@@ -6,10 +6,10 @@ ARG RAR2FS_VERSION=1.29.7
 # Add mediaarea repo and install its package
 RUN apt-get update && \
     apt-get clean && \
-    wget https://mediaarea.net/repo/deb/repo-mediaarea_1.0-25_all.deb && \
-    dpkg -i repo-mediaarea_1.0-25_all.deb && \
-    rm repo-mediaarea_1.0-25_all.deb && \
-    wget https://download.opensuse.org/repositories/home:/movie_thumbnailer/Debian_12/amd64/mtn_3.5.0-1_amd64.deb && \
+    wget https://mediaarea.net/repo/deb/repo-mediaarea_1.0-26_all.deb && \
+    dpkg -i repo-mediaarea_1.0-26_all.deb && \
+    rm repo-mediaarea_1.0-26_all.deb && \
+    wget https://download.opensuse.org/repositories/home:/movie_thumbnailer/Debian_13/amd64/mtn_3.5.0-1_amd64.deb && \
     apt-get install -y ./mtn_3.5.0-1_amd64.deb && \
     rm mtn_3.5.0-1_amd64.deb && \
     apt-get update && \

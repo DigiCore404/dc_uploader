@@ -197,7 +197,7 @@ def main():
     tmp_dir = Path(config.get('Paths', 'TMP_DIR')) / str(os.getpid())
     cleanup_enabled = config.getboolean('Settings', 'CLEANUP')
 
-    program_version = "1.1.9"
+    program_version = "1.2.0"
 
     try:
         hasher = config.get('Torrent', 'HASHER').strip()
@@ -297,19 +297,16 @@ def main():
         print()
 
         ascii_art_header("Login")
-        print(f"{bcolors.ENDC}{bcolors.YELLOW}Logging in...\n{bcolors.ENDC}")
-        # Login and get cookies
+        print(f"{bcolors.ENDC}{bcolors.YELLOW}Logging in via API Key...\n{bcolors.ENDC}")
+        # Login now returns headers (including API Key) instead of cookies
         try:
-            cookies = login()  # Call the login function from login.utils.py
-            if not cookies:
+            auth_headers = login()  # Updated login returns auth headers
+            if not auth_headers:
                 log_to_file(log_file_path, "Login failed. Cannot proceed with the script.")
                 print(f"{bcolors.RED}Login failed. Cannot proceed with the script.\n{bcolors.ENDC}")
                 fail_exit(tmp_dir, cleanup_enabled)
             else:
                 print(f"{bcolors.OKGREEN}Login successful. Proceeding...\n{bcolors.ENDC}")
-                # Continue with the rest of your script using the cookies
-                # For example:
-                # upload_data(cookies)
         except Exception as e:
             log_to_file(log_file_path, f"Error during login: {str(e)}")
             print(f"{bcolors.FAIL}Error during login: {str(e)}\n{bcolors.ENDC}")
@@ -325,7 +322,8 @@ def main():
             # Only run dupe check if both DUPECHECK and DUPEDL are enabled
             if dupecheck_enabled and dupedl_enabled:
                 ascii_art_header("Dupe checking")
-                duplicate_found = check_and_download_dupe(directory_name, cookies)
+                # Passing auth_headers instead of cookies
+                duplicate_found = check_and_download_dupe(directory_name, auth_headers)
                 if duplicate_found:
                     log("Duplicate found. Skipping further operations.", log_file_path)
                     update_status(directory, 'dupe')
@@ -352,6 +350,7 @@ def main():
 
         # Initialize replacements dictionary with version info.
         replacements = {'!version!': program_version}
+        
         ### Screenshots processing section
         if screenshots_enabled:
             ascii_art_header("Screenshots")
@@ -606,33 +605,25 @@ def main():
         ascii_art_header("Uploading")
 
         # Print and log variables before upload
-        print(f"{bcolors.YELLOW}Uploading torrent...\n{bcolors.ENDC}")
-        #print(f"Torrent file: {torrent_file}")
-        #print(f"Template content: {template_content}")
-        #print(f"Cookies: {cookies}")
-        #print(f"Category ID: {category_id}")
-        #print(f"IMDB ID: {imdb_id}")
-        #print(f"Mediainfo content length: {len(mediainfo_content) if mediainfo_content else '0'}")
+        print(f"{bcolors.YELLOW}Uploading torrent via API Key...\n{bcolors.ENDC}")
 
         # Log variables
         log(f"Torrent file: {torrent_file}", log_file_path)
-        log(f"Template content: {template_content}", log_file_path)
-        log(f"Cookies: {cookies}", log_file_path)
+        log(f"Template content path: {template_content}", log_file_path)
+        log(f"Auth Headers: {auth_headers}", log_file_path) # Now logging headers instead of cookies
         log(f"Category ID: {category_id}", log_file_path)
         log(f"IMDB ID: {imdb_id}", log_file_path)
         log(f"Mediainfo content length: {len(mediainfo_content) if mediainfo_content else '0'}", log_file_path)
-        # Initialize upload details dictionary
 
         try:
-            upload_torrent(torrent_file, template_content, cookies, category_id, imdb_id, mediainfo_content, dupedl_enabled)
+            # We pass auth_headers here instead of cookies
+            upload_torrent(torrent_file, template_content, auth_headers, category_id, imdb_id, mediainfo_content, dupedl_enabled)
             log_upload_details(upload_details, upload_log_path, duplicate_found=False)
             update_status(directory, 'uploaded')
             update_upload_status(name=directory_name, new_status='uploaded')
             print(f"Torrent uploaded successfully. Details logged at: {upload_log_path}")
         except Exception as e:
             log(f"Error uploading torrent: {str(e)}", log_file_path)
-            # Optionally, you can log details even when an exception occurs, if relevant
-            #log_upload_details(upload_details, upload_log_path, duplicate_found=False)
             print(f"Failed to upload torrent. Error: {str(e)}")
             update_upload_status(name=directory_name, new_status='failed')
             fail_exit(tmp_dir, cleanup_enabled)
@@ -646,4 +637,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

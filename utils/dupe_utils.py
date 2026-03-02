@@ -51,7 +51,7 @@ def similar(uploading, existing):
     return matches / total_keys
 
 
-def check_and_download_dupe(release_name, cookies):
+def check_and_download_dupe(release_name, auth_headers):
     """Check for duplicate torrent and download it if found, based on configuration."""
     dupe_check_flag = config.getboolean('Settings', 'DUPECHECK')
     dupe_dl_flag = config.getboolean('Settings', 'DUPEDL')
@@ -67,7 +67,8 @@ def check_and_download_dupe(release_name, cookies):
 
     try:
         print(f"{bcolors.YELLOW}Checking for dupe: {release_name}\n{bcolors.ENDC}")
-        response = requests.get(search_url, cookies=cookies, headers={'User-Agent': 'Mozilla/5.0'})
+        # Use auth_headers instead of cookies
+        response = requests.get(search_url, headers=auth_headers)
         response.raise_for_status()
 
         # Log the response
@@ -111,8 +112,8 @@ def check_and_download_dupe(release_name, cookies):
                         f"{bcolors.WARNING}Duplicate download is disabled in the configuration. Exiting.{bcolors.ENDC}")
                     return True  # Indicate that a duplicate was found but not downloaded
 
-                # Download the duplicate torrent and get its file path
-                torrent_file_path = download_torrent(dupe_torrent_url, cookies, release_name,
+                # Download the duplicate torrent using headers
+                torrent_file_path = download_torrent(dupe_torrent_url, auth_headers, release_name,
                                                      dupe_id=torrent_id)
 
                 # Copy the downloaded torrent to the watch folder

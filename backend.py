@@ -205,7 +205,7 @@ def main():
     tmp_dir = Path(config.get('Paths', 'TMP_DIR')) / str(os.getpid())
     cleanup_enabled = config.getboolean('Settings', 'CLEANUP')
 
-    program_version = "1.1.9"
+    program_version = "1.2.1"
 
     try:
         hasher = config.get('Torrent', 'HASHER').strip()

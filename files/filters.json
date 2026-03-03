@@ -1,722 +1,761 @@
 {
-    "MUSIC_MP3": {
-        "patterns": {
-            "initial": [
-                "mp3"
-            ],
-            "exclude_patterns": [
-                ""
-            ]
-        },
-        "categories": [
-            {
-                "name": "Music/MP3",
-                "cat_id": "22",
-                "patterns": [
-                    ""
-                ],
-                "exclude_patterns": [
-                    ""
-                ]
-            }
-        ]
-    },
-    "MUSIC_FLAC": {
-        "patterns": {
-            "initial": [
-                ".*[fF][lL][aA][cC].*"
-            ],
-            "exclude_patterns": [
-                "(1080[pP]|720[pP]|[bB][lL][uU][rR][aA][yY]|2160[pP]|2880[pP]|3630[pP]|2700[pP]|4096[pP]|2048[pP]|3072[pP]|3840[pP]|3000[pP])",
-                "(IMAGESET)"
-            ]
-        },
-        "categories": [
-            {
-                "name": "Music/FLAC",
-                "cat_id": "23",
-                "patterns": [
-                    ""
-                ],
-                "exclude_patterns": [
-                    ""
-                ]
-            }
-        ]
-    },
-    "SD_MOVIES_TV_SPORTS_PACKS": {
-        "patterns": {
-            "initial": [
-                "([Ww][Ee][Bb]|[Ww][Ee][Bb][Rr][Ii][Pp]|[Hh][Dd][Tt][Vv]|[xX][vV][iI][dD]|[hH][eE][vV][cC]|[cC][aA][mM]|[hH]264|[xX]264|[dD][vV][dD][sS][cC][rR]|[wW][eE][bB][dD][lL]|[wW][eE][bB][rR][iI][pP]|[dD][vV][dD][rR][iI][pP]|[dD][vV][bB][rR][iI][pP]|[bB][rR][rR][iI][pP]|[bB][dD][rR][iI][pP])"
-            ],
-            "exclude_patterns": [
-                "([fF][lL][aA][cC]|[Xx][Xx][Xx]|720[pP]|1080[pP]|2160[Pp]|[bB][lL][uU][rR][aA][yY]|[pP][aA][lL]|[nN][tT][sS][cC]|[eE][bB][oO][oO][kK]|-BitBook|-DARKSiDERS|-iLEARN|-UDUMMY|ELearning|-BLOAT|-SkilledHares|-DECiBEL|-QUiD|-LiBRO|-NOLEDGE|-REBAR|-SOFTiMAGE|-SSQ|-iLST|-LND|-STM|-ZH|-ViGOROUS|-APoLLo|-XCODE|-EXPANSION|-iLLiTERATE|-RiDWARE|-KNiSO|-SHEPHERDS|-BiFiSO|-ADSR|-ANALYTiCS|-CaviaRPDA|-H0WT0|-THECOOP|-OXBRiDGE|-XQZT|-PRODEV|-MAGNiTUDE|-MASCHiNE|AEROHOLiCS|-COMPRISED|-BooKWoRM|-PHOTONE|-THEOS|-LiQUiDWARE|-kEISO|-ISO|-BYS|-NEWiSO|-DVTiSO|-TBE|-QUASAR|-rG|-NAViGON|-ELOHiM|-TUTOR|-PLATO|-SONiTUS|-EMBRACE|-XiSO|-YUM|-iRONiSO|-SoSISO|-SPiRiT|-BLZiSO|-CHR|-iNDiSO|-HOTiSO|-DVTiSO|-ZWTiSO|-ZWT|-JGTiSO|-DYNAMiCS|-WZT|-iNKiSO|-CYGiSO|-BIE|-AiRISO)",
-                ".*[Bb][oO][Oo][kK][Ww][Aa][Rr][Ee].*",
-                ".*[eE][Bb][oO][Oo][kK].*",
-                ".*[Ee][Pp][Uu][Bb].*"
-            ]
-        },
-        "categories": [
-            {
-                "name": "TV Packs/SD",
-                "cat_id": "12",
-                "patterns": [
-                    ".*[Ss][0-9][0-9].*",
-                    ".*[Ss][Ee][Aa][Ss][Oo][Nn].*[0-9][0-9].*",
-                    ".*[0-9]{4}\\.[0-9]{2}\\.[0-9]{2}.*[Hh][Dd][Tt][Vv].*",
-                    "(\\d{4})\\.(\\d{2})\\.(\\d{2})"
-                ],
-                "exclude_patterns": [
-                    "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)",
-                    ".*[Ss][0-9][0-9].*[Ee][0-9][0-9].*"
-                ]
-            },
-            {
-                "name": "Series/SD",
-                "cat_id": "10",
-                "patterns": [
-                    ".*[Ss][0-9][0-9].*[Ee][0-9][0-9].*",
-                    ".*[Ee][0-9][0-9].*",
-                    ".*[Ss][Ee][Aa][Ss][Oo][Nn].*[0-9][0-9].*",
-                    ".*[0-9]{4}\\.[0-9]{2}\\.[0-9]{2}.*",
-                    "(\\d{4})\\.(\\d{2})\\.(\\d{2})"
-                ],
-                "exclude_patterns": [
-                    ""
-                ]
-            },
-            {
-                "name": "Sports",
-                "cat_id": "15",
-                "patterns": [
-                    "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)"
-                ],
-                "exclude_patterns": [
-                    ""
-                ]
-            },
-            {
-                "name": "Movies/SD",
-                "cat_id": "2",
-                "patterns": [
-                    ""
-                ],
-                "exclude_patterns": [
-                    "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)",
-                    ".*[Ss][0-9][0-9].*[Ee][0-9][0-9].*",
-                    "(\\d{4})\\.(\\d{2})\\.(\\d{2})"
-                ]
-            }
-        ]
-    },
-    "2160P_MOVIES_TV_SPORTS_PACKS": {
-        "patterns": {
-            "initial": [
-                "2160[pP]"
-            ],
-            "exclude_patterns": [
-                "([xX][xX][xX]|[mM][bB][lL][uU][rR][aA][yY]|[dD][vV][dD][rR][iI][pP]|[dD][vV][bB][rR][iI][pP]|[bB][rR][rR][iI][pP]|[xX][vV][iI][dD]|[bB][dD][rR][iI][pP]|480[pP]|720[pP]|1080[pP]|[fF][lL][aA][cC])"
-            ]
-        },
-        "categories": [
-            {
-                "name": "TV Packs/2160p",
-                "cat_id": "12",
-                "patterns": [
-                    ".*[Ss][0-9][0-9].*",
-                    ".*[Ss][Ee][Aa][Ss][Oo][Nn].*[0-9][0-9].*"
-                ],
-                "exclude_patterns": [
-                    "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)",
-                    ".*[Ss][0-9][0-9].*[Ee][0-9][0-9].*",
-                    ".*[0-9]{4}\\.[0-9]{2}\\.[0-9]{2}.*"
-                ]
-            },
-            {
-                "name": "Series/2160p",
-                "cat_id": "13",
-                "patterns": [
-                    ".*[Ss][0-9][0-9].*[Ee][0-9][0-9].*",
-                    ".*[Ss][0-9][0-9].*",
-                    ".*[Ee][0-9][0-9].*",
-                    ".*[0-9]{4}\\.[0-9]{2}\\.[0-9]{2}.*",
-                    "(\\d{4})\\.(\\d{2})\\.(\\d{2})"
-                ],
-                "exclude_patterns": [
-                    "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)"
-                ]
-            },
-            {
-                "name": "Sports",
-                "cat_id": "15",
-                "patterns": [
-                    "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)"
-                ],
-                "exclude_patterns": [
-                    ""
-                ]
-            },
-            {
-                "name": "Movies/2160p",
-                "cat_id": "4",
-                "patterns": [
-                    ""
-                ],
-                "exclude_patterns": [
-                    "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)",
-                    ".*[Ss][0-9][0-9].*[Ee][0-9][0-9].*",
-                    "(\\d{4})\\.(\\d{2})\\.(\\d{2})"
-                ]
-            }
-        ]
-    },
-    "1080P_MOVIES_TV_SPORTS_PACKS": {
-        "patterns": {
-            "initial": [
-                "1080[pP]"
-            ],
-            "exclude_patterns": [
-                "([Xx][Xx][Xx]|[mM][bB][lL][uU][rR][aA][yY]|[dD][vV][dD][rR][iI][pP]|[dD][vV][bB][rR][iI][pP]|[bB][rR][rR][iI][pP]|[xX][vV][iI][dD]|[bB][dD][rR][iI][pP]|480p|[fF][lL][aA][cC])"
-            ]
-        },
-        "categories": [
-            {
-                "name": "TV Packs/1080p",
-                "cat_id": "12",
-                "patterns": [
-                    ".*[Ss][0-9][0-9].*",
-                    ".*[Ss][Ee][Aa][Ss][Oo][Nn].*[0-9][0-9].*"
-                ],
-                "exclude_patterns": [
-                    "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)",
-                    ".*[Ss][0-9][0-9].*[Ee][0-9][0-9].*",
-                    "(\\d{4})\\.(\\d{2})\\.(\\d{2})"
-                ]
-            },
-            {
-                "name": "Series/1080p",
-                "cat_id": "9",
-                "patterns": [
-                    ".*[Ss][0-9][0-9].*[Ee][0-9][0-9].*",
-                    ".*[Ss][0-9][0-9].*",
-                    ".*[Ee][0-9][0-9].*",
-                    ".*[0-9]{4}\\.[0-9]{2}\\.[0-9]{2}.*[Hh][Dd][Tt][Vv].*",
-                    "(\\d{4})\\.(\\d{2})\\.(\\d{2})"
-                ],
-                "exclude_patterns": [
-                    "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)"
-                ]
-            },
-            {
-                "name": "Sports",
-                "cat_id": "15",
-                "patterns": [
-                    "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)"
-                ],
-                "exclude_patterns": [
-                    ""
-                ]
-            },
-            {
-                "name": "Movies/1080p",
-                "cat_id": "6",
-                "patterns": [
-                    ""
-                ],
-                "exclude_patterns": [
-                    "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)",
-                    ".*[Ss][0-9][0-9].*[Ee][0-9][0-9].*",
-                    "(\\d{4})\\.(\\d{2})\\.(\\d{2})"
-                ]
-            }
-        ]
-    },
-    "720P_MOVIES_TV_SPORTS_PACKS": {
-        "patterns": {
-            "initial": [
-                "720[pP]"
-            ],
-            "exclude_patterns": [
-                "([Xx][Xx][Xx]|[mM][bB][lL][uU][rR][aA][yY]|[dD][vV][dD][rR][iI][pP]|[dD][vV][bB][rR][iI][pP]|[bB][rR][rR][iI][pP]|[xX][vV][iI][dD]|[bB][dD][rR][iI][pP]|480p|[fF][lL][aA][cC])"
-            ]
-        },
-        "categories": [
-            {
-                "name": "TV Packs/720p",
-                "cat_id": "12",
-                "patterns": [
-                    ".*[Ss][0-9][0-9].*",
-                    ".*[Ss][Ee][Aa][Ss][Oo][Nn].*[0-9][0-9].*",
-                    ".*[0-9]{4}\\.[0-9]{2}\\.[0-9]{2}.*[Hh][Dd][Tt][Vv].*"
-                ],
-                "exclude_patterns": [
-                    "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)",
-                    ".*[Ss][0-9][0-9].*[Ee][0-9][0-9].*"
-                ]
-            },
-            {
-                "name": "Series/720p",
-                "cat_id": "8",
-                "patterns": [
-                    ".*[Ss][0-9][0-9].*[Ee][0-9][0-9].*",
-                    ".*[Ss][0-9][0-9].*",
-                    ".*[Ee][0-9][0-9].*",
-                    ".*[0-9]{4}\\.[0-9]{2}\\.[0-9]{2}.*[Hh][Dd][Tt][Vv].*",
-                    "(\\d{4})\\.(\\d{2})\\.(\\d{2})"
-                ],
-                "exclude_patterns": [
-                    "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)"
-                ]
-            },
-            {
-                "name": "Sports",
-                "cat_id": "15",
-                "patterns": [
-                    "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)"
-                ],
-                "exclude_patterns": [
-                    ""
-                ]
-            },
-            {
-                "name": "Movies/720p",
-                "cat_id": "5",
-                "patterns": [
-                    ""
-                ],
-                "exclude_patterns": [
-                    "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)",
-                    ".*[Ss][0-9][0-9].*[Ee][0-9][0-9].*",
-                    "(\\d{4})\\.(\\d{2})\\.(\\d{2})"
-                ]
-            }
-        ]
-    },
-    "BLURAY_COMPLETE_MOVIES_TV_SPORTS_PACKS": {
-        "patterns": {
-            "initial": [
-                "([bB][lL][uU][rR][aA][yY]|[Cc][Oo][Mm][Pp][Ll][Ee][Tt][Ee]|[Uu][Hh][Dd])"
-            ],
-            "exclude_patterns": [
-                "([Xx][Xx][Xx]|[hH][dD][tT][vV]|[xX][xX][xX]|[mM][bB][lL][uU][rR][aA][yY]|[dD][vV][dD][rR][iI][pP]|[dD][vV][bB][rR][iI][pP]|[bB][rR][rR][iI][pP]|[xX][vV][iI][dD]|[bB][dD][rR][iI][pP]|480[pP]|1080[pP]|720[pP]|2160[pP]|[fF][lL][aA][cC])",
-                "(-I_KnoW|-HHT|-PLAYMAGiC|-CLS|-bADkARMA|-RUNE|-TENOKE|-ANOMALY|-FCKDRM|-VREX|-DVN|-DARKZER0|-NAPT|-RAZOR|-DINOByTES|-HOODLUM|-GOG|-DOGE|-STEAMPUNKS|-DARKSiDERS|-SiMPLEX|I_KnoW|-CPY|0x0007|-BAT|-PLAZA|-ACTiVATED|-CODEX|-CLASSiCS|-DEFA|-RELOADED|-SKIDROW|-JAGDOX|-Razor1911|-FLT|-JAGUAR|-iNDEPENDANT|-PROPHET|-WARG|-FANiSO|-HI2U|-ARMADA|-FLTDOX|-DELiGHT|-POSTMORTEM|-TiNYiSO|-AVENGED|-CLONEDVD-P2P|-ARM|-GENESIS|-FASiSO|-ViTALiTY|-RazorDOX|-SPLATTERKiNGS)",
-                "([Bb][oO][Oo][kK][Ww][Aa][Rr][Ee]|[eE][Bb][oO][Oo][kK]|[Ee][Pp][Uu][Bb])",
-                ".*MDVDR.*|.*DVDR.*"
-            ]
-        },
-        "categories": [
-            {
-                "name": "TV Packs/Bluray",
-                "cat_id": "12",
-                "patterns": [
-                    ".*[Ss][0-9][0-9].*",
-                    ".*[Ss][Ee][Aa][Ss][Oo][Nn].*[0-9][0-9].*",
-                    ".*[0-9]{4}\\.[0-9]{2}\\.[0-9]{2}.*[Hh][Dd][Tt][Vv].*"
-                ],
-                "exclude_patterns": [
-                    ".*[Dd][0-9][0-9].*",
-                    ".*[Ee][0-9][0-9].*",
-                    "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)"
-                ]
-            },
-            {
-                "name": "Series/Bluray",
-                "cat_id": "14",
-                "patterns": [
-                    ".*[Ss][0-9][0-9].*[Dd][0-9][0-9].*",
-                    ".*[Ss][0-9][0-9].*",
-                    ".*[Dd][0-9][0-9].*",
-                    "(\\d{4})\\.(\\d{2})\\.(\\d{2})"
-                ],
-                "exclude_patterns": [
-                    "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)"
-                ]
-            },
-            {
-                "name": "Sports",
-                "cat_id": "15",
-                "patterns": [
-                    "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)"
-                ],
-                "exclude_patterns": [
-                    ""
-                ]
-            },
-            {
-                "name": "Movies/UHD/Bluray",
-                "cat_id": "38",
-                "patterns": [
-                    "([Uu][hH][dD])"
-                ],
-                "exclude_patterns": [
-                    ""
-                ]
-            },
-            {
-                "name": "Movies/Bluray",
-                "cat_id": "3",
-                "patterns": [
-                    ""
-                ],
-                "exclude_patterns": [
-                    "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)",
-                    ".*[Ss][0-9][0-9].*[Ee][0-9][0-9].*",
-                    "(\\d{4})\\.(\\d{2})\\.(\\d{2})",
-                    "(-I_KnoW|-HHT|-PLAYMAGiC|-CLS|-bADkARMA|-RUNE|-TENOKE|-ANOMALY|-FCKDRM|-VREX|-DVN|-DARKZER0|-NAPT|-RAZOR|-DINOByTES|-HOODLUM|-GOG|-DOGE|-STEAMPUNKS|-DARKSiDERS|-SiMPLEX|I_KnoW|-CPY|0x0007|-BAT|-PLAZA|-ACTiVATED|-CODEX|-CLASSiCS|-DEFA|-RELOADED|-SKIDROW|-JAGDOX|-Razor1911|-FLT|-JAGUAR|-iNDEPENDANT|-PROPHET|-WARG|-FANiSO|-HI2U|-ARMADA|-FLTDOX|-DELiGHT|-POSTMORTEM|-TiNYiSO|-AVENGED|-CLONEDVD-P2P|-ARM|-GENESIS|-FASiSO|-ViTALiTY|-RazorDOX|-SPLATTERKiNGS)"
-                ]
-            }
-        ]
-    },
-    "PC_ISO_GAMES": {
-        "patterns": {
-            "initial": [
-                "(-I_KnoW|-HHT|-PLAYMAGiC|-CLS|-bADkARMA|-RUNE|-TENOKE|-ANOMALY|-FCKDRM|-VREX|-DVN|-DARKZER0|-NAPT|-RAZOR|-DINOByTES|-HOODLUM|-GOG|-DOGE|-STEAMPUNKS|-DARKSiDERS|-SiMPLEX|I_KnoW|-CPY|0x0007|-BAT|-PLAZA|-ACTiVATED|-CODEX|-CLASSiCS|-DEFA|-RELOADED|-SKIDROW|-JAGDOX|-Razor1911|-FLT|-JAGUAR|-iNDEPENDANT|-PROPHET|-WARG|-FANiSO|-HI2U|-ARMADA|-FLTDOX|-DELiGHT|-POSTMORTEM|-TiNYiSO|-AVENGED|-CLONEDVD-P2P|-ARM|-GENESIS|-FASiSO|-ViTALiTY|-RazorDOX|-SPLATTERKiNGS)"
-            ],
-            "exclude_patterns": [
-                ""
-            ]
-        },
-        "categories": [
-            {
-                "name": "MacOSX/Games",
-                "cat_id": "27",
-                "patterns": [
-                    ".*[Mm][aA][Cc].*",
-                    ".*[Mm][aA][Cc][Oo][Ss].*"
-                ],
-                "exclude_patterns": [
-                    ""
-                ]
-            },
-            {
-                "name": "Games",
-                "cat_id": "25",
-                "patterns": [
-                    ""
-                ],
-                "exclude_patterns": [
-                    ""
-                ]
-            }
-        ]
-    },
-    "NSW_GAMES": {
-        "patterns": {
-            "initial": [
-                ".*NSW.*"
-            ],
-            "exclude_patterns": [
-                ""
-            ]
-        },
-        "categories": [
-            {
-                "name": "NSW/Games",
-                "cat_id": "26",
-                "patterns": [
-                    ".*NSW.*"
-                ],
-                "exclude_patterns": [
-                    ""
-                ]
-            }
-        ]
-    },
-    "0DAY": {
-        "patterns": {
-            "initial": [
-                "(-BONDYE|RINDVIEH|-RLTS|-EQUiNOX|-BS|-BTCR|-WEB0DAY|-WEBiSO|-CaviaR|-6581|-rGPDA|-EATSHIT|-SERiF|-NGEN|-Unleashed|-FSOCIETY|-DVT|-ALiAS|-rG|-AMPED|-Lz0|-XFORCE|-CORE|-TE|-WaLMaRT|-BLiZZARD|-FALLEN|-LAXiTY|-DJiNN|-FANiSO|-CRD|-HERiTAGE|-DELiGHT|-AiR|-ArCADE|-BEAN|-EAT|-ST3RE0|-NOY|-FOSI|-eMAG|-REDT|-YPOGEiOS|-F4CG|-DIGERATI|-ROGUE|-AGAiN|-PARADOX|-ZWT|-UNION|-iNViSiBLE|-TCi|-JOLT|-MESMERiZE|-ARN|-DOA|-SiMPLiFY|-RECOiL|-PH|-TYPO|-VACE|-OUTLAWS|-QUANTiZE|-BRD|-EcHoS|-MAZE|-PH|-CzW)$"
-            ],
-            "exclude_patterns": [
-                "([xX][xX][xX]|[xX][vV][iI][dD]|[bB][dD][rR][iI][pP]|[dD][vV][dD][rR][iI][pP]|[dD][vV][bB][rR][iI][pP]|[bB][rR][rR][iI][pP]|[mM][bB][lL][uU][rR][aA][yY]|[mM][dD][vV][dD][rR]|[nN][tT][sS][cC]|[pP][aA][lL]|1080[pP]|720[pP]|2160[pP]|[fF][lL][aA][cC])"
-            ]
-        },
-        "categories": [
-            {
-                "name": "MacOSX/Apps",
-                "cat_id": "21",
-                "patterns": [
-                    ".*[Mm][aA][Cc].*",
-                    ".*[Mm][aA][Cc][Oo][Ss].*"
-                ],
-                "exclude_patterns": [
-                    ""
-                ]
-            },
-            {
-                "name": "PC/Apps",
-                "cat_id": "20",
-                "patterns": [
-                    "([Ii][Ss][Oo])"
-                ],
-                "exclude_patterns": [
-                    ""
-                ]
-            },
-            {
-                "name": "APPS/0day",
-                "cat_id": "18",
-                "patterns": [
-                    ""
-                ],
-                "exclude_patterns": [
-                    ""
-                ]
-            }
-        ]
-    },
-    "APPS": {
-        "patterns": {
-            "initial": [
-                "(oNePiEcE|BTCRiSO|-RAiN|-iLEARN|-UDUMMY|ELearning|-BLOAT|-SkilledHares|-DECiBEL|-QUiD|-LiBRO|-NOLEDGE|-REBAR|-SOFTiMAGE|-SSQ|-iLST|-LND|-STM|-ZH|-ViGOROUS|-APoLLo|-XCODE|-EXPANSION|-iLLiTERATE|-RiDWARE|-KNiSO|-SHEPHERDS|-BiFiSO|-ADSR|-ANALYTiCS|-CaviaRPDA|-H0WT0|-THECOOP|-OXBRiDGE|-XQZT|-PRODEV|-MAGNiTUDE|-MASCHiNE|AEROHOLiCS|-COMPRISED|-BooKWoRM|-PHOTONE|-THEOS|-LiQUiDWARE|-BooKWoRM|-kEISO|-ISO|-COMPRISED|-BYS|-NEWiSO|-DVTiSO|-TBE|-QUASAR|-rG|-NAViGON|-ELOHiM|-TUTOR|-PLATO|-SONiTUS|-EMBRACE|-XiSO|-YUM|-iRONiSO|-SoSISO|-SPiRiT|-BLZiSO|-CHR|-iNDiSO|-HOTiSO|-DVTiSO|-ZWTiSO|-ZWT|-JGTiSO|-DYNAMiCS|-WZT|-iNKiSO|-CYGiSO|-BIE|-AiRISO)$"
-            ],
-            "exclude_patterns": [
-                "([xX][xX][xX]|[xX][vV][iI][dD]|[bB][dD][rR][iI][pP]|[dD][vV][dD][rR][iI][pP]|[dD][vV][bB][rR][iI][pP]|[bB][rR][rR][iI][pP]|[mM][bB][lL][uU][rR][aA][yY]|[mM][dD][vV][dD][rR]|[nN][tT][sS][cC]|[pP][aA][lL]|1080[pP]|720[pP]|2160[pP]|[fF][lL][aA][cC])"
-            ]
-        },
-        "categories": [
-            {
-                "name": "MacOSX/Apps",
-                "cat_id": "21",
-                "patterns": [
-                    ".*[Mm][aA][Cc].*",
-                    ".*[Mm][aA][Cc][Oo][Ss].*"
-                ],
-                "exclude_patterns": [
-                    ""
-                ]
-            },
-            {
-                "name": "TUTORIAL/Apps",
-                "cat_id": "33",
-                "patterns": [
-                    "(-iLEARN|-UDUMMY|ELearning|-BLOAT|-SkilledHares|-QUiD|-LiBRO|-ViGOROUS|-APoLLo|-XCODE|-RiDWARE|-iNKiSO|-NOLEDGE|-CONSORTiUM|-REBAR|-ADSR|-ZH|-KNiSO|-BLZiSO|-STM|-QUASAR|-XQZT|-BooKWoRM|-kEISO|-TUTOR|-ELOHiM|-JGTiSO|-RPBISO|-BiFiSO|-SKiLLUP|-H0WT0|BOOKWARE|-iLST|-iLLiTERATE|-OXBRiDGE|-ANALYTiCS|-SHEPHERDS)$"
-                ],
-                "exclude_patterns": [
-                    ""
-                ]
-            },
-            {
-                "name": "PC/Apps",
-                "cat_id": "20",
-                "patterns": [
-                    ""
-                ],
-                "exclude_patterns": [
-                    ""
-                ]
-            }
-        ]
-    },
-    "DVDR": {
-        "patterns": {
-            "initial": [
-                "(-JFKDVD|[pP][aA][lL]\b|[nN][tT][sS][cC])"
-            ],
-            "exclude_patterns": [
-                "([Ww][Ee][Bb]|[Ff][lL][aA][cC]|[Xx][Xx][Xx]|[xX][bB][oO][xX]360|[xX][vV][iI][dD]|[mM][bB][lL][uU][rR][aA][yY]|[mM][dD][vV][dD][rR]|720p|1080p|MAGNiTUDE|SONiTUS|DYNAMiCS|PLATO|[fF][lL][aA][cC])"
-            ]
-        },
-        "categories": [
-            {
-                "name": "DVDR",
-                "cat_id": "1",
-                "patterns": [
-                    ""
-                ],
-                "exclude_patterns": [
-                    ""
-                ]
-            }
-        ]
-    },
-    "MBLURAY": {
-        "patterns": {
-            "initial": [
-                "([mM][bB][lL][uU][rR][aA][yY])"
-            ],
-            "exclude_patterns": [
-                "([Xx][Xx][Xx]|[mM][dD][vV][dD][rR]|[fF][lL][aA][cC])"
-            ]
-        },
-        "categories": [
-            {
-                "name": "MBluray",
-                "cat_id": "24",
-                "patterns": [
-                    "([mM][bB][lL][uU][rR][aA][yY])"
-                ],
-                "exclude_patterns": [
-                    "([Xx][Xx][Xx]|[mM][dD][vV][dD][rR]|[fF][lL][aA][cC])"
-                ]
-            }
-        ]
-    },
-    "MDVDR": {
-        "patterns": {
-            "initial": [
-                ".*[mM][dD][vV][dD][rR].*"
-            ],
-            "exclude_patterns": [
-                "([Xx][Xx][Xx]|[mM][pP]3|[xX][vV][iI][dD]|\b[dD][vV][dD][rR]\b|[bB][rR][rR][iI][pP]|[bB][dD][rR][iI][pP]|1080p|720p|[bB][lL][uU][rR][aA][yY]|[fF][lL][aA][cC])"
-            ]
-        },
-        "categories": [
-            {
-                "name": "MDVDR",
-                "cat_id": "39",
-                "patterns": [
-                    ".*[mM][dD][vV][dD][rR].*"
-                ],
-                "exclude_patterns": [
-                    "([Xx][Xx][Xx]|[mM][pP]3|[xX][vV][iI][dD]|\b[dD][vV][dD][rR]\b|[bB][rR][rR][iI][pP]|[bB][dD][rR][iI][pP]|1080p|720p|[bB][lL][uU][rR][aA][yY]|[fF][lL][aA][cC])"
-                ]
-            }
-        ]
-    },
-    "EBOOKS": {
-        "patterns": {
-            "initial": [
-                ".*[Bb][oO][Oo][kK][Ww][Aa][Rr][Ee].*",
-                ".*[eE][Bb][oO][Oo][kK].*",
-                ".*[Ee][Pp][Uu][Bb].*"
-            ],
-            "exclude_patterns": [
-                "([Xx][Xx][Xx]|[mM][pP]3|[xX][vV][iI][dD]|[dD][vV][dD][rR]|[bB][rR][rR][iI][pP]|[bB][dD][rR][iI][pP]|1080p|720p|[bB][lL][uU][rR][aA][yY]|[fF][lL][aA][cC])"
-            ]
-        },
-        "categories": [
-            {
-                "name": "Ebooks",
-                "cat_id": "28",
-                "patterns": [
-                    ".*[Bb][oO][Oo][kK][Ww][Aa][Rr][Ee].*",
-                    ".*[eE][Bb][oO][Oo][kK].*",
-                    ".*[Ee][Pp][Uu][Bb].*"
-                ],
-                "exclude_patterns": [
-                    "([Xx][Xx][Xx]|[mM][pP]3|[xX][vV][iI][dD]|[dD][vV][dD][rR]|[bB][rR][rR][iI][pP]|[bB][dD][rR][iI][pP]|1080p|720p|[bB][lL][uU][rR][aA][yY]|[fF][lL][aA][cC])"
-                ]
-            }
-        ]
-    },
-    "PORN_": {
-        "patterns": {
-            "initial": [
-                "[Xx][Xx][Xx]"
-            ],
-            "exclude_patterns": [
-                "([fF][lL][aA][cC])"
-            ]
-        },
-        "categories": [
-            {
-                "name": "XXX/Movies/HD",
-                "cat_id": "36",
-                "patterns": [
-                    "(1080[pP]|720[pP])"
-                ],
-                "exclude_patterns": [
-                    "(IMAGESET)",
-                    "(2160[pP]|2880[pP]|3630[pP]|2700[pP]|4096[pP]|2048[pP]|3072[pP]|3840[pP]|3000[pP])",
-                    ".*[0-9][0-9].[0-9][0-9].[0-9][0-9].*",
-                    ".*[Ee][0-9]{1",
-                    "6}.*"
-                ]
-            },
-            {
-                "name": "XXX/0DAY/HD",
-                "cat_id": "31",
-                "patterns": [
-                    "(1080[pP]|720[pP])"
-                ],
-                "exclude_patterns": [
-                    "(IMAGESET)",
-                    "(2160[pP]|2880[pP]|3630[pP]|2700[pP]|4096[pP]|2048[pP]|3072[pP]|3840[pP]|3000[pP])"
-                ]
-            },
-            {
-                "name": "XXX/MOVIES/4K",
-                "cat_id": "37",
-                "patterns": [
-                    "(2160[pP]|2880[pP]|3630[pP]|2700[pP]|4096[pP]|2048[pP]|3072[pP]|3840[pP]|3000[pP])"
-                ],
-                "exclude_patterns": [
-                    "(IMAGESET)",
-                    "(1080[pP]|720[pP])",
-                    ".*[0-9][0-9].[0-9][0-9].[0-9][0-9].*",
-                    ".*[Ee][0-9]{1",
-                    "6}"
-                ]
-            },
-            {
-                "name": "XXX/0DAY/4K",
-                "cat_id": "32",
-                "patterns": [
-                    "(2160[pP]|2880[pP]|3630[pP]|2700[pP]|4096[pP]|2048[pP]|3072[pP]|3840[pP]|3000[pP])"
-                ],
-                "exclude_patterns": [
-                    "(IMAGESET)",
-                    "(1080[pP]|720[pP])"
-                ]
-            },
-            {
-                "name": "XXX/IMAGESET",
-                "cat_id": "34",
-                "patterns": [
-                    "(IMAGESET)"
-                ],
-                "exclude_patterns": [
-                    "(1080[pP]|720[pP]2160[pP]|2880[pP]|3630[pP]|2700[pP]|4096[pP]|2048[pP]|3072[pP]|3840[pP]|3000[pP])"
-                ]
-            },
-            {
-                "name": "XXX/Movies/SD",
-                "cat_id": "35",
-                "patterns": [
-                    ""
-                ],
-                "exclude_patterns": [
-                    "(1080[pP]|720[pP]|[bB][lL][uU][rR][aA][yY]|2160[pP]|2880[pP]|3630[pP]|2700[pP]|4096[pP]|2048[pP]|3072[pP]|3840[pP]|3000[pP])",
-                    ".*[0-9][0-9].[0-9][0-9].[0-9][0-9].*",
-                    ".*[Ee][0-9]{1",
-                    "6}",
-                    "(IMAGESET)"
-                ]
-            },
-            {
-                "name": "XXX/SD",
-                "cat_id": "30",
-                "patterns": [
-                    ""
-                ],
-                "exclude_patterns": [
-                    "(1080[pP]|720[pP]|[bB][lL][uU][rR][aA][yY]|2160[pP]|2880[pP]|3630[pP]|2700[pP]|4096[pP]|2048[pP]|3072[pP]|3840[pP]|3000[pP])",
-                    "(IMAGESET)"
-                ]
-            }
-        ]
-    },
-    "UNKNOWN": {
-        "patterns": {
-            "initial": [
-                ""
-            ],
-            "exclude_patterns": [
-                ""
-            ]
-        },
-        "categories": [
-            {
-                "name": "Unknown",
-                "cat_id": "17",
-                "patterns": [
-                    ""
-                ],
-                "exclude_patterns": [
-                    ""
-                ]
-            }
-        ]
+"AUDIOBOOKS": {
+  "priority": 70,
+  "patterns": {
+    "initial": [
+      ".*\\b(?:abook|audiobooks?)\\b.*"
+    ],
+    "exclude_patterns": []
+  },
+  "categories": [
+    {
+      "name": "Audiobooks",
+      "cat_id": "44",
+      "patterns": [],
+      "exclude_patterns": []
     }
+  ]
+},
+
+"MUSIC_MP3": {
+  "priority": 80,
+  "patterns": {
+    "initial": [],
+    "exclude_patterns": [
+      "\\b(?:abook|audiobooks?)\\b"
+    ]
+  },
+  "file_scan": {
+    "any_ext": [
+      "mp3"
+    ],
+    "recursive": true
+  },
+  "categories": [
+    {
+      "name": "Music/MP3",
+      "cat_id": "22",
+      "patterns": [],
+      "exclude_patterns": []
+    }
+  ]
+},
+  "MUSIC_FLAC": {
+    "patterns": {
+      "initial": [
+        ".*[fF][lL][aA][cC].*"
+      ],
+      "exclude_patterns": [
+        "(1080[pP]|720[pP]|[bB][lL][uU][rR][aA][yY]|2160[pP]|2880[pP]|3630[pP]|2700[pP]|4096[pP]|2048[pP]|3072[pP]|3840[pP]|3000[pP])",
+        "(IMAGESET)"
+      ]
+    },
+    "categories": [
+      {
+        "name": "Music/FLAC",
+        "cat_id": "23",
+        "patterns": [],
+        "exclude_patterns": []
+      }
+    ]
+  },
+"SD_MOVIES_TV_SPORTS_PACKS": {
+  "patterns": {
+    "initial": [
+      "([Ww][Ee][Bb]|[Ww][Ee][Bb][Rr][Ii][Pp]|[Hh][Dd][Tt][Vv]|[xX][vV][iI][dD]|[hH][eE][vV][cC]|\\b[cC][aA][mM]\\b|[hH]264|[xX]264|[dD][vV][dD][sS][cC][rR]|[wW][eE][bB][dD][lL]|[wW][eE][bB][rR][iI][pP]|[dD][vV][dD][rR][iI][pP]|[dD][vV][bB][rR][iI][pP]|[bB][rR][rR][iI][pP]|[bB][dD][rR][iI][pP])"
+    ],
+      "exclude_patterns": [
+        "([fF][lL][aA][cC]|[Xx][Xx][Xx]|720[pP]|1080[pP]|2160[Pp]|[bB][lL][uU][rR][aA][yY]|[pP][aA][lL]|[nN][tT][sS][cC]|[eE][bB][oO][oO][kK]|-BTCR|-BitBook|-DARKSiDERS|-iLEARN|-UDUMMY|ELearning|-BLOAT|-SkilledHares|-DECiBEL|-QUiD|-LiBRO|-NOLEDGE|-REBAR|-SOFTiMAGE|-SSQ|-iLST|-LND|-STM|-ZH|-ViGOROUS|-APoLLo|-XCODE|-EXPANSION|-iLLiTERATE|-RiDWARE|-KNiSO|-SHEPHERDS|-BiFiSO|-ADSR|-ANALYTiCS|-CaviaRPDA|-H0WT0|-THECOOP|-OXBRiDGE|-XQZT|-PRODEV|-MAGNiTUDE|-MASCHiNE|-COMPRISED|-BooKWoRM|-PHOTONE|-THEOS|-LiQUiDWARE|-kEISO|-ISO|-BYS|-NEWiSO|-DVTiSO|-TBE|-QUASAR|-rG|-NAViGON|-ELOHiM|-TUTOR|-PLATO|-SONiTUS|-EMBRACE|-XiSO|-YUM|-iRONiSO|-SoSISO|-SPiRiT|-BLZiSO|-CHR|-iNDiSO|-HOTiSO|-DVTiSO|-ZWTiSO|-ZWT|-JGTiSO|-DYNAMiCS|-WZT|-iNKiSO|-CYGiSO|-BIE|-AiRISO)",
+        ".*[Bb][oO][Oo][kK][Ww][Aa][Rr][Ee].*",
+        ".*[eE][Bb][oO][Oo][kK].*",
+        ".*[Ee][Pp][Uu][Bb].*",
+        "(-I_KnoW|-HHT|-PLAYMAGiC|-CLS|-bADkARMA|-RUNE|-TENOKE|-ANOMALY|-FCKDRM|-VREX|-DVN|-DARKZER0|-NAPT|-RAZOR|-DINOByTES|-HOODLUM|-GOG|-DOGE|-STEAMPUNKS|-DARKSiDERS|-SiMPLEX|I_KnoW|-CPY|0x0007|-BAT|-PLAZA|-ACTiVATED|-CODEX|-CLASSiCS|-DEFA|-RELOADED|-SKIDROW|-JAGDOX|-Razor1911|-FLT|-JAGUAR|-iNDEPENDANT|-PROPHET|-WARG|-FANiSO|-HI2U|-ARMADA|-FLTDOX|-DELiGHT|-POSTMORTEM|-TiNYiSO|-AVENGED|-CLONEDVD-P2P|-ARM|-GENESIS|-FASiSO|-ViTALiTY|-RazorDOX|-SPLATTERKiNGS)"
+      ]
+    },
+    "categories": [
+      {
+        "name": "TV Packs/SD",
+        "cat_id": "12",
+        "patterns": [
+          ".*[Ss][0-9][0-9].*",
+          ".*[Ss][Ee][Aa][Ss][Oo][Nn].*[0-9][0-9].*",
+          ".*[0-9]{4}\\.[0-9]{2}\\.[0-9]{2}.*[Hh][Dd][Tt][Vv].*",
+          "(\\d{4})\\.(\\d{2})\\.(\\d{2})"
+        ],
+        "exclude_patterns": [
+          "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)",
+          ".*[Ss][0-9][0-9].*[Ee][0-9][0-9].*"
+        ]
+      },
+      {
+        "name": "Series/SD",
+        "cat_id": "10",
+        "patterns": [
+          ".*[Ss][0-9][0-9].*[Ee][0-9][0-9].*",
+          ".*[Ee][0-9][0-9].*",
+          ".*[Ss][Ee][Aa][Ss][Oo][Nn].*[0-9][0-9].*",
+          ".*[0-9]{4}\\.[0-9]{2}\\.[0-9]{2}.*",
+          "(\\d{4})\\.(\\d{2})\\.(\\d{2})"
+        ],
+        "exclude_patterns": [
+          ""
+        ]
+      },
+      {
+        "name": "Sports",
+        "cat_id": "15",
+        "patterns": [
+          "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)"
+        ],
+        "exclude_patterns": [
+          ""
+        ]
+      },
+      {
+        "name": "Movies/SD",
+        "cat_id": "2",
+        "patterns": [
+          ""
+        ],
+        "exclude_patterns": [
+          "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)",
+          ".*[Ss][0-9][0-9].*[Ee][0-9][0-9].*",
+          "(\\d{4})\\.(\\d{2})\\.(\\d{2})"
+        ]
+      }
+    ]
+  },
+  "2160P_MOVIES_TV_SPORTS_PACKS": {
+    "patterns": {
+      "initial": [
+        "2160[pP]"
+      ],
+      "exclude_patterns": [
+        "([xX][xX][xX]|[mM][bB][lL][uU][rR][aA][yY]|[dD][vV][dD][rR][iI][pP]|[dD][vV][bB][rR][iI][pP]|[bB][rR][rR][iI][pP]|[xX][vV][iI][dD]|[bB][dD][rR][iI][pP]|480[pP]|720[pP]|1080[pP]|[fF][lL][aA][cC])"
+      ]
+    },
+    "categories": [
+      {
+        "name": "TV Packs/2160p",
+        "cat_id": "12",
+        "patterns": [
+          ".*[Ss][0-9][0-9].*",
+          ".*[Ss][Ee][Aa][Ss][Oo][Nn].*[0-9][0-9].*"
+        ],
+        "exclude_patterns": [
+          "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)",
+          ".*[Ss][0-9][0-9].*[Ee][0-9][0-9].*",
+          ".*[0-9]{4}\\.[0-9]{2}\\.[0-9]{2}.*"
+        ]
+      },
+      {
+        "name": "Series/2160p",
+        "cat_id": "13",
+        "patterns": [
+          ".*[Ss][0-9][0-9].*[Ee][0-9][0-9].*",
+          ".*[Ss][0-9][0-9].*",
+          ".*[Ee][0-9][0-9].*",
+          ".*[0-9]{4}\\.[0-9]{2}\\.[0-9]{2}.*",
+          "(\\d{4})\\.(\\d{2})\\.(\\d{2})"
+        ],
+        "exclude_patterns": [
+          "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)"
+        ]
+      },
+      {
+        "name": "Sports",
+        "cat_id": "15",
+        "patterns": [
+          "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)"
+        ],
+        "exclude_patterns": [
+          ""
+        ]
+      },
+      {
+        "name": "Movies/2160p",
+        "cat_id": "4",
+        "patterns": [
+          ""
+        ],
+        "exclude_patterns": [
+          "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)",
+          ".*[Ss][0-9][0-9].*[Ee][0-9][0-9].*",
+          "(\\d{4})\\.(\\d{2})\\.(\\d{2})"
+        ]
+      }
+    ]
+  },
+  "1080P_MOVIES_TV_SPORTS_PACKS": {
+    "patterns": {
+      "initial": [
+        "1080[pP]"
+      ],
+      "exclude_patterns": [
+        "([Xx][Xx][Xx]|[mM][bB][lL][uU][rR][aA][yY]|[dD][vV][dD][rR][iI][pP]|[dD][vV][bB][rR][iI][pP]|[bB][rR][rR][iI][pP]|[xX][vV][iI][dD]|[bB][dD][rR][iI][pP]|480p|[fF][lL][aA][cC])"
+      ]
+    },
+    "categories": [
+      {
+        "name": "TV Packs/1080p",
+        "cat_id": "12",
+        "patterns": [
+          ".*[Ss][0-9][0-9].*",
+          ".*[Ss][Ee][Aa][Ss][Oo][Nn].*[0-9][0-9].*"
+        ],
+        "exclude_patterns": [
+          "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)",
+          ".*[Ss][0-9][0-9].*[Ee][0-9][0-9].*",
+          "(\\d{4})\\.(\\d{2})\\.(\\d{2})"
+        ]
+      },
+      {
+        "name": "Series/1080p",
+        "cat_id": "9",
+        "patterns": [
+          ".*[Ss][0-9][0-9].*[Ee][0-9][0-9].*",
+          ".*[Ss][0-9][0-9].*",
+          ".*[Ee][0-9][0-9].*",
+          ".*[0-9]{4}\\.[0-9]{2}\\.[0-9]{2}.*[Hh][Dd][Tt][Vv].*",
+          "(\\d{4})\\.(\\d{2})\\.(\\d{2})"
+        ],
+        "exclude_patterns": [
+          "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)"
+        ]
+      },
+      {
+        "name": "Sports",
+        "cat_id": "15",
+        "patterns": [
+          "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)"
+        ],
+        "exclude_patterns": [
+          ""
+        ]
+      },
+      {
+        "name": "Movies/1080p",
+        "cat_id": "6",
+        "patterns": [
+          ""
+        ],
+        "exclude_patterns": [
+          "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)",
+          ".*[Ss][0-9][0-9].*[Ee][0-9][0-9].*",
+          "(\\d{4})\\.(\\d{2})\\.(\\d{2})"
+        ]
+      }
+    ]
+  },
+  "720P_MOVIES_TV_SPORTS_PACKS": {
+    "patterns": {
+      "initial": [
+        "720[pP]"
+      ],
+      "exclude_patterns": [
+        "([Xx][Xx][Xx]|[mM][bB][lL][uU][rR][aA][yY]|[dD][vV][dD][rR][iI][pP]|[dD][vV][bB][rR][iI][pP]|[bB][rR][rR][iI][pP]|[xX][vV][iI][dD]|[bB][dD][rR][iI][pP]|480p|[fF][lL][aA][cC])"
+      ]
+    },
+    "categories": [
+      {
+        "name": "TV Packs/720p",
+        "cat_id": "12",
+        "patterns": [
+          ".*[Ss][0-9][0-9].*",
+          ".*[Ss][Ee][Aa][Ss][Oo][Nn].*[0-9][0-9].*",
+          ".*[0-9]{4}\\.[0-9]{2}\\.[0-9]{2}.*[Hh][Dd][Tt][Vv].*"
+        ],
+        "exclude_patterns": [
+          "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)",
+          ".*[Ss][0-9][0-9].*[Ee][0-9][0-9].*"
+        ]
+      },
+      {
+        "name": "Series/720p",
+        "cat_id": "8",
+        "patterns": [
+          ".*[Ss][0-9][0-9].*[Ee][0-9][0-9].*",
+          ".*[Ss][0-9][0-9].*",
+          ".*[Ee][0-9][0-9].*",
+          ".*[0-9]{4}\\.[0-9]{2}\\.[0-9]{2}.*[Hh][Dd][Tt][Vv].*",
+          "(\\d{4})\\.(\\d{2})\\.(\\d{2})"
+        ],
+        "exclude_patterns": [
+          "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)"
+        ]
+      },
+      {
+        "name": "Sports",
+        "cat_id": "15",
+        "patterns": [
+          "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)"
+        ],
+        "exclude_patterns": [
+          ""
+        ]
+      },
+      {
+        "name": "Movies/720p",
+        "cat_id": "5",
+        "patterns": [
+          ""
+        ],
+        "exclude_patterns": [
+          "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)",
+          ".*[Ss][0-9][0-9].*[Ee][0-9][0-9].*",
+          "(\\d{4})\\.(\\d{2})\\.(\\d{2})"
+        ]
+      }
+    ]
+  },
+  "BLURAY_COMPLETE_MOVIES_TV_SPORTS_PACKS": {
+    "patterns": {
+      "initial": [
+        "([bB][lL][uU][rR][aA][yY]|[Cc][Oo][Mm][Pp][Ll][Ee][Tt][Ee]|[Uu][Hh][Dd])"
+      ],
+      "exclude_patterns": [
+        "([Xx][Xx][Xx]|[hH][dD][tT][vV]|[xX][xX][xX]|[mM][bB][lL][uU][rR][aA][yY]|[dD][vV][dD][rR][iI][pP]|[dD][vV][bB][rR][iI][pP]|[bB][rR][rR][iI][pP]|[xX][vV][iI][dD]|[bB][dD][rR][iI][pP]|480[pP]|1080[pP]|720[pP]|2160[pP]|[fF][lL][aA][cC])",
+        "(-I_KnoW|-HHT|-PLAYMAGiC|-CLS|-bADkARMA|-RUNE|-TENOKE|-ANOMALY|-FCKDRM|-VREX|-DVN|-DARKZER0|-NAPT|-RAZOR|-DINOByTES|-HOODLUM|-GOG|-DOGE|-STEAMPUNKS|-DARKSiDERS|-SiMPLEX|I_KnoW|-CPY|0x0007|-BAT|-PLAZA|-ACTiVATED|-CODEX|-CLASSiCS|-DEFA|-RELOADED|-SKIDROW|-JAGDOX|-Razor1911|-FLT|-JAGUAR|-iNDEPENDANT|-PROPHET|-WARG|-FANiSO|-HI2U|-ARMADA|-FLTDOX|-DELiGHT|-POSTMORTEM|-TiNYiSO|-AVENGED|-CLONEDVD-P2P|-ARM|-GENESIS|-FASiSO|-ViTALiTY|-RazorDOX|-SPLATTERKiNGS)",
+        "([Bb][oO][Oo][kK][Ww][Aa][Rr][Ee]|[eE][Bb][oO][Oo][kK]|[Ee][Pp][Uu][Bb])",
+        ".*MDVDR.*|.*DVDR.*"
+      ]
+    },
+    "categories": [
+      {
+        "name": "TV Packs/Bluray",
+        "cat_id": "12",
+        "patterns": [
+          ".*[Ss][0-9][0-9].*",
+          ".*[Ss][Ee][Aa][Ss][Oo][Nn].*[0-9][0-9].*",
+          ".*[0-9]{4}\\.[0-9]{2}\\.[0-9]{2}.*[Hh][Dd][Tt][Vv].*"
+        ],
+        "exclude_patterns": [
+          ".*[Dd][0-9][0-9].*",
+          ".*[Ee][0-9][0-9].*",
+          "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)"
+        ]
+      },
+      {
+        "name": "Series/Bluray",
+        "cat_id": "14",
+        "patterns": [
+          ".*[Ss][0-9][0-9].*[Dd][0-9][0-9].*",
+          ".*[Ss][0-9][0-9].*",
+          ".*[Dd][0-9][0-9].*",
+          "(\\d{4})\\.(\\d{2})\\.(\\d{2})"
+        ],
+        "exclude_patterns": [
+          "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)"
+        ]
+      },
+      {
+        "name": "Sports",
+        "cat_id": "15",
+        "patterns": [
+          "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)"
+        ],
+        "exclude_patterns": [
+          ""
+        ]
+      },
+      {
+        "name": "Movies/UHD/Bluray",
+        "cat_id": "38",
+        "patterns": [
+          "([Uu][hH][dD])"
+        ],
+        "exclude_patterns": [
+          ""
+        ]
+      },
+      {
+        "name": "Movies/Bluray",
+        "cat_id": "3",
+        "patterns": [
+          ""
+        ],
+        "exclude_patterns": [
+          "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)",
+          ".*[Ss][0-9][0-9].*[Ee][0-9][0-9].*",
+          "(\\d{4})\\.(\\d{2})\\.(\\d{2})",
+          "(-I_KnoW|-HHT|-PLAYMAGiC|-CLS|-bADkARMA|-RUNE|-TENOKE|-ANOMALY|-FCKDRM|-VREX|-DVN|-DARKZER0|-NAPT|-RAZOR|-DINOByTES|-HOODLUM|-GOG|-DOGE|-STEAMPUNKS|-DARKSiDERS|-SiMPLEX|I_KnoW|-CPY|0x0007|-BAT|-PLAZA|-ACTiVATED|-CODEX|-CLASSiCS|-DEFA|-RELOADED|-SKIDROW|-JAGDOX|-Razor1911|-FLT|-JAGUAR|-iNDEPENDANT|-PROPHET|-WARG|-FANiSO|-HI2U|-ARMADA|-FLTDOX|-DELiGHT|-POSTMORTEM|-TiNYiSO|-AVENGED|-CLONEDVD-P2P|-ARM|-GENESIS|-FASiSO|-ViTALiTY|-RazorDOX|-SPLATTERKiNGS)"
+        ]
+      }
+    ]
+  },
+  "PC_ISO_GAMES": {
+    "patterns": {
+      "initial": [
+        "(-I_KnoW|-HHT|-PLAYMAGiC|-CLS|-bADkARMA|-RUNE|-TENOKE|-ANOMALY|-FCKDRM|-VREX|-DVN|-DARKZER0|-NAPT|-RAZOR|-DINOByTES|-HOODLUM|-GOG|-DOGE|-STEAMPUNKS|-DARKSiDERS|-SiMPLEX|I_KnoW|-CPY|0x0007|-BAT|-PLAZA|-ACTiVATED|-CODEX|-CLASSiCS|-DEFA|-RELOADED|-SKIDROW|-JAGDOX|-Razor1911|-FLT|-JAGUAR|-iNDEPENDANT|-PROPHET|-WARG|-FANiSO|-HI2U|-ARMADA|-FLTDOX|-DELiGHT|-POSTMORTEM|-TiNYiSO|-AVENGED|-CLONEDVD-P2P|-ARM|-GENESIS|-FASiSO|-ViTALiTY|-RazorDOX|-SPLATTERKiNGS)"
+      ],
+      "exclude_patterns": [
+        ""
+      ]
+    },
+    "categories": [
+      {
+        "name": "MacOSX/Games",
+        "cat_id": "27",
+        "patterns": [
+          ".*[Mm][aA][Cc].*",
+          ".*[Mm][aA][Cc][Oo][Ss].*"
+        ],
+        "exclude_patterns": [
+          ""
+        ]
+      },
+      {
+        "name": "Games",
+        "cat_id": "25",
+        "patterns": [
+          ""
+        ],
+        "exclude_patterns": [
+          ""
+        ]
+      }
+    ]
+  },
+"NSW_GAMES": {
+  "priority": 90,
+  "patterns": {
+    "initial": [
+      "(?:^|[.\\-_])NSW(?:[.\\-_]|$)"
+    ],
+    "exclude_patterns": [
+      ".*[Ee][Pp][Uu][Bb].*",
+      ".*[eE][Bb][oO][Oo][kK].*"
+    ]
+  },
+  "categories": [
+    {
+      "name": "NSW/Games",
+      "cat_id": "26",
+      "patterns": [
+        "(?:^|[.\\-_])NSW(?:[.\\-_]|$)"
+      ],
+      "exclude_patterns": []
+    }
+  ]
+},
+"PS5_GAMES": {
+  "priority": 90,
+  "patterns": {
+    "initial": [
+      "(?:^|[.\\-_])PS5(?:[.\\-_]|$)"
+    ],
+    "exclude_patterns": [
+      ".*[Ee][Pp][Uu][Bb].*",
+      ".*[eE][Bb][oO][Oo][kK].*",
+      ".*[Bb][oO][Oo][kK][Ww][Aa][Rr][Ee].*"
+    ]
+  },
+  "categories": [
+    {
+      "name": "PS5/Games",
+      "cat_id": "26",
+      "patterns": [
+        "(?:^|[.\\-_])PS5(?:[.\\-_]|$)"
+      ],
+      "exclude_patterns": []
+    }
+  ]
+},
+  "0DAY": {
+    "patterns": {
+      "initial": [
+        "(-BONDYE|RINDVIEH|-RLTS|-EQUiNOX|-BS|-BTCR|-WEB0DAY|-WEBiSO|-CaviaR|-6581|-rGPDA|-EATSHIT|-SERiF|-NGEN|-Unleashed|-FSOCIETY|-DVT|-ALiAS|-rG|-AMPED|-Lz0|-XFORCE|-CORE|-TE|-WaLMaRT|-BLiZZARD|-FALLEN|-LAXiTY|-DJiNN|-FANiSO|-CRD|-HERiTAGE|-DELiGHT|-AiR|-ArCADE|-BEAN|-EAT|-ST3RE0|-NOY|-FOSI|-eMAG|-REDT|-YPOGEiOS|-F4CG|-DIGERATI|-ROGUE|-AGAiN|-PARADOX|-ZWT|-UNION|-iNViSiBLE|-TCi|-JOLT|-MESMERiZE|-ARN|-DOA|-SiMPLiFY|-RECOiL|-PH|-TYPO|-VACE|-OUTLAWS|-QUANTiZE|-BRD|-EcHoS|-MAZE|-PH|-CzW)$"
+      ],
+      "exclude_patterns": [
+        "([xX][xX][xX]|[xX][vV][iI][dD]|[bB][dD][rR][iI][pP]|[dD][vV][dD][rR][iI][pP]|[dD][vV][bB][rR][iI][pP]|[bB][rR][rR][iI][pP]|[mM][bB][lL][uU][rR][aA][yY]|[mM][dD][vV][dD][rR]|[nN][tT][sS][cC]|[pP][aA][lL]|1080[pP]|720[pP]|2160[pP]|[fF][lL][aA][cC])"
+      ]
+    },
+    "categories": [
+      {
+        "name": "MacOSX/Apps",
+        "cat_id": "21",
+        "patterns": [
+          ".*[Mm][aA][Cc].*",
+          ".*[Mm][aA][Cc][Oo][Ss].*"
+        ],
+        "exclude_patterns": [
+          ""
+        ]
+      },
+      {
+        "name": "PC/Apps",
+        "cat_id": "20",
+        "patterns": [
+          "([Ii][Ss][Oo])"
+        ],
+        "exclude_patterns": [
+          ""
+        ]
+      },
+      {
+        "name": "APPS/0day",
+        "cat_id": "18",
+        "patterns": [
+          ""
+        ],
+        "exclude_patterns": [
+          ""
+        ]
+      }
+    ]
+  },
+
+  "APPS": {
+    "patterns": {
+      "initial": [
+        "(oNePiEcE|BTCRiSO|-RAiN|-iLEARN|-UDUMMY|ELearning|-BLOAT|-SkilledHares|-DECiBEL|-QUiD|-LiBRO|-NOLEDGE|-REBAR|-SOFTiMAGE|-SSQ|-iLST|-LND|-STM|-ZH|-ViGOROUS|-APoLLo|-XCODE|-EXPANSION|-iLLiTERATE|-RiDWARE|-KNiSO|-SHEPHERDS|-BiFiSO|-ADSR|-ANALYTiCS|-CaviaRPDA|-H0WT0|-THECOOP|-OXBRiDGE|-XQZT|-PRODEV|-MAGNiTUDE|-MASCHiNE|-COMPRISED|-BooKWoRM|-PHOTONE|-THEOS|-LiQUiDWARE|-BooKWoRM|-kEISO|-ISO|-COMPRISED|-BYS|-NEWiSO|-DVTiSO|-TBE|-QUASAR|-rG|-NAViGON|-ELOHiM|-TUTOR|-PLATO|-SONiTUS|-EMBRACE|-XiSO|-YUM|-iRONiSO|-SoSISO|-SPiRiT|-BLZiSO|-CHR|-iNDiSO|-HOTiSO|-DVTiSO|-ZWTiSO|-ZWT|-JGTiSO|-DYNAMiCS|-WZT|-iNKiSO|-CYGiSO|-BIE|-AiRISO)$"
+      ],
+      "exclude_patterns": [
+        "([xX][xX][xX]|[xX][vV][iI][dD]|[bB][dD][rR][iI][pP]|[dD][vV][dD][rR][iI][pP]|[dD][vV][bB][rR][iI][pP]|[bB][rR][rR][iI][pP]|[mM][bB][lL][uU][rR][aA][yY]|[mM][dD][vV][dD][rR]|[nN][tT][sS][cC]|[pP][aA][lL]|1080[pP]|720[pP]|2160[pP]|[fF][lL][aA][cC])"
+      ]
+    },
+    "categories": [
+      {
+        "name": "MacOSX/Apps",
+        "cat_id": "21",
+        "patterns": [
+          ".*[Mm][aA][Cc].*",
+          ".*[Mm][aA][Cc][Oo][Ss].*"
+        ],
+        "exclude_patterns": [
+          ""
+        ]
+      },
+      {
+        "name": "TUTORIAL/Apps",
+        "cat_id": "33",
+        "patterns": [
+          "(-iLEARN|-UDUMMY|ELearning|-BLOAT|-SkilledHares|-QUiD|-LiBRO|-ViGOROUS|-APoLLo|-XCODE|-RiDWARE|-iNKiSO|-NOLEDGE|-CONSORTiUM|-REBAR|-ADSR|-ZH|-KNiSO|-BLZiSO|-STM|-QUASAR|-XQZT|-BooKWoRM|-kEISO|-TUTOR|-ELOHiM|-JGTiSO|-RPBISO|-BiFiSO|-SKiLLUP|-H0WT0|BOOKWARE|-iLST|-iLLiTERATE|-OXBRiDGE|-ANALYTiCS|-SHEPHERDS)$"
+        ],
+        "exclude_patterns": [
+          ""
+        ]
+      },
+      {
+        "name": "PC/Apps",
+        "cat_id": "20",
+        "patterns": [
+          ""
+        ],
+        "exclude_patterns": [
+          ""
+        ]
+      }
+    ]
+  },
+
+  "DVDR": {
+    "patterns": {
+      "initial": [
+        "(-JFKDVD|[pP][aA][lL]\\b|[nN][tT][sS][cC]\\b)"
+      ],
+      "exclude_patterns": [
+        "([Ww][Ee][Bb]|[Ff][lL][aA][cC]|[Xx][Xx][Xx]|[xX][bB][oO][xX]360|[xX][vV][iI][dD]|[mM][bB][lL][uU][rR][aA][yY]|[mM][dD][vV][dD][rR]|720p|1080p|MAGNiTUDE|SONiTUS|DYNAMiCS|PLATO|[fF][lL][aA][cC])"
+      ]
+    },
+    "categories": [
+      {
+        "name": "DVDR",
+        "cat_id": "1",
+        "patterns": [
+          ""
+        ],
+        "exclude_patterns": [
+          ""
+        ]
+      }
+    ]
+  },
+
+  "MBLURAY": {
+    "patterns": {
+      "initial": [
+        "([mM][bB][lL][uU][rR][aA][yY])"
+      ],
+      "exclude_patterns": [
+        "([Xx][Xx][Xx]|[mM][dD][vV][dD][rR]|[fF][lL][aA][cC])"
+      ]
+    },
+    "categories": [
+      {
+        "name": "MBluray",
+        "cat_id": "24",
+        "patterns": [
+          "([mM][bB][lL][uU][rR][aA][yY])"
+        ],
+        "exclude_patterns": [
+          "([Xx][Xx][Xx]|[mM][dD][vV][dD][rR]|[fF][lL][aA][cC])"
+        ]
+      }
+    ]
+  },
+
+  "MDVDR": {
+    "patterns": {
+      "initial": [
+        ".*[mM][dD][vV][dD][rR].*"
+      ],
+      "exclude_patterns": [
+        "([Xx][Xx][Xx]|[mM][pP]3|[xX][vV][iI][dD]|\\b[dD][vV][dD][rR]\\b|[bB][rR][rR][iI][pP]|[bB][dD][rR][iI][pP]|1080p|720p|[bB][lL][uU][rR][aA][yY]|[fF][lL][aA][cC])"
+      ]
+    },
+    "categories": [
+      {
+        "name": "MDVDR",
+        "cat_id": "39",
+        "patterns": [
+          ".*[mM][dD][vV][dD][rR].*"
+        ],
+        "exclude_patterns": [
+          "([Xx][Xx][Xx]|[mM][pP]3|[xX][vV][iI][dD]|\\b[dD][vV][dD][rR]\\b|[bB][rR][rR][iI][pP]|[bB][dD][rR][iI][pP]|1080p|720p|[bB][lL][uU][rR][aA][yY]|[fF][lL][aA][cC])"
+        ]
+      }
+    ]
+  },
+  "EBOOKS": {
+    "priority": 90,
+    "patterns": {
+      "initial": [
+        ".*[Bb][oO][Oo][kK][Ww][Aa][Rr][Ee].*",
+        ".*[eE][Bb][oO][Oo][kK].*",
+        ".*[Ee][Pp][Uu][Bb].*"
+      ],
+      "exclude_patterns": [
+        "([Xx][Xx][xX]|[mM][pP]3|[xX][vV][iI][dD]|[dD][vV][dD][rR]|[bB][rR][rR][iI][pP]|[bB][dD][rR][iI][pP]|1080p|720p|[bB][lL][uU][rR][aA][yY]|[fF][lL][aA][cC])"
+      ]
+    },
+    "categories": [
+      {
+        "name": "Ebooks",
+        "cat_id": "28",
+        "patterns": [
+          ".*[Bb][oO][Oo][kK][Ww][Aa][Rr][Ee].*",
+          ".*[eE][Bb][oO][Oo][kK].*",
+          ".*[Ee][Pp][Uu][Bb].*"
+        ],
+        "exclude_patterns": [
+          "([Xx][Xx][xX]|[mM][pP]3|[xX][vV][iI][dD]|[dD][vV][dD][rR]|[bB][rR][rR][iI][pP]|[bB][dD][rR][iI][pP]|1080p|720p|[bB][lL][uU][rR][aA][yY]|[fF][lL][aA][cC])"
+        ]
+      }
+    ]
+  },
+
+  "PORN_": {
+    "patterns": {
+      "initial": [
+        "[Xx][Xx][Xx]"
+      ],
+      "exclude_patterns": [
+        "([fF][lL][aA][cC])"
+      ]
+    },
+    "categories": [
+      {
+        "name": "XXX/Movies/HD",
+        "cat_id": "36",
+        "patterns": [
+          "(1080[pP]|720[pP]|960[pP])"
+        ],
+        "exclude_patterns": [
+          "(IMAGESET)",
+          "(2160[pP]|2880[pP]|3630[pP]|2700[pP]|4096[pP]|2048[pP]|3072[pP]|3840[pP]|3000[pP]|1440[pP])",
+          ".*[0-9][0-9].[0-9][0-9].[0-9][0-9].*",
+          ".*[Ee][0-9]{1,6}.*"
+        ]
+      },
+      {
+        "name": "XXX/0DAY/HD",
+        "cat_id": "31",
+        "patterns": [
+          "(1080[pP]|720[pP]|960[pP])"
+        ],
+        "exclude_patterns": [
+          "(IMAGESET)",
+          "(2160[pP]|2880[pP]|3630[pP]|2700[pP]|4096[pP]|2048[pP]|3072[pP]|3840[pP]|3000[pP]|1440[pP])"
+        ]
+      },
+      {
+        "name": "XXX/MOVIES/4K",
+        "cat_id": "37",
+        "patterns": [
+          "(2160[pP]|2880[pP]|3630[pP]|2700[pP]|4096[pP]|2048[pP]|3072[pP]|3840[pP]|3000[pP]|1440[pP])"
+        ],
+        "exclude_patterns": [
+          "(IMAGESET)",
+          "(1080[pP]|720[pP])",
+          ".*[0-9][0-9].[0-9][0-9].[0-9][0-9].*",
+          ".*[Ee][0-9]{1,6}"
+        ]
+      },
+      {
+        "name": "XXX/0DAY/4K",
+        "cat_id": "32",
+        "patterns": [
+          "(2160[pP]|2880[pP]|3630[pP]|2700[pP]|4096[pP]|2048[pP]|3072[pP]|3840[pP]|3000[pP]|1440[pP])"
+        ],
+        "exclude_patterns": [
+          "(IMAGESET)",
+          "(.*1080[pP]|720[pP])"
+        ]
+      },
+      {
+        "name": "XXX/IMAGESET",
+        "cat_id": "34",
+        "patterns": [
+          "(IMAGESET)"
+        ],
+        "exclude_patterns": [
+          "(1080[pP]|720[pP]2160[pP]|2880[pP]|3630[pP]|2700[pP]|4096[pP]|2048[pP]|3072[pP]|3840[pP]|3000[pP]|1440[pP])"
+        ]
+      },
+      {
+        "name": "XXX/Movies/SD",
+        "cat_id": "35",
+        "patterns": [],
+        "exclude_patterns": [
+          "(1080[pP]|720[pP]|[bB][lL][uU][rR][aA][yY]|2160[pP]|2880[pP]|3630[pP]|2700[pP]|4096[pP]|2048[pP]|3072[pP]|3840[pP]|3000[pP]|1440[pP])",
+          ".*[0-9][0-9].[0-9][0-9].[0-9][0-9].*",
+          ".*[Ee][0-9]{1,6}",
+          "(IMAGESET)"
+        ]
+      },
+      {
+        "name": "XXX/SD",
+        "cat_id": "30",
+        "patterns": [],
+        "exclude_patterns": [
+          "(1080[pP]|720[pP]|[bB][lL][uU][rR][aA][yY]|2160[pP]|2880[pP]|3630[pP]|2700[pP]|4096[pP]|2048[pP]|3072[pP]|3840[pP]|3000[pP]1440[pP])",
+          "(IMAGESET)"
+        ]
+      }
+    ]
+  },
+
+  "UNKNOWN": {
+    "patterns": {
+      "initial": [
+        ""
+      ],
+      "exclude_patterns": [
+        ""
+      ]
+    },
+    "categories": [
+      {
+        "name": "Unknown",
+        "cat_id": "17",
+        "patterns": [
+          ""
+        ],
+        "exclude_patterns": [
+          ""
+        ]
+      }
+    ]
+  }
 }

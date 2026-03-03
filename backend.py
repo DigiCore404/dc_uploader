@@ -7,6 +7,7 @@ import shutil
 import sqlite3
 import sys
 import time
+import argparse  # Added for CLI argument handling
 from pathlib import Path
 from requests import HTTPError
 
@@ -183,6 +184,13 @@ def version_check(program_version):
                   f"Continuing without version check{bcolors.ENDC}")
 
 def main():
+    # --- COMMAND LINE ARGUMENT SETUP ---
+    parser = argparse.ArgumentParser(description="dc_uploader Backend")
+    parser.add_argument('directory', help="The name of the release directory to upload")
+    parser.add_argument('-cat', '--cat', help="Manual Category ID override", type=int, default=None)
+    args = parser.parse_args()
+    # ------------------------------------
+
     """Main function to run the script."""
     system_platform = platform.system()
     if system_platform.lower() != 'linux':
@@ -197,7 +205,7 @@ def main():
     tmp_dir = Path(config.get('Paths', 'TMP_DIR')) / str(os.getpid())
     cleanup_enabled = config.getboolean('Settings', 'CLEANUP')
 
-    program_version = "1.2.0"
+    program_version = "1.2.1"
 
     try:
         hasher = config.get('Torrent', 'HASHER').strip()
@@ -216,11 +224,9 @@ def main():
             print(f"Error creating upload log: {str(e)}")
             fail_exit(tmp_dir, cleanup_enabled)
 
-        if len(sys.argv) > 1:
-            directory_name = sys.argv[1]
-        else:
-            log("No directory name provided.", log_file_path)
-            fail_exit(tmp_dir, cleanup_enabled)
+        # Set variables from CLI arguments
+        directory_name = args.directory
+        manual_cat_id = args.cat
 
         ascii_art_header("Header", program_version)
         version_check(program_version)
@@ -341,9 +347,10 @@ def main():
 
         ascii_art_header("Category")
 
-        # Determine the category of the torrent
-        category_name, category_id_str = determine_category(directory_name)
+        # --- Updated call to pass manual_category_id ---
+        category_name, category_id_str = determine_category(directory_name, manual_id=manual_cat_id)
         category_id = int(category_id_str)  # Convert category_id to integer
+        # -----------------------------------------------
 
         upload_details['category'] = f"{category_name} ({category_id})"
         update_upload_status(name=directory_name, new_status='uploading', size=f'{upload_details["size"]}', category=f'{category_name}')

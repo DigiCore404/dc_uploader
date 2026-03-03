@@ -10,6 +10,8 @@ print_help() {
     echo
     echo "    -c, --cp: Copies provided directory to DATADIR."
     echo
+    echo "    -cat, --cat: Use a category number here to override the filters.json."
+    echo
     echo "    -m, --mv: Moves provided directory to DATADIR. May break other torrents that rely on the same data," \
     "use with caution."
     echo
@@ -37,6 +39,12 @@ watch_dir="$(awk -F '=' '/^WATCHFOLDER[[:space:]]*=/ {gsub(/^[[:space:]]+|[[:spa
 watch_dir=$(realpath -s "$watch_dir")
 data_path="$1"
 
+# Initialize variables
+LN=false
+CP=false
+MV=false
+CAT_ID=""
+
 # Initial argument check
 if [ $# -eq 0 ] || [[ "$data_path" == "--help" ]] || [[ "$data_path" == "-h" ]]; then
     # No arguments provided or first argument was help, just print help
@@ -49,10 +57,6 @@ if [ $# -gt 2 ]; then
     exit 1
 fi
 
-LN=false
-CP=false
-MV=false
-
 if [ $# -gt 1 ]; then
     # Only bother parsing args if an arg beside path is specified
     if [ $# -gt 2 ]; then
@@ -60,7 +64,7 @@ if [ $# -gt 1 ]; then
         exit 1
     fi
 
-    valid_args=("-h" "--help" "-l" "--ln" "-c" "--cp" "-m" "--mv")
+    valid_args=("-h" "--help" "-l" "--ln" "-c" "--cp" "-m" "--mv" "-cat" "--cat")
     found=false
 
     for item in "${valid_args[@]}"; do
@@ -74,7 +78,7 @@ if [ $# -gt 1 ]; then
         exit 1
     fi
 
-    if ! opts=$(getopt -o 'hlcm' -l 'help,ln,cp,mv' -n "$script" -- "$@"); then
+    if ! opts=$(getopt -o 'hlcm' -l 'help,ln,cp,mv,cat:' -n "$script" -- "$@"); then
         echo -e "${red}ERROR: Failed to parse options. See --help.${ncl}" >&2
         exit 1
     fi
@@ -95,6 +99,10 @@ if [ $# -gt 1 ]; then
             -m | --mv)
                 MV=true
                 shift
+                ;;
+            -cat | --cat)
+                CAT_ID="$2"
+                shift 2
                 ;;
             -h | --help)
                 print_help
@@ -187,7 +195,13 @@ fi
 # Run using venv
 source "/venv/dc_uploader/bin/activate"
 
-if python3 "$root_dir/backend.py" "$uploaded_directory"; then
+# Build python command with optional category override
+python_args=("$root_dir/backend.py" "$uploaded_directory")
+if [ -n "$CAT_ID" ]; then
+    python_args+=("-cat" "$CAT_ID")
+fi
+
+if python3 "${python_args[@]}"; then
     exit 0;
 else
     exit 1;

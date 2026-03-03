@@ -22,8 +22,15 @@ def check_for_mp3_files(directory_path):
         print(f"{bcolors.YELLOW}Directory not found: {directory_path}{bcolors.ENDC}")
     return False
 
-def determine_category(directory_name):
+def determine_category(directory_name, manual_id=None):
     """Determine the category of the content based on directory name using filters from filters.json."""
+    
+    # --- START OF MANUAL OVERRIDE FIX ---
+    if manual_id:
+        print(f"{bcolors.OKGREEN}Manual Override Detected. Using Category ID: {manual_id}{bcolors.ENDC}")
+        return 'Manual Override', str(manual_id)
+    # --- END OF MANUAL OVERRIDE FIX ---
+
     filters = load_filters()
     config = load_config()  # Load configuration
     data_dir = config.get('Paths', 'DATADIR').strip()  # Get DATADIR from config

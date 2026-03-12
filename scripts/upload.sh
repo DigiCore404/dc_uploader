@@ -52,18 +52,8 @@ if [ $# -eq 0 ] || [[ "$data_path" == "--help" ]] || [[ "$data_path" == "-h" ]];
     exit 0
 fi
 
-if [ $# -gt 2 ]; then
-    echo -e "${red}ERROR: Too many arguments provided${ncl}" >&2
-    exit 1
-fi
-
 if [ $# -gt 1 ]; then
     # Only bother parsing args if an arg beside path is specified
-    if [ $# -gt 2 ]; then
-        echo -e "${red}ERROR: Too many args.${ncl}" >&2
-        exit 1
-    fi
-
     valid_args=("-h" "--help" "-l" "--ln" "-c" "--cp" "-m" "--mv" "-cat" "--cat")
     found=false
 

@@ -205,7 +205,7 @@ def main():
     tmp_dir = Path(config.get('Paths', 'TMP_DIR')) / str(os.getpid())
     cleanup_enabled = config.getboolean('Settings', 'CLEANUP')
 
-    program_version = "1.2.1"
+    program_version = config.get('Header', 'VERSION')
 
     try:
         hasher = config.get('Torrent', 'HASHER').strip()
@@ -612,7 +612,7 @@ def main():
         ascii_art_header("Uploading")
 
         # Print and log variables before upload
-        print(f"{bcolors.YELLOW}Uploading torrent via API Key...\n{bcolors.ENDC}")
+        print(f"{bcolors.YELLOW}Uploading torrent...\n{bcolors.ENDC}")
 
         # Log variables
         log(f"Torrent file: {torrent_file}", log_file_path)

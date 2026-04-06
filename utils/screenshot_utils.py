@@ -61,8 +61,11 @@ def generate_screenshots(directory, category_id):
         process_media_files(directory, command_opts, screenshots_dir)
     
 
-def process_media_files(directory, command_opts, screenshots_dir, is_rar2fs=False):
+def process_media_files(directory, command_opts, screenshots_dir, is_rar2fs=False, skip_sample_filter=None):
     """Process movie files to generate screenshots using MTN."""
+    if skip_sample_filter is None:
+        skip_sample_filter = config.getboolean('Settings', 'SKIP_SAMPLE_FILTER', fallback=False)
+    
     valid_media_ext = ['*.mp4', '*.mkv', '*.avi', '*.mov', '*.flv', '*.wmv', '*.mpg', '*.m2ts', '*.vob']
     media_files = []
     screenshots_generated = False
@@ -87,7 +90,7 @@ def process_media_files(directory, command_opts, screenshots_dir, is_rar2fs=Fals
     for item in media_files:
         name = str(item)
         # Create a list of actual media vs sample folders via folder name. Searches for 'sample', case-insensitive
-        if not is_rar2fs and 'sample' in name.lower():
+        if not skip_sample_filter and not is_rar2fs and 'sample' in name.lower():
             print(f"{bcolors.YELLOW}Skipping sample file: {item}{bcolors.ENDC}")
         else:
             # Add it to the list of actual media
@@ -112,7 +115,8 @@ def process_media_files(directory, command_opts, screenshots_dir, is_rar2fs=Fals
             return
 
     # If no screenshots were generated, and it's not a RAR2FS mount, check sample directories, if any
-    if not screenshots_generated and not is_rar2fs:
+    screenshot_sample_fallback = config.getboolean('Settings', 'SCREENSHOT_SAMPLE_FALLBACK', fallback=True)
+    if not screenshots_generated and not is_rar2fs and screenshot_sample_fallback:
         print(f"{bcolors.YELLOW}No screenshots generated. Checking sample directories...{bcolors.ENDC}")
         # Process movie files in sample directories if no screenshots were generated
         sample_dirs = [
@@ -122,7 +126,7 @@ def process_media_files(directory, command_opts, screenshots_dir, is_rar2fs=Fals
         if sample_dirs:
             print(f"Found sample directories: {sample_dirs}")
             for sample_dir in sample_dirs:
-                process_media_files(sample_dir, command_opts, screenshots_dir, is_rar2fs=False)
+                process_media_files(sample_dir, command_opts, screenshots_dir, is_rar2fs=False, skip_sample_filter=True)
 
 
 def mtn_exec(command_opts, media_file, mtn_path, screenshots_dir):

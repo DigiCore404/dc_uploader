@@ -1,52 +1,55 @@
 {
-"AUDIOBOOKS": {
-  "priority": 70,
-  "patterns": {
-    "initial": [
-      ".*\\b(?:abook|audiobooks?)\\b.*"
-    ],
-    "exclude_patterns": []
-  },
-  "categories": [
-    {
-      "name": "Audiobooks",
-      "cat_id": "44",
-      "patterns": [],
+  "AUDIOBOOKS": {
+    "priority": 70,
+    "patterns": {
+      "initial": [
+        ".*\\b(?:abook|audiobooks?)\\b.*"
+      ],
       "exclude_patterns": []
-    }
-  ]
-},
-
-"MUSIC_MP3": {
-  "priority": 80,
-  "patterns": {
-    "initial": [],
-    "exclude_patterns": [
-      "\\b(?:abook|audiobooks?)\\b"
+    },
+    "categories": [
+      {
+        "name": "Audiobooks",
+        "cat_id": "44",
+        "patterns": [],
+        "exclude_patterns": []
+      }
     ]
   },
-  "file_scan": {
-    "any_ext": [
-      "mp3"
-    ],
-    "recursive": true
+
+  "MUSIC_MP3": {
+    "priority": 80,
+    "patterns": {
+      "initial": [
+        ".*-[cC][dD]-[0-9]{4}-.*"
+      ],
+      "exclude_patterns": [
+        "\\b(?:abook|audiobooks?)\\b"
+      ]
+    },
+    "file_scan": {
+      "any_ext": [
+        "mp3"
+      ],
+      "recursive": true
+    },
+    "categories": [
+      {
+        "name": "Music/MP3",
+        "cat_id": "22",
+        "patterns": [],
+        "exclude_patterns": []
+      }
+    ]
   },
-  "categories": [
-    {
-      "name": "Music/MP3",
-      "cat_id": "22",
-      "patterns": [],
-      "exclude_patterns": []
-    }
-  ]
-},
+
   "MUSIC_FLAC": {
     "patterns": {
       "initial": [
         ".*[fF][lL][aA][cC].*"
       ],
       "exclude_patterns": [
-        "(1080[pP]|720[pP]|[bB][lL][uU][rR][aA][yY]|2160[pP]|2880[pP]|3630[pP]|2700[pP]|4096[pP]|2048[pP]|3072[pP]|3840[pP]|3000[pP])",
+        "(1080[pP]|720[pP]|2160[pP]|2880[pP]|3630[pP]|2700[pP]|4096[pP]|2048[pP]|3072[pP]|3840[pP]|3000[pP])",
         "(IMAGESET)"
       ]
     },
@@ -59,17 +62,44 @@
       }
     ]
   },
-"SD_MOVIES_TV_SPORTS_PACKS": {
-  "patterns": {
-    "initial": [
-      "([Ww][Ee][Bb]|[Ww][Ee][Bb][Rr][Ii][Pp]|[Hh][Dd][Tt][Vv]|[xX][vV][iI][dD]|[hH][eE][vV][cC]|\\b[cC][aA][mM]\\b|[hH]264|[xX]264|[dD][vV][dD][sS][cC][rR]|[wW][eE][bB][dD][lL]|[wW][eE][bB][rR][iI][pP]|[dD][vV][dD][rR][iI][pP]|[dD][vV][bB][rR][iI][pP]|[bB][rR][rR][iI][pP]|[bB][dD][rR][iI][pP])"
-    ],
+
+  "SPORTS_EVENTS": {
+    "priority": 85,
+    "patterns": {
+      "initial": [
+        "(?:^|[.\\-_])(?:nfl|nba|ncaa|nhl|nsr|mlb|mls|fifa|nrl|nwsl|spfl|vfl|afl|nrlw|motogp|moto2|moto3|f1|formula1|formula2|formula3|formula4|formulae|indycar|wrc|erc|la\\.?liga|serie\\s?a|bundesliga|epl|fa\\.?cup|uefa|champions\\s?league|europa\\s?league|premier\\s?league|ligue\\s?1|ufc|mma|wwe|wwf|boxing|budo\\s?striking|glory|pdc|snooker|darts|poker|grand\\s?prix|rennen|qualifikation|freies\\s?training|spieltag|vorberichte|cricket|rugby|wimbledon|giro\\s?d[''']italia|tour\\s?de\\s?france|vuelta\\s?a\\s?espa|match\\s?of\\s?the\\s?day|soccer\\s?aid|world\\s?cup|olympics?|Cycling)(?:[.\\-_]|$)"
+      ],
       "exclude_patterns": [
-        "([fF][lL][aA][cC]|[Xx][Xx][Xx]|720[pP]|1080[pP]|2160[Pp]|[bB][lL][uU][rR][aA][yY]|[pP][aA][lL]|[nN][tT][sS][cC]|[eE][bB][oO][oO][kK]|-BTCR|-BitBook|-DARKSiDERS|-iLEARN|-UDUMMY|ELearning|-BLOAT|-SkilledHares|-DECiBEL|-QUiD|-LiBRO|-NOLEDGE|-REBAR|-SOFTiMAGE|-SSQ|-iLST|-LND|-STM|-ZH|-ViGOROUS|-APoLLo|-XCODE|-EXPANSION|-iLLiTERATE|-RiDWARE|-KNiSO|-SHEPHERDS|-BiFiSO|-ADSR|-ANALYTiCS|-CaviaRPDA|-H0WT0|-THECOOP|-OXBRiDGE|-XQZT|-PRODEV|-MAGNiTUDE|-MASCHiNE|-COMPRISED|-BooKWoRM|-PHOTONE|-THEOS|-LiQUiDWARE|-kEISO|-ISO|-BYS|-NEWiSO|-DVTiSO|-TBE|-QUASAR|-rG|-NAViGON|-ELOHiM|-TUTOR|-PLATO|-SONiTUS|-EMBRACE|-XiSO|-YUM|-iRONiSO|-SoSISO|-SPiRiT|-BLZiSO|-CHR|-iNDiSO|-HOTiSO|-DVTiSO|-ZWTiSO|-ZWT|-JGTiSO|-DYNAMiCS|-WZT|-iNKiSO|-CYGiSO|-BIE|-AiRISO)",
+        "[Xx][Xx][Xx]",
+        "[eE][Bb][oO][oO][kK]",
+        "[Ee][Pp][Uu][Bb]",
+        "(?:food|cooking|chef|kitchen|recipe|bake|cook)\\s?tour"
+      ]
+    },
+    "categories": [
+      {
+        "name": "TV/Sports",
+        "cat_id": "15",
+        "patterns": [
+          "(?:^|[.\\-_])(?:nfl|nba|ncaa|nhl|nsr|mlb|mls|fifa|nrl|nwsl|spfl|vfl|afl|nrlw|motogp|moto2|moto3|f1|formula1|formula2|formula3|formula4|formulae|indycar|wrc|erc|la\\.?liga|serie\\s?a|bundesliga|epl|fa\\.?cup|uefa|champions\\s?league|europa\\s?league|premier\\s?league|ligue\\s?1|ufc|mma|wwe|wwf|boxing|budo\\s?striking|glory|pdc|snooker|darts|poker|grand\\s?prix|rennen|qualifikation|freies\\s?training|spieltag|vorberichte|cricket|rugby|wimbledon|giro\\s?d[''']italia|tour\\s?de\\s?france|vuelta\\s?a\\s?espa|match\\s?of\\s?the\\s?day|soccer\\s?aid|world\\s?cup|olympics?|Cycling)(?:[.\\-_]|$)"
+        ],
+        "exclude_patterns": []
+      }
+    ]
+  },
+
+  "SD_MOVIES_TV_SPORTS_PACKS": {
+    "patterns": {
+      "initial": [
+        "([Ww][Ee][Bb]|[Ww][Ee][Bb][Rr][Ii][Pp]|[Hh][Dd][Tt][Vv]|[xX][vV][iI][dD]|[hH][eE][vV][cC]|\\b[cC][aA][mM]\\b|[hH]264|[xX]264|[dD][vV][dD][sS][cC][rR]|[wW][eE][bB][dD][lL]|[wW][eE][bB][rR][iI][pP]|[dD][vV][dD][rR][iI][pP]|[dD][vV][bB][rR][iI][pP]|[bB][rR][rR][iI][pP]|[bB][dD][rR][iI][pP])"
+      ],
+      "exclude_patterns": [
+        "([fF][lL][aA][cC]|[Xx][Xx][Xx]|720[pP]|1080[pP]|2160[Pp]|[bB][lL][uU][rR][aA][yY]|\\b[pP][aA][lL]\\b|\\b[nN][tT][sS][cC]\\b|[eE][bB][oO][oO][kK]|-BTCR|-BitBook|-DARKSiDERS|-iLEARN|-UDUMMY|-BLOAT|-SkilledHares|-DECiBEL|-QUiD|-LiBRO|-NOLEDGE|-REBAR|-SOFTiMAGE|-SSQ|-iLST|-LND|-STM|-ZH|-ViGOROUS|-APoLLo|-XCODE|-EXPANSION|-iLLiTERATE|-RiDWARE|-KNiSO|-SHEPHERDS|-BiFiSO|-ADSR|-ANALYTiCS|-CaviaRPDA|-H0WT0|-THECOOP|-OXBRiDGE|-XQZT|-PRODEV|-MAGNiTUDE|-MASCHiNE|-COMPRISED|-BooKWoRM|-PHOTONE|-THEOS|-LiQUiDWARE|-kEISO|-ISO|-BYS|-NEWiSO|-DVTiSO|-TBE|-QUASAR|-rG|-NAViGON|-ELOHiM|-TUTOR|-PLATO|-SONiTUS|-EMBRACE|-XiSO|-YUM|-iRONiSO|-SoSISO|-SPiRiT|-BLZiSO|-CHR|-iNDiSO|-HOTiSO|-DVTiSO|-ZWTiSO|-ZWT|-JGTiSO|-DYNAMiCS|-WZT|-iNKiSO|-CYGiSO|-BIE|-AiRISO)",
         ".*[Bb][oO][Oo][kK][Ww][Aa][Rr][Ee].*",
         ".*[eE][Bb][oO][Oo][kK].*",
         ".*[Ee][Pp][Uu][Bb].*",
-        "(-I_KnoW|-HHT|-PLAYMAGiC|-CLS|-bADkARMA|-RUNE|-TENOKE|-ANOMALY|-FCKDRM|-VREX|-DVN|-DARKZER0|-NAPT|-RAZOR|-DINOByTES|-HOODLUM|-GOG|-DOGE|-STEAMPUNKS|-DARKSiDERS|-SiMPLEX|I_KnoW|-CPY|0x0007|-BAT|-PLAZA|-ACTiVATED|-CODEX|-CLASSiCS|-DEFA|-RELOADED|-SKIDROW|-JAGDOX|-Razor1911|-FLT|-JAGUAR|-iNDEPENDANT|-PROPHET|-WARG|-FANiSO|-HI2U|-ARMADA|-FLTDOX|-DELiGHT|-POSTMORTEM|-TiNYiSO|-AVENGED|-CLONEDVD-P2P|-ARM|-GENESIS|-FASiSO|-ViTALiTY|-RazorDOX|-SPLATTERKiNGS)"
+        "(-I_KnoW|-HHT|-PLAYMAGiC|-CLS|-bADkARMA|-RUNE|-TENOKE|-ANOMALY|-FCKDRM|-VREX|-DVN|-DARKZER0|-NAPT|-RAZOR|-DINOByTES|-HOODLUM|-GOG|-DOGE|-STEAMPUNKS|-DARKSiDERS|-SiMPLEX|I_KnoW|-CPY|0x0007|-BAT|-PLAZA|-ACTiVATED|-CODEX|-CLASSiCS|-DEFA|-RELOADED|-SKIDROW|-JAGDOX|-Razor1911|-FLT|-JAGUAR|-iNDEPENDANT|-PROPHET|-WARG|-FANiSO|-HI2U|-ARMADA|-FLTDOX|-DELiGHT|-POSTMORTEM|-TiNYiSO|-AVENGED|-CLONEDVD-P2P|-ARM|-GENESIS|-FASiSO|-ViTALiTY|-RazorDOX|-SPLATTERKiNGS)",
+        "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
       ]
     },
     "categories": [
@@ -84,7 +114,9 @@
         ],
         "exclude_patterns": [
           "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)",
-          ".*[Ss][0-9][0-9].*[Ee][0-9][0-9].*"
+          ".*[Ss][0-9][0-9].*[Ee][0-9][0-9].*",
+          "(?<!S[0-9][0-9]).*[Ee][0-9][0-9].*",
+          "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
         ]
       },
       {
@@ -98,7 +130,7 @@
           "(\\d{4})\\.(\\d{2})\\.(\\d{2})"
         ],
         "exclude_patterns": [
-          ""
+          "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
         ]
       },
       {
@@ -108,7 +140,7 @@
           "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)"
         ],
         "exclude_patterns": [
-          ""
+          "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
         ]
       },
       {
@@ -120,18 +152,21 @@
         "exclude_patterns": [
           "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)",
           ".*[Ss][0-9][0-9].*[Ee][0-9][0-9].*",
-          "(\\d{4})\\.(\\d{2})\\.(\\d{2})"
+          "(\\d{4})\\.(\\d{2})\\.(\\d{2})",
+          "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
         ]
       }
     ]
   },
+
   "2160P_MOVIES_TV_SPORTS_PACKS": {
     "patterns": {
       "initial": [
         "2160[pP]"
       ],
       "exclude_patterns": [
-        "([xX][xX][xX]|[mM][bB][lL][uU][rR][aA][yY]|[dD][vV][dD][rR][iI][pP]|[dD][vV][bB][rR][iI][pP]|[bB][rR][rR][iI][pP]|[xX][vV][iI][dD]|[bB][dD][rR][iI][pP]|480[pP]|720[pP]|1080[pP]|[fF][lL][aA][cC])"
+        "([xX][xX][Xx]|[mM][bB][lL][uU][rR][aA][yY]|[dD][vV][dD][rR][iI][pP]|[dD][vV][bB][rR][iI][pP]|[bB][rR][rR][iI][pP]|[xX][vV][iI][dD]|[bB][dD][rR][iI][pP]|480[pP]|720[pP]|1080[pP]|[fF][lL][aA][cC])",
+        "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
       ]
     },
     "categories": [
@@ -145,7 +180,9 @@
         "exclude_patterns": [
           "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)",
           ".*[Ss][0-9][0-9].*[Ee][0-9][0-9].*",
-          ".*[0-9]{4}\\.[0-9]{2}\\.[0-9]{2}.*"
+          ".*[0-9]{4}\\.[0-9]{2}\\.[0-9]{2}.*",
+          "(?<!S[0-9][0-9]).*[Ee][0-9][0-9].*",
+          "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
         ]
       },
       {
@@ -159,7 +196,8 @@
           "(\\d{4})\\.(\\d{2})\\.(\\d{2})"
         ],
         "exclude_patterns": [
-          "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)"
+          "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)",
+          "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
         ]
       },
       {
@@ -169,7 +207,7 @@
           "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)"
         ],
         "exclude_patterns": [
-          ""
+          "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
         ]
       },
       {
@@ -181,18 +219,21 @@
         "exclude_patterns": [
           "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)",
           ".*[Ss][0-9][0-9].*[Ee][0-9][0-9].*",
-          "(\\d{4})\\.(\\d{2})\\.(\\d{2})"
+          "(\\d{4})\\.(\\d{2})\\.(\\d{2})",
+          "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
         ]
       }
     ]
   },
+
   "1080P_MOVIES_TV_SPORTS_PACKS": {
     "patterns": {
       "initial": [
         "1080[pP]"
       ],
       "exclude_patterns": [
-        "([Xx][Xx][Xx]|[mM][bB][lL][uU][rR][aA][yY]|[dD][vV][dD][rR][iI][pP]|[dD][vV][bB][rR][iI][pP]|[bB][rR][rR][iI][pP]|[xX][vV][iI][dD]|[bB][dD][rR][iI][pP]|480p|[fF][lL][aA][cC])"
+        "([Xx][Xx][Xx]|[mM][bB][lL][uU][rR][aA][yY]|[dD][vV][dD][rR][iI][pP]|[dD][vV][bB][rR][iI][pP]|[bB][rR][rR][iI][pP]|[xX][vV][iI][dD]|[bB][dD][rR][iI][pP]|480p|[fF][lL][aA][cC])",
+        "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
       ]
     },
     "categories": [
@@ -206,7 +247,9 @@
         "exclude_patterns": [
           "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)",
           ".*[Ss][0-9][0-9].*[Ee][0-9][0-9].*",
-          "(\\d{4})\\.(\\d{2})\\.(\\d{2})"
+          "(\\d{4})\\.(\\d{2})\\.(\\d{2})",
+          "(?<!S[0-9][0-9]).*[Ee][0-9][0-9].*",
+          "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
         ]
       },
       {
@@ -220,7 +263,8 @@
           "(\\d{4})\\.(\\d{2})\\.(\\d{2})"
         ],
         "exclude_patterns": [
-          "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)"
+          "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)",
+          "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
         ]
       },
       {
@@ -230,7 +274,7 @@
           "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)"
         ],
         "exclude_patterns": [
-          ""
+          "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
         ]
       },
       {
@@ -242,18 +286,21 @@
         "exclude_patterns": [
           "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)",
           ".*[Ss][0-9][0-9].*[Ee][0-9][0-9].*",
-          "(\\d{4})\\.(\\d{2})\\.(\\d{2})"
+          "(\\d{4})\\.(\\d{2})\\.(\\d{2})",
+          "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
         ]
       }
     ]
   },
+
   "720P_MOVIES_TV_SPORTS_PACKS": {
     "patterns": {
       "initial": [
         "720[pP]"
       ],
       "exclude_patterns": [
-        "([Xx][Xx][Xx]|[mM][bB][lL][uU][rR][aA][yY]|[dD][vV][dD][rR][iI][pP]|[dD][vV][bB][rR][iI][pP]|[bB][rR][rR][iI][pP]|[xX][vV][iI][dD]|[bB][dD][rR][iI][pP]|480p|[fF][lL][aA][cC])"
+        "([Xx][Xx][Xx]|[mM][bB][lL][uU][rR][aA][yY]|[dD][vV][dD][rR][iI][pP]|[dD][vV][bB][rR][iI][pP]|[bB][rR][rR][iI][pP]|[xX][vV][iI][dD]|[bB][dD][rR][iI][pP]|480p|[fF][lL][aA][cC])",
+        "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
       ]
     },
     "categories": [
@@ -267,7 +314,9 @@
         ],
         "exclude_patterns": [
           "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)",
-          ".*[Ss][0-9][0-9].*[Ee][0-9][0-9].*"
+          ".*[Ss][0-9][0-9].*[Ee][0-9][0-9].*",
+          "(?<!S[0-9][0-9]).*[Ee][0-9][0-9].*",
+          "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
         ]
       },
       {
@@ -281,7 +330,8 @@
           "(\\d{4})\\.(\\d{2})\\.(\\d{2})"
         ],
         "exclude_patterns": [
-          "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)"
+          "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)",
+          "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
         ]
       },
       {
@@ -291,7 +341,7 @@
           "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)"
         ],
         "exclude_patterns": [
-          ""
+          "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
         ]
       },
       {
@@ -303,21 +353,24 @@
         "exclude_patterns": [
           "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)",
           ".*[Ss][0-9][0-9].*[Ee][0-9][0-9].*",
-          "(\\d{4})\\.(\\d{2})\\.(\\d{2})"
+          "(\\d{4})\\.(\\d{2})\\.(\\d{2})",
+          "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
         ]
       }
     ]
   },
+
   "BLURAY_COMPLETE_MOVIES_TV_SPORTS_PACKS": {
     "patterns": {
       "initial": [
         "([bB][lL][uU][rR][aA][yY]|[Cc][Oo][Mm][Pp][Ll][Ee][Tt][Ee]|[Uu][Hh][Dd])"
       ],
       "exclude_patterns": [
-        "([Xx][Xx][Xx]|[hH][dD][tT][vV]|[xX][xX][xX]|[mM][bB][lL][uU][rR][aA][yY]|[dD][vV][dD][rR][iI][pP]|[dD][vV][bB][rR][iI][pP]|[bB][rR][rR][iI][pP]|[xX][vV][iI][dD]|[bB][dD][rR][iI][pP]|480[pP]|1080[pP]|720[pP]|2160[pP]|[fF][lL][aA][cC])",
+        "([Xx][Xx][Xx]|[hH][dD][tT][vV]|[xX][xX][Xx]|[mM][bB][lL][uU][rR][aA][yY]|[dD][vV][dD][rR][iI][pP]|[dD][vV][bB][rR][iI][pP]|[bB][rR][rR][iI][pP]|[xX][vV][iI][dD]|[bB][dD][rR][iI][pP]|480[pP]|1080[pP]|720[pP]|2160[pP]|[fF][lL][aA][cC])",
         "(-I_KnoW|-HHT|-PLAYMAGiC|-CLS|-bADkARMA|-RUNE|-TENOKE|-ANOMALY|-FCKDRM|-VREX|-DVN|-DARKZER0|-NAPT|-RAZOR|-DINOByTES|-HOODLUM|-GOG|-DOGE|-STEAMPUNKS|-DARKSiDERS|-SiMPLEX|I_KnoW|-CPY|0x0007|-BAT|-PLAZA|-ACTiVATED|-CODEX|-CLASSiCS|-DEFA|-RELOADED|-SKIDROW|-JAGDOX|-Razor1911|-FLT|-JAGUAR|-iNDEPENDANT|-PROPHET|-WARG|-FANiSO|-HI2U|-ARMADA|-FLTDOX|-DELiGHT|-POSTMORTEM|-TiNYiSO|-AVENGED|-CLONEDVD-P2P|-ARM|-GENESIS|-FASiSO|-ViTALiTY|-RazorDOX|-SPLATTERKiNGS)",
         "([Bb][oO][Oo][kK][Ww][Aa][Rr][Ee]|[eE][Bb][oO][Oo][kK]|[Ee][Pp][Uu][Bb])",
-        ".*MDVDR.*|.*DVDR.*"
+        ".*MDVDR.*|.*DVDR.*",
+        "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
       ]
     },
     "categories": [
@@ -332,7 +385,9 @@
         "exclude_patterns": [
           ".*[Dd][0-9][0-9].*",
           ".*[Ee][0-9][0-9].*",
-          "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)"
+          "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)",
+          "(?<!S[0-9][0-9]).*[Ee][0-9][0-9].*",
+          "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
         ]
       },
       {
@@ -345,7 +400,8 @@
           "(\\d{4})\\.(\\d{2})\\.(\\d{2})"
         ],
         "exclude_patterns": [
-          "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)"
+          "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)",
+          "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
         ]
       },
       {
@@ -355,7 +411,7 @@
           "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)"
         ],
         "exclude_patterns": [
-          ""
+          "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
         ]
       },
       {
@@ -365,7 +421,7 @@
           "([Uu][hH][dD])"
         ],
         "exclude_patterns": [
-          ""
+          "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
         ]
       },
       {
@@ -378,15 +434,17 @@
           "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)",
           ".*[Ss][0-9][0-9].*[Ee][0-9][0-9].*",
           "(\\d{4})\\.(\\d{2})\\.(\\d{2})",
-          "(-I_KnoW|-HHT|-PLAYMAGiC|-CLS|-bADkARMA|-RUNE|-TENOKE|-ANOMALY|-FCKDRM|-VREX|-DVN|-DARKZER0|-NAPT|-RAZOR|-DINOByTES|-HOODLUM|-GOG|-DOGE|-STEAMPUNKS|-DARKSiDERS|-SiMPLEX|I_KnoW|-CPY|0x0007|-BAT|-PLAZA|-ACTiVATED|-CODEX|-CLASSiCS|-DEFA|-RELOADED|-SKIDROW|-JAGDOX|-Razor1911|-FLT|-JAGUAR|-iNDEPENDANT|-PROPHET|-WARG|-FANiSO|-HI2U|-ARMADA|-FLTDOX|-DELiGHT|-POSTMORTEM|-TiNYiSO|-AVENGED|-CLONEDVD-P2P|-ARM|-GENESIS|-FASiSO|-ViTALiTY|-RazorDOX|-SPLATTERKiNGS)"
+          "(-I_KnoW|-HHT|-PLAYMAGiC|-CLS|-bADkARMA|-RUNE|-TENOKE|-ANOMALY|-FCKDRM|-VREX|-DVN|-DARKZER0|-NAPT|-RAZOR|-DINOByTES|-HOODLUM|-GOG|-DOGE|-STEAMPUNKS|-DARKSiDERS|-SiMPLEX|I_KnoW|-CPY|0x0007|-BAT|-PLAZA|-ACTiVATED|-CODEX|-CLASSiCS|-DEFA|-RELOADED|-SKIDROW|-JAGDOX|-Razor1911|-FLT|-JAGUAR|-iNDEPENDANT|-PROPHET|-WARG|-FANiSO|-HI2U|-ARMADA|-FLTDOX|-DELiGHT|-POSTMORTEM|-TiNYiSO|-AVENGED|-CLONEDVD-P2P|-ARM|-GENESIS|-FASiSO|-ViTALiTY|-RazorDOX|-SPLATTERKiNGS)",
+          "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
         ]
       }
     ]
   },
+
   "PC_ISO_GAMES": {
     "patterns": {
       "initial": [
-        "(-I_KnoW|-HHT|-PLAYMAGiC|-CLS|-bADkARMA|-RUNE|-TENOKE|-ANOMALY|-FCKDRM|-VREX|-DVN|-DARKZER0|-NAPT|-RAZOR|-DINOByTES|-HOODLUM|-GOG|-DOGE|-STEAMPUNKS|-DARKSiDERS|-SiMPLEX|I_KnoW|-CPY|0x0007|-BAT|-PLAZA|-ACTiVATED|-CODEX|-CLASSiCS|-DEFA|-RELOADED|-SKIDROW|-JAGDOX|-Razor1911|-FLT|-JAGUAR|-iNDEPENDANT|-PROPHET|-WARG|-FANiSO|-HI2U|-ARMADA|-FLTDOX|-DELiGHT|-POSTMORTEM|-TiNYiSO|-AVENGED|-CLONEDVD-P2P|-ARM|-GENESIS|-FASiSO|-ViTALiTY|-RazorDOX|-SPLATTERKiNGS)"
+        "(-I_KnoW|-HHT|-PLAYMAGiC|-CLS|-bADkARMA|-RUNE|-TENOKE|-ANOMALY|-FCKDRM|-VREX|-DVN|-DARKZER0|-NAPT|-RAZOR|-DINOByTES|-HOODLUM|-GOG|-DOGE|-STEAMPUNKS|-DARKSiDERS|-SiMPLEX|I_KnoW|-CPY|0x0007|-BAT|-PLAZA|-ACTiVATED|-CODEX|-CLASSiCS|-DEFA|-RELOADED|-SKIDROW|-JAGDOX|-Razor1911|-FLT|-JAGUAR|-iNDEPENDANT|-PROPHET|-WARG|-FANiSO|-HI2U|-ARMADA|-FLTDOX|-DELiGHT|-POSTMORTEM|-TiNYiSO|-AVENGED|-CLONEDVD-P2P|-ARM|-GENESIS|-FASiSO|-ViTALiTY|-RazorDOX|-SPLATTERKiNGS|-BiGMAC)"
       ],
       "exclude_patterns": [
         ""
@@ -397,8 +455,8 @@
         "name": "MacOSX/Games",
         "cat_id": "27",
         "patterns": [
-          ".*[Mm][aA][Cc].*",
-          ".*[Mm][aA][Cc][Oo][Ss].*"
+          ".*\\b[Mm][aA][Cc]\\b.*",
+          ".*\\b[Mm][aA][Cc][Oo][Ss]\\b.*"
         ],
         "exclude_patterns": [
           ""
@@ -416,58 +474,61 @@
       }
     ]
   },
-"NSW_GAMES": {
-  "priority": 90,
-  "patterns": {
-    "initial": [
-      "(?:^|[.\\-_])NSW(?:[.\\-_]|$)"
-    ],
-    "exclude_patterns": [
-      ".*[Ee][Pp][Uu][Bb].*",
-      ".*[eE][Bb][oO][Oo][kK].*"
-    ]
-  },
-  "categories": [
-    {
-      "name": "NSW/Games",
-      "cat_id": "26",
-      "patterns": [
+
+  "NSW_GAMES": {
+    "priority": 90,
+    "patterns": {
+      "initial": [
         "(?:^|[.\\-_])NSW(?:[.\\-_]|$)"
       ],
-      "exclude_patterns": []
-    }
-  ]
-},
-"PS5_GAMES": {
-  "priority": 90,
-  "patterns": {
-    "initial": [
-      "(?:^|[.\\-_])PS5(?:[.\\-_]|$)"
-    ],
-    "exclude_patterns": [
-      ".*[Ee][Pp][Uu][Bb].*",
-      ".*[eE][Bb][oO][Oo][kK].*",
-      ".*[Bb][oO][Oo][kK][Ww][Aa][Rr][Ee].*"
+      "exclude_patterns": [
+        ".*[Ee][Pp][Uu][Bb].*",
+        ".*[eE][Bb][oO][Oo][kK].*"
+      ]
+    },
+    "categories": [
+      {
+        "name": "NSW/Games",
+        "cat_id": "26",
+        "patterns": [
+          "(?:^|[.\\-_])NSW(?:[.\\-_]|$)"
+        ],
+        "exclude_patterns": []
+      }
     ]
   },
-  "categories": [
-    {
-      "name": "PS5/Games",
-      "cat_id": "26",
-      "patterns": [
+
+  "PS5_GAMES": {
+    "priority": 90,
+    "patterns": {
+      "initial": [
         "(?:^|[.\\-_])PS5(?:[.\\-_]|$)"
       ],
-      "exclude_patterns": []
-    }
-  ]
-},
+      "exclude_patterns": [
+        ".*[Ee][Pp][Uu][Bb].*",
+        ".*[eE][Bb][oO][Oo][kK].*",
+        ".*[Bb][oO][Oo][kK][Ww][Aa][Rr][Ee].*"
+      ]
+    },
+    "categories": [
+      {
+        "name": "PS5/Games",
+        "cat_id": "26",
+        "patterns": [
+          "(?:^|[.\\-_])PS5(?:[.\\-_]|$)"
+        ],
+        "exclude_patterns": []
+      }
+    ]
+  },
+
   "0DAY": {
     "patterns": {
       "initial": [
         "(-BONDYE|RINDVIEH|-RLTS|-EQUiNOX|-BS|-BTCR|-WEB0DAY|-WEBiSO|-CaviaR|-6581|-rGPDA|-EATSHIT|-SERiF|-NGEN|-Unleashed|-FSOCIETY|-DVT|-ALiAS|-rG|-AMPED|-Lz0|-XFORCE|-CORE|-TE|-WaLMaRT|-BLiZZARD|-FALLEN|-LAXiTY|-DJiNN|-FANiSO|-CRD|-HERiTAGE|-DELiGHT|-AiR|-ArCADE|-BEAN|-EAT|-ST3RE0|-NOY|-FOSI|-eMAG|-REDT|-YPOGEiOS|-F4CG|-DIGERATI|-ROGUE|-AGAiN|-PARADOX|-ZWT|-UNION|-iNViSiBLE|-TCi|-JOLT|-MESMERiZE|-ARN|-DOA|-SiMPLiFY|-RECOiL|-PH|-TYPO|-VACE|-OUTLAWS|-QUANTiZE|-BRD|-EcHoS|-MAZE|-PH|-CzW)$"
       ],
       "exclude_patterns": [
-        "([xX][xX][xX]|[xX][vV][iI][dD]|[bB][dD][rR][iI][pP]|[dD][vV][dD][rR][iI][pP]|[dD][vV][bB][rR][iI][pP]|[bB][rR][rR][iI][pP]|[mM][bB][lL][uU][rR][aA][yY]|[mM][dD][vV][dD][rR]|[nN][tT][sS][cC]|[pP][aA][lL]|1080[pP]|720[pP]|2160[pP]|[fF][lL][aA][cC])"
+        "([xX][xX][Xx]|[xX][vV][iI][dD]|[bB][dD][rR][iI][pP]|[dD][vV][dD][rR][iI][pP]|[dD][vV][bB][rR][iI][pP]|[bB][rR][rR][iI][pP]|[mM][bB][lL][uU][rR][aA][yY]|[mM][dD][vV][dD][rR]|\\b[nN][tT][sS][cC]\\b|\\b[pP][aA][lL]\\b|1080[pP]|720[pP]|2160[pP]|[fF][lL][aA][cC])"
       ]
     },
     "categories": [
@@ -475,8 +536,8 @@
         "name": "MacOSX/Apps",
         "cat_id": "21",
         "patterns": [
-          ".*[Mm][aA][Cc].*",
-          ".*[Mm][aA][Cc][Oo][Ss].*"
+          ".*\\b[Mm][aA][Cc]\\b.*",
+          ".*\\b[Mm][aA][Cc][Oo][Ss]\\b.*"
         ],
         "exclude_patterns": [
           ""
@@ -511,7 +572,7 @@
         "(oNePiEcE|BTCRiSO|-RAiN|-iLEARN|-UDUMMY|ELearning|-BLOAT|-SkilledHares|-DECiBEL|-QUiD|-LiBRO|-NOLEDGE|-REBAR|-SOFTiMAGE|-SSQ|-iLST|-LND|-STM|-ZH|-ViGOROUS|-APoLLo|-XCODE|-EXPANSION|-iLLiTERATE|-RiDWARE|-KNiSO|-SHEPHERDS|-BiFiSO|-ADSR|-ANALYTiCS|-CaviaRPDA|-H0WT0|-THECOOP|-OXBRiDGE|-XQZT|-PRODEV|-MAGNiTUDE|-MASCHiNE|-COMPRISED|-BooKWoRM|-PHOTONE|-THEOS|-LiQUiDWARE|-BooKWoRM|-kEISO|-ISO|-COMPRISED|-BYS|-NEWiSO|-DVTiSO|-TBE|-QUASAR|-rG|-NAViGON|-ELOHiM|-TUTOR|-PLATO|-SONiTUS|-EMBRACE|-XiSO|-YUM|-iRONiSO|-SoSISO|-SPiRiT|-BLZiSO|-CHR|-iNDiSO|-HOTiSO|-DVTiSO|-ZWTiSO|-ZWT|-JGTiSO|-DYNAMiCS|-WZT|-iNKiSO|-CYGiSO|-BIE|-AiRISO)$"
       ],
       "exclude_patterns": [
-        "([xX][xX][xX]|[xX][vV][iI][dD]|[bB][dD][rR][iI][pP]|[dD][vV][dD][rR][iI][pP]|[dD][vV][bB][rR][iI][pP]|[bB][rR][rR][iI][pP]|[mM][bB][lL][uU][rR][aA][yY]|[mM][dD][vV][dD][rR]|[nN][tT][sS][cC]|[pP][aA][lL]|1080[pP]|720[pP]|2160[pP]|[fF][lL][aA][cC])"
+        "([xX][xX][Xx]|[xX][vV][iI][dD]|[bB][dD][rR][iI][pP]|[dD][vV][dD][rR][iI][pP]|[dD][vV][bB][rR][iI][pP]|[bB][rR][rR][iI][pP]|[mM][bB][lL][uU][rR][aA][yY]|[mM][dD][vV][dD][rR]|\\b[nN][tT][sS][cC]\\b|\\b[pP][aA][lL]\\b|1080[pP]|720[pP]|2160[pP]|[fF][lL][aA][cC])"
       ]
     },
     "categories": [
@@ -519,8 +580,8 @@
         "name": "MacOSX/Apps",
         "cat_id": "21",
         "patterns": [
-          ".*[Mm][aA][Cc].*",
-          ".*[Mm][aA][Cc][Oo][Ss].*"
+          ".*\\b[Mm][aA][Cc]\\b.*",
+          ".*\\b[Mm][aA][Cc][Oo][Ss]\\b.*"
         ],
         "exclude_patterns": [
           ""
@@ -552,7 +613,7 @@
   "DVDR": {
     "patterns": {
       "initial": [
-        "(-JFKDVD|[pP][aA][lL]\\b|[nN][tT][sS][cC]\\b)"
+        "(-JFKDVD|\\b[pP][aA][lL]\\b|\\b[nN][tT][sS][cC]\\b)"
       ],
       "exclude_patterns": [
         "([Ww][Ee][Bb]|[Ff][lL][aA][cC]|[Xx][Xx][Xx]|[xX][bB][oO][xX]360|[xX][vV][iI][dD]|[mM][bB][lL][uU][rR][aA][yY]|[mM][dD][vV][dD][rR]|720p|1080p|MAGNiTUDE|SONiTUS|DYNAMiCS|PLATO|[fF][lL][aA][cC])"
@@ -575,7 +636,8 @@
   "MBLURAY": {
     "patterns": {
       "initial": [
-        "([mM][bB][lL][uU][rR][aA][yY])"
+        "([mM][bB][lL][uU][rR][aA][yY])",
+        "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
       ],
       "exclude_patterns": [
         "([Xx][Xx][Xx]|[mM][dD][vV][dD][rR]|[fF][lL][aA][cC])"
@@ -586,7 +648,8 @@
         "name": "MBluray",
         "cat_id": "24",
         "patterns": [
-          "([mM][bB][lL][uU][rR][aA][yY])"
+          "([mM][bB][lL][uU][rR][aA][yY])",
+          "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
         ],
         "exclude_patterns": [
           "([Xx][Xx][Xx]|[mM][dD][vV][dD][rR]|[fF][lL][aA][cC])"
@@ -617,6 +680,7 @@
       }
     ]
   },
+
   "EBOOKS": {
     "priority": 90,
     "patterns": {
@@ -732,6 +796,24 @@
           "(1080[pP]|720[pP]|[bB][lL][uU][rR][aA][yY]|2160[pP]|2880[pP]|3630[pP]|2700[pP]|4096[pP]|2048[pP]|3072[pP]|3840[pP]|3000[pP]1440[pP])",
           "(IMAGESET)"
         ]
+      }
+    ]
+  },
+
+  "ROMS": {
+    "priority": 85,
+    "patterns": {
+      "initial": [
+        ".*(?:\\b|_|-)(?:Amiga|C64|SNES|NES|N64|Megadrive|Sega|ROMS?|GBA|GBC|NDS|SMD|ZXS)(?:\\b|_|-).*"
+      ],
+      "exclude_patterns": []
+    },
+    "categories": [
+      {
+        "name": "ROMs",
+        "cat_id": "43",
+        "patterns": [],
+        "exclude_patterns": []
       }
     ]
   },

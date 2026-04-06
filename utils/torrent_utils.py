@@ -390,14 +390,14 @@ def calculate_piece_size(directory):
     return pieces
 
 
-def download_torrent(url, cookies, release_name, is_dupe=False, dupe_id=None):
+def download_torrent(url, auth_headers, release_name, is_dupe=False, dupe_id=None):
     """Download a torrent file, distinguishing between duplicate and regular torrents."""
     try:
         # Determine the temporary file path with appropriate naming
         temp_torrent_path = os.path.join(TMP_DIR, f'{dupe_id}_{release_name}.torrent') if is_dupe and dupe_id else os.path.join(TMP_DIR, f'{release_name}.torrent')
 
         # Download the torrent content
-        response = requests.get(url, cookies=cookies, headers={'User-Agent': 'Mozilla/5.0'})
+        response = requests.get(url, headers=auth_headers)
         response.raise_for_status()  # Raise an error for bad responses
         log_to_file(os.path.join(TMP_DIR, 'response_debug.log'), f"Response status: {response.status_code}\nResponse content: {response.text}")
 
@@ -454,14 +454,14 @@ def download_torrent(url, cookies, release_name, is_dupe=False, dupe_id=None):
         log_to_file(os.path.join(TMP_DIR, 'dupe_general_error.log' if is_dupe else 'torrent_general_error.log'), f"An error occurred: {str(e)}")
         print(f"{bcolors.FAIL}An error occurred: {str(e)}{bcolors.ENDC}")
 
-def upload_torrent(torrent_file, template_file, cookies, category_id, imdb_id, mediainfo_text, dupedl_enabled):
+def upload_torrent(torrent_file, template_file, auth_headers, category_id, imdb_id, mediainfo_text, dupedl_enabled):
     """
     Uploads a torrent file to the specified site with the required details.
 
     Args:
         torrent_file (str): Path to the .torrent file.
         template_file (str): Path to the NFO template file.
-        cookies (dict): Cookies to be used in the request.
+        auth_headers (dict): Authentication headers (X-API-KEY, User-Agent, Accept).
         category_id (int): The ID of the category of the torrent.
         imdb_id (str): The IMDB ID associated with the torrent.
         mediainfo_text (str): The mediainfo text to be included in the upload.
@@ -502,16 +502,14 @@ def upload_torrent(torrent_file, template_file, cookies, category_id, imdb_id, m
         
         # Log request details for debugging
         log_to_file(os.path.join(TMP_DIR, 'upload_request.log'), f"Uploading to URL: {upload_url}")
-        log_to_file(os.path.join(TMP_DIR, 'upload_request.log'), f"Headers: {{'User-Agent': '{user_agent}', 'Expect': ''}}")
-        log_to_file(os.path.join(TMP_DIR, 'upload_request.log'), f"Cookies: {cookies}")
+        log_to_file(os.path.join(TMP_DIR, 'upload_request.log'), f"Headers: {auth_headers}")
         log_to_file(os.path.join(TMP_DIR, 'upload_request.log'), f"Files: {files}")
         log_to_file(os.path.join(TMP_DIR, 'upload_request.log'), f"Data: {data}")
 
         try:
             response = requests.post(
                 upload_url,
-                headers={'User-Agent': user_agent, 'Expect': ''},
-                cookies=cookies,
+                headers=auth_headers,
                 files=files,
                 data=data,
                 verify=False
@@ -537,7 +535,7 @@ def upload_torrent(torrent_file, template_file, cookies, category_id, imdb_id, m
             
             # Download the torrent file using the ID from the response
             torrent_url = f"{config.get('Website', 'SITEURL')}/api/v1/torrents/download/{torrent_id}"
-            download_torrent(torrent_url, cookies, torrent_name, torrent_id)
+            download_torrent(torrent_url, auth_headers, torrent_name, is_dupe=False)
             return response_code
         else:
             raise requests.RequestException(f"Status code: {response_code}\nResponse: {response.text}")

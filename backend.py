@@ -382,7 +382,7 @@ def main():
                 except Exception as e:
                     log(f"Error generating mediainfo: {str(e)}", log_file_path)
                 else:
-                    if mediainfo_file_path.exists():
+                    if mediainfo_file_path and mediainfo_file_path.exists():
                         with open(mediainfo_file_path, 'r') as file:
                             mediainfo_content = file.read()
 

@@ -87,14 +87,10 @@ if [ "$EUID" -ne 0 ]; then
     echo -e "${red}Please run as root or with sudo.${ncl}" >&2
     exit 1
 else
-    stored_user="$(who mom likes | awk '{print $1}')";
+    stored_user="$(whoami)";
     if [ -z  "$stored_user" ]; then
-        # For some reason, stored user still empty, try with sudo
-        stored_user="$(sudo who mom likes | awk '{print $1}')";
-        if [ -z  "$stored_user" ]; then
-            echo -e "${red}Couldn't store name of user running this script for some reason, contact the devs.${ncl}" >&2
-            exit 1
-        fi
+        echo -e "${red}Couldn't determine current user, contact the devs.${ncl}" >&2
+        exit 1
     fi
 fi
 
@@ -114,7 +110,7 @@ fi
 
 # Domain name validation if an actual domain is being used
 if [ "$server_name" != "$HOSTNAME" ]; then
-    if ! echo "$server_name" | grep -qP '(?=^.{4,253}$)(^((?!-)[a-zA-Z0-9-]{1,63}(?<!-)\.)+[a-zA-Z]{2,63}$)'; then
+    if ! echo "$server_name" | grep -qE '^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$'; then
         echo -e "${red}Error: Invalid domain name provided${ncl}" >&2
         exit 1
     fi
@@ -128,10 +124,18 @@ if ! command_exists mediainfo; then
 fi
 # If mtn isn't already installed, add it.
 if ! command_exists mtn; then
-    if [ "$ID" == "ubuntu" ]; then
-        apt-get install -y software-properties-common
-        echo "Movie thumbnailer repo not detected in apt source, adding"
-        add-apt-repository -y ppa:wahibre/mtn
+if [ "$ID" == "ubuntu" ]; then
+    apt-get install -y software-properties-common
+    
+    # 1. Add the repo but tell it NOT to update yet (so it doesn't crash)
+    add-apt-repository -y -n ppa:wahibre/mtn
+    
+    # 2. Force the update and tell apt "I don't care if the label changed, just do it"
+    apt-get update --allow-releaseinfo-change
+    
+    # 3. Now install
+    apt-get install -y mtn
+
     elif [ "$ID" == "debian" ]; then
         if [ "$VERSION_ID" -ge 9 ]; then
             if [ "$VERSION_ID" -eq 9 ]; then
@@ -149,7 +153,7 @@ if ! command_exists mtn; then
     fi
 fi
 
-apt-get update
+apt-get update --allow-releaseinfo-change
 
 # Required packages
 echo "Installing required tools and their dependencies..."

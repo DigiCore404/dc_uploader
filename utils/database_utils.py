@@ -1,11 +1,9 @@
 import sqlite3
-import sys
 from datetime import datetime
 from pathlib import Path
 
 UPLOADS_DB = 'data/uploads.db'
-TERMINAL_OUTPUT_DB = 'data/terminal_output.db'
-DIRECTORIES_DB = 'data/directories.db'
+MAX_UPLOAD_HISTORY_ROWS = 5000
 
 def create_uploads_table():
     """Create the uploads table in SQLite if it doesn't exist."""
@@ -26,48 +24,20 @@ def create_uploads_table():
             image_url TEXT
         )
     ''')
-    conn.commit()
-    conn.close()
-
-def create_terminal_output_table():
-    """Create the terminal_output table in SQLite if it doesn't exist."""
-    conn = sqlite3.connect(TERMINAL_OUTPUT_DB)
-    cursor = conn.cursor()
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS terminal_logs (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            timestamp TEXT DEFAULT CURRENT_TIMESTAMP,
-            source TEXT,  -- Optional, can be used to differentiate uploaders
-            log_line TEXT
-        )
-    ''')
-    conn.commit()
-    conn.close()
-
-def create_directories_table():
-    """Create the directories table in SQLite if it doesn't exist."""
-    conn = sqlite3.connect(DIRECTORIES_DB)
-    cursor = conn.cursor()
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS directories (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT UNIQUE,
-            status TEXT,
-            creation_date TEXT
-        )
-    ''')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_uploads_name ON uploads(name)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_uploads_date ON uploads(date)')
     conn.commit()
     conn.close()
 
 
-def initialize_all_databases():
-    """Initialize all required databases."""
+
+
+def initialize_upload_database():
+    """Initialize the CLI upload record table; existing legacy databases are left untouched."""
     # Ensure data directory for databases exists
     Path("data").mkdir(parents=False, mode=0o775, exist_ok=True)
     create_uploads_table()
-    create_terminal_output_table()
-    create_directories_table()
-    print("All databases initialized successfully.")
+    print("Upload database ready.")
 
 def insert_upload(name, category=None, status=None, size=None, imdb_url=None, mediainfo=None, nfo_content=None, screenshot_url=None, image_url=None):
     """Insert a new upload record into the SQLite database with only the fields provided."""
@@ -91,6 +61,17 @@ def insert_upload(name, category=None, status=None, size=None, imdb_url=None, me
         image_url
     ))
 
+    cursor.execute(
+        '''
+        DELETE FROM uploads
+        WHERE id NOT IN (
+            SELECT id FROM uploads
+            ORDER BY id DESC
+            LIMIT ?
+        )
+        ''',
+        (MAX_UPLOAD_HISTORY_ROWS,),
+    )
     conn.commit()
     conn.close()
 
@@ -120,7 +101,7 @@ def update_upload_status(name, new_status=None, category=None, size=None, imdb_u
         fields_to_update.append("mediainfo = ?")
         values.append(mediainfo)
     if nfo is not None:
-        fields_to_update.append("nfo = ?")
+        fields_to_update.append("nfo_content = ?")
         values.append(nfo)
     if screenshot_url is not None:
         fields_to_update.append("screenshot_url = ?")
@@ -137,37 +118,3 @@ def update_upload_status(name, new_status=None, category=None, size=None, imdb_u
 
     conn.commit()
     conn.close()
-
-
-def fetch_all_uploads():
-    """Fetch all uploads from the database."""
-    conn = sqlite3.connect(UPLOADS_DB)
-    cursor = conn.cursor()
-    cursor.execute('SELECT * FROM uploads ORDER BY date DESC')
-    rows = cursor.fetchall()
-    conn.close()
-    return rows
-
-
-def main():
-    if len(sys.argv) < 2:
-        print("Usage: python database_utils.py <function_name>")
-        return
-    
-    function_name = sys.argv[1]
-    
-    if function_name == 'initialize_all_databases':
-        initialize_all_databases()
-    elif function_name == 'create_uploads_table':
-        create_uploads_table()
-    elif function_name == 'create_terminal_output_table':
-        create_terminal_output_table()
-    elif function_name == 'create_directories_table':
-        create_directories_table()
-    else:
-        print(f"Unknown function: {function_name}")
-
-if __name__ == '__main__':
-    main()
-
-

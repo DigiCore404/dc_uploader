@@ -21,6 +21,9 @@ TMP_DIR.mkdir(parents=True, exist_ok=True)
 # API Credentials from config
 SITEURL = config.get('Website', 'SITEURL')
 API_KEY = config.get('Website', 'API_KEY')
+REQUEST_TIMEOUT = config.getint('Network', 'Timeout', fallback=15)
+VERIFY_SSL = config.getboolean('Network', 'VERIFY_SSL', fallback=False)
+USER_AGENT = config.get('Network', 'UserAgent', fallback='Mozilla/5.0 (Windows NT 10.0; Win64; x64) dc_uploader/1.0')
 
 def get_api_headers():
     """
@@ -33,27 +36,37 @@ def get_api_headers():
     
     return {
         'X-API-KEY': API_KEY,
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) dc_uploader/1.0',
+        'User-Agent': USER_AGENT,
         'Accept': 'application/json'
     }
 
-def login():
+def login(validate=None):
     """
-    In the API model, 'login' validates the API key by attempting to reach
-    the /api/v1/torrents endpoint.
+    In the API model, 'login' prepares API headers. Optional validation can
+    be enabled with Settings.VALIDATE_API_KEY=true, but skipping it saves one
+    network request per upload; dupecheck/upload will still fail clearly if
+    the key is invalid.
+
     Returns: headers dict if successful, None if failed.
     """
-    print(f"{bcolors.OKBLUE}[*] Validating API Key for {SITEURL}...{bcolors.ENDC}")
-    
     headers = get_api_headers()
     if not headers:
         return None
+
+    if validate is None:
+        validate = config.getboolean('Settings', 'VALIDATE_API_KEY', fallback=False)
+
+    if not validate:
+        print(f"{bcolors.OKBLUE}[*] API headers ready for {SITEURL}.{bcolors.ENDC}")
+        return headers
+
+    print(f"{bcolors.OKBLUE}[*] Validating API Key for {SITEURL}...{bcolors.ENDC}")
 
     # Using the 'List Torrents' route from your screenshot to verify access
     test_url = f"{SITEURL}/api/v1/torrents"
     
     try:
-        response = requests.get(test_url, headers=headers, verify=False, timeout=15)
+        response = requests.get(test_url, headers=headers, verify=VERIFY_SSL, timeout=REQUEST_TIMEOUT)
         
         # Log details for debugging
         log_to_file(TMP_DIR / 'api_check.log', f"URL: {test_url}\nStatus: {response.status_code}\nResponse: {response.text[:500]}")

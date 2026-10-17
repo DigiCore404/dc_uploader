@@ -1,0 +1,23 @@
+# Optional: bash setup.sh --unrar. Requires a shared host mount and /dev/fuse.
+services:
+  uploader:
+    devices: [/dev/fuse:/dev/fuse]
+    cap_add: [SYS_ADMIN]
+    security_opt: [apparmor:unconfined]
+    volumes:
+      - type: bind
+        source: ${STATE_DIR}/identity/passwd
+        target: /etc/passwd
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ${STATE_DIR}/identity/group
+        target: /etc/group
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ${STATE_DIR}/mounts
+        target: /mounts
+        bind:
+          create_host_path: false
+          propagation: rshared

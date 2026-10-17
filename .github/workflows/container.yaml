@@ -1,0 +1,71 @@
+name: Test and publish
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  container:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Block private data and scan complete checkout
+        run: |
+          python3 scripts/publication.py
+          python3 scripts/publication.py --checkout
+          bash scripts/check-secrets.sh
+      - name: Build test image
+        run: docker build --target test --tag digitalcore-test .
+      - name: Test backend and bundled media tools
+        run: |
+          docker run --rm --user 1000:1000 --tmpfs /app/data:uid=1000,gid=1000 --tmpfs /app/tmp:uid=1000,gid=1000 --tmpfs /app/dist:uid=1000,gid=1000 --entrypoint python digitalcore-test -m unittest discover -s tests -v
+          node tests/test_search_name.cjs
+          node tests/test_activity_navigation.cjs
+      - name: Build release image
+        env:
+          REVISION: ${{ github.sha }}
+          SOURCE: https://github.com/${{ github.repository }}
+        run: |
+          docker build --target release --label "org.opencontainers.image.source=$SOURCE" --label "org.opencontainers.image.revision=$REVISION" --tag digitalcore-release .
+      - name: Publish GHCR image
+        if: github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ACTOR: ${{ github.actor }}
+          REPOSITORY: ${{ github.repository }}
+          REF: ${{ github.ref }}
+        run: |
+          set -euo pipefail
+          image="ghcr.io/${REPOSITORY,,}"
+          printf '%s' "$GH_TOKEN" | docker login ghcr.io -u "$ACTOR" --password-stdin
+          trap 'docker logout ghcr.io >/dev/null' EXIT
+          if [[ "$REF" == refs/tags/v* ]]; then
+            version="${REF#refs/tags/v}"
+            [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo 'Use a stable vMAJOR.MINOR.PATCH release tag.'; exit 1; }
+            docker tag digitalcore-release "$image:$version"
+            docker push "$image:$version"
+            docker tag digitalcore-release "$image:latest"
+            docker push "$image:latest"
+          else
+            docker tag digitalcore-release "$image:edge"
+            docker push "$image:edge"
+          fi
+      - name: Attach checked installer packages to release
+        if: startsWith(github.ref, 'refs/tags/v') && github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          python3 scripts/package_docker.py
+          python3 scripts/package_seedbox.py
+          gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --title "$TAG" --generate-notes
+          gh release upload "$TAG" dist/* --clobber

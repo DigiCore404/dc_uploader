@@ -1,0 +1,7 @@
+Movie Thumbnailer 3.5.0
+Upstream: https://gitlab.com/movie_thumbnailer/mtn/
+License: GPL-2.0-or-later. Upstream source and build script are included in source/.
+Bundled shared libraries are unmodified Ubuntu 22.04 packages. Exact package versions
+are listed in source/build-packages.txt; corresponding source packages are available
+from https://archive.ubuntu.com/ubuntu/ using apt-get source PACKAGE=VERSION.
+The host glibc and loader are used. Font licensing is in FONT-LICENSE.txt.

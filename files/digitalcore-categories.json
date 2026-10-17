@@ -1,0 +1,170 @@
+[
+  {
+    "id": 2,
+    "name": "Movies/SD"
+  },
+  {
+    "id": 1,
+    "name": "Movies/DVDR"
+  },
+  {
+    "id": 5,
+    "name": "Movies/720p"
+  },
+  {
+    "id": 6,
+    "name": "Movies/1080p"
+  },
+  {
+    "id": 4,
+    "name": "Movies/2160p"
+  },
+  {
+    "id": 3,
+    "name": "Movies/BluRay"
+  },
+  {
+    "id": 38,
+    "name": "Movies/Bluray/UHD"
+  },
+  {
+    "id": 7,
+    "name": "Movies/PACKS"
+  },
+  {
+    "id": 8,
+    "name": "Tv/720p"
+  },
+  {
+    "id": 9,
+    "name": "Tv/1080p"
+  },
+  {
+    "id": 10,
+    "name": "Tv/SD"
+  },
+  {
+    "id": 11,
+    "name": "Tv/DVDR"
+  },
+  {
+    "id": 12,
+    "name": "Tv/PACKS"
+  },
+  {
+    "id": 13,
+    "name": "Tv/2160p"
+  },
+  {
+    "id": 14,
+    "name": "Tv/BluRay"
+  },
+  {
+    "id": 15,
+    "name": "Tv/SPORTS"
+  },
+  {
+    "id": 17,
+    "name": "Unknown"
+  },
+  {
+    "id": 18,
+    "name": "Apps/0DAY"
+  },
+  {
+    "id": 20,
+    "name": "Apps/PC"
+  },
+  {
+    "id": 21,
+    "name": "Apps/Mac"
+  },
+  {
+    "id": 33,
+    "name": "Apps/Tutorials"
+  },
+  {
+    "id": 22,
+    "name": "Music/MP3"
+  },
+  {
+    "id": 23,
+    "name": "Music/FLAC"
+  },
+  {
+    "id": 24,
+    "name": "Music/MTV"
+  },
+  {
+    "id": 29,
+    "name": "Music/PACKS"
+  },
+  {
+    "id": 39,
+    "name": "Music/DVD"
+  },
+  {
+    "id": 40,
+    "name": "Music/Bluray"
+  },
+  {
+    "id": 25,
+    "name": "Games/PC"
+  },
+  {
+    "id": 26,
+    "name": "Games/Consoles"
+  },
+  {
+    "id": 43,
+    "name": "Games/ROMS"
+  },
+  {
+    "id": 42,
+    "name": "Games/XXX"
+  },
+  {
+    "id": 27,
+    "name": "Games/Mac"
+  },
+  {
+    "id": 28,
+    "name": "Ebooks"
+  },
+  {
+    "id": 44,
+    "name": "Audiobooks"
+  },
+  {
+    "id": 30,
+    "name": "XXX/SD"
+  },
+  {
+    "id": 31,
+    "name": "XXX/HD"
+  },
+  {
+    "id": 32,
+    "name": "XXX/4K"
+  },
+  {
+    "id": 34,
+    "name": "XXX/Imagesets"
+  },
+  {
+    "id": 35,
+    "name": "XXX/Movies/SD"
+  },
+  {
+    "id": 36,
+    "name": "XXX/Movies/HD"
+  },
+  {
+    "id": 37,
+    "name": "XXX/Movies/4K"
+  },
+  {
+    "id": 41,
+    "name": "XXX/PACKS"
+  }
+]

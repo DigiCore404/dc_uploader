@@ -1,13 +1,8 @@
-[c][b][size=16]!releasename![/size][/b][/c]
+[b]!releasename![/b]
 
-[c][size=13][url=https://github.com/DigiCore404/dc_uploader]Created by DC Uploader v!version![/url][/size][/c]
-
+!description!
 
 !imageupload!
-
-!gameimage!
-
-!gameinfo!
 
 !screenshots!
 

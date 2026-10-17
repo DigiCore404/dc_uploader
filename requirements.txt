@@ -1,10 +1,1 @@
-requests
-rfr
-flask
-watchdog
-torf-cli
-gevent
-cli-ui
-rich
-psutil
-guessit
+requests>=2.32.3,<3

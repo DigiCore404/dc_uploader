@@ -1,12 +1,13 @@
 # DigitalCore Uploader
 
-DigitalCore's self-hosted browser and CLI uploader. This modernizes the original
-DC Uploader while retaining its repository history and license. The shared upload
-engine and workspace workflow are adapted from the DirtyBytes uploader.
+Upload to DigitalCore through your browser or the command line. Includes metadata
+lookup with TMDB, TVmaze and IGDB, automatic screenshots, MediaInfo, DigitalCore's
+image host and qBittorrent integration.
 
-## Docker / Synology
+## Install
 
-Requires Linux x86_64 and Docker Compose v2 (Synology Container Manager).
+For Docker or Synology, you need Linux x86_64 and Docker Compose (Container Manager
+on Synology).
 
 ```bash
 git clone https://github.com/DigiCore404/dc_uploader.git
@@ -15,51 +16,33 @@ docker build --target release -t dc-uploader:local .
 bash setup.sh --media /srv/media --image dc-uploader:local --bind 0.0.0.0
 ```
 
-When running as root, pass your ordinary account's `--uid` and `--gid`.
-The installer generates a private workspace password and preserves existing login
-and settings on subsequent starts. Open `http://<server-ip>:6080`.
-For access from outside your LAN use an HTTPS reverse proxy or SSH tunnel.
-See [Docker storage and installation](README-docker.md).
+Replace `/srv/media` with your media folder. When running as root, also pass your
+normal account's `--uid` and `--gid`.
 
-## Features
+Open `http://<server-ip>:6080` and sign in with the login shown during installation.
 
-* DigitalCore Nexus dark blue theme and the existing DigitalCore wordmark.
-* Release-folder browsing, review before upload, full activity history and logs.
-* All 42 DigitalCore categories; a manual selection always takes precedence.
-  Ambiguous automatic classifications stop for review.
-* TMDB movie/TV, IGDB game and key-free TVmaze series search, preview and cover selection, IMDb from NFO or
-  manual input, and Steam/GOG/IGDB game-page links. IGDB uses server-side Twitch application credentials.
-* mkbrr creation and source-torrent editing, preserving piece hashes on imports.
-* MTN/FFmpeg screenshots, MediaInfo, NFO, and configurable image hosting.
-* qBittorrent connections, paths check, import queue and seeding status.
-* Persistent private SQLite state, authentication, CSRF and workspace access rules.
-* CLI uploads, completed-download callbacks and optional incoming-folder watcher.
-* Optional archive mounting requires the separate FUSE Compose override.
+[Docker and Synology setup](README-docker.md) · [Linux seedbox setup](SEEDBOX-INSTALL.md)
 
-Native binaries and media libraries are installed into the image, not committed
-to this repository. mkbrr is downloaded from its official pinned release and
-verified against the binary SHA-256 manifest; MTN/rar2fs are built from pinned sources.
+## Upload
 
-## First run
+1. Add your DigitalCore API key and personal announce URL in **Settings**.
+2. Connect qBittorrent in **Clients** if you want to import torrents.
+3. Choose **New upload** or **Import torrent**, fill in the release details and review before uploading.
 
-1. Open Settings and add your DigitalCore API key and full personal announce URL.
-2. Use DigitalCore’s own image host (default, no separate key) and optionally configure TMDB/IGDB credentials. TVmaze needs no key. Secrets stay on
-   your server; blank secret fields preserve their existing values.
-3. Mount your media read-only at `/content` and configure the qBittorrent path
-   mapping in Clients. The media must exist on shared storage, not just remotely
-   in a client's API.
-4. Choose a release, category and details, then review before publishing.
-5. Seed the confirmed torrent downloaded from DigitalCore. New uploads deliver
-   to `/watch`; scheduled imports use their selected qBittorrent client.
+DigitalCore's image host is ready to use. TVmaze works without a key; TMDB and
+IGDB can be enabled in Settings with your own credentials.
 
-An API key is never needed to test the UI, health check or isolated regression
-suite. Do not put production credentials in this repository.
+Keep seeding after uploading. Folder and seeding instructions are available in
+**Manuals** inside the uploader.
+
+## Command line
+
+The CLI, download-completion callback and folder watcher remain available.
+For a native Linux installation, upload a release with:
 
 ```bash
-# Full test image with disposable runtime folders
-docker build --target test -t dc-uploader:test .
-docker run --rm --tmpfs /app/data --tmpfs /app/tmp --entrypoint python dc-uploader:test -m unittest discover -s tests -v
+bash start.sh upload /srv/media/My.Release --cat 6
 ```
 
-The `main` workflow tests the source before publishing the `edge` image to
-`ghcr.io/digicore404/dc_uploader:edge`. Stable tags produce versioned releases.
+Browser and CLI uploads appear together in **Activity**, with their progress,
+logs and results. Use the same installation and persistent data folder.

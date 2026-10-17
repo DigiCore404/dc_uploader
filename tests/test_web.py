@@ -17,6 +17,12 @@ import web
 
 
 class WebTests(unittest.TestCase):
+    def test_web_start_does_not_interrupt_active_cli_upload(self):
+        self.server.workspace.history.create('external-cli', {'source': str(self.root / 'Release'), 'category': 6})
+        with uploader.upload_lock():
+            another = web.Workspace('test-access', self.root / 'uploads.db')
+        self.assertEqual(another.history.get('external-cli')['status'], 'running')
+
     def test_public_image_host_config_uses_official_public_key(self):
         path = self.base + '/api/image-host/public-config'
         self.assertEqual(self.client.get(path).status_code, 401)

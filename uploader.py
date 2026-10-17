@@ -158,7 +158,7 @@ def review_text(job, config):
 
 def backend_command(job, job_path):
     return [sys.executable, '-u', str(ROOT / 'backend.py'), job['source'],
-            '--cat', str(job['category']), '--job', str(job_path)]
+            *(['--cat', str(job['category'])] if job.get('category') is not None else []), '--job', str(job_path)]
 
 
 @contextmanager
@@ -196,6 +196,9 @@ def run_job(job, config, emit=print):
 
 
 def _run_job(job, config, emit):
+    if not getattr(emit, 'history_managed', False):
+        from utils.attempt_history import record
+        return record(ROOT, job, config, emit, lambda sink: _run_job(job, config, sink))
     check_writable(config)
     from utils.database_utils import initialize_upload_database
     initialize_upload_database()
@@ -206,7 +209,7 @@ def _run_job(job, config, emit):
         job_path = Path(f.name)
     try:
         env = dict(os.environ, DIGITALCORE_CONFIG=str(config_path()),
-                   PYTHONIOENCODING='utf-8')
+                   PYTHONIOENCODING='utf-8', DIGITALCORE_HISTORY_WORKER='1')
         with subprocess.Popen(backend_command(job, job_path), cwd=ROOT, env=env,
                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                               encoding='utf-8', errors='replace', bufsize=1) as proc:
@@ -319,6 +322,34 @@ def watch(config, category, interval=None, stable=None, folder=None):
         print('Watcher stopped. Check DigitalCore before retrying an interrupted upload.')
     finally:
         db.close()
+
+
+def run_backend_cli(arguments):
+    """Keep the original backend.py CLI, with shared Activity history and locking."""
+    parser = argparse.ArgumentParser(description='Upload a release folder')
+    parser.add_argument('directory')
+    parser.add_argument('-cat', '--cat', type=int)
+    parser.add_argument('--job', help='Local JSON file containing upload details')
+    args = parser.parse_args(arguments)
+    job = json.loads(Path(args.job).read_text(encoding='utf-8')) if args.job else {}
+    if not isinstance(job, dict):
+        raise ValueError('The upload job must be a JSON object.')
+    os.chdir(ROOT)
+    ensure_config()
+    config = load_config()
+    errors = check_config(config)
+    if errors:
+        raise ValueError('\n'.join(errors))
+    source = Path(args.directory).expanduser()
+    if not source.is_absolute():
+        source = Path(config.get('Paths', 'DATADIR')) / source
+    source = source.resolve(strict=True)
+    if not source.is_dir():
+        raise ValueError('Choose a release folder.')
+    if args.cat is not None and args.cat not in {row['id'] for row in categories()}:
+        raise ValueError('Choose a valid category.')
+    job.update(source=str(source), category=args.cat)
+    return run_job(job, config)
 
 
 def main():

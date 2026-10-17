@@ -103,7 +103,11 @@ class Workspace:
         self.history = JobHistory(database_path, legacy_path=database_path.with_name('web-history.json'))
         config = uploader.load_config()
         self.security = Security(self.history, password, os.environ.get('DIGITALCORE_WEB_USERNAME') or config.get('Web', 'USERNAME', fallback='admin'), config.get('Web', 'ALLOWED_IPS', fallback=''))
-        self.history.recover_interrupted()
+        try:
+            with uploader.upload_lock():
+                self.history.recover_interrupted()
+        except ValueError:
+            pass  # An external CLI worker still owns the shared upload lock.
         self.clients = QbitClients(self.history)
         self.imports = ImportQueue(self)
 
@@ -293,6 +297,7 @@ class Workspace:
                 clean = {key: redact(value) if isinstance(value, str) else value for key, value in fields.items()}
                 self.history.update(identity, clean)
             emit.event = event
+            emit.history_managed = True
             code = None
             error = None
             status = 'needs_review'

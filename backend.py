@@ -538,4 +538,11 @@ def main():
         cleanup_tmp_dir(tmp_dir, cleanup_enabled)
 
 if __name__ == "__main__":
+    if os.environ.get('DIGITALCORE_HISTORY_WORKER') != '1':
+        from uploader import run_backend_cli
+        try:
+            sys.exit(run_backend_cli(sys.argv[1:]))
+        except (OSError, ValueError) as exc:
+            print(f'ERROR: {exc}', file=sys.stderr)
+            sys.exit(2)
     main()

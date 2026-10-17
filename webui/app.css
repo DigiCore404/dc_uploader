@@ -129,7 +129,7 @@ body{font-size:1rem}.sidebar{width:280px;padding:36px 26px 24px}.main-shell{marg
 
 .job-navigation{position:sticky;top:10px;z-index:5;display:flex;align-items:center;gap:16px;margin:0 0 12px;padding:9px 12px;background:#132131;border:1px solid var(--line);border-radius:9px;box-shadow:0 2px 8px #00000008}.job-navigation>span{font-size:.8125rem;color:#9aadc0}
 
-/* DigitalCore Nexus palette and branding. */
+/* DigitalCore palette and branding. */
 :root{color-scheme:dark;--ink:#1a2c3e;--muted:#9aadc0;--pink:#79dafa;--accent:#79dafa;--line:#30455b;--bg:#090f17;--nav:#0e1824;--soft:#162535}
 body{background:radial-gradient(ellipse at 85% 0,#162a3c 0,transparent 45%),#090f17;color:var(--ink)}
 .card,dialog,.login-card,.metadata-result,.activity-row,.job-navigation{background:#111d2b;color:#1a2c3e;border-color:#30455b}
@@ -151,7 +151,7 @@ input,select,textarea,pre,.log-output{background:#0a1521;color:#1a2c3e;border-co
 .avatar,.section-icon,.folder-illustration,.art-folder{background:#23435d!important;color:#a4e8ff!important}.sidebar .workspace-name{margin-top:28px}.server-dot,.preview-live i{background:#83dbad}.nav-item svg{color:#8dc9ef}
 .status-badge:not(.ready){background:#443b22;color:#f1d58c}.notice-icon{background:#354966;color:#d7ecff}.login-art .brand{max-width:420px}.login-card .small-logo{max-width:220px}
 
-/* Keep foregrounds bright against the Nexus panels, including hover states. */
+/* Keep foregrounds bright against the DigitalCore panels, including hover states. */
 :root{--ink:#e4edf5;--muted:#9aadc0}
 body,h1,h2,h3,h4,strong{color:#e4edf5}
 .topbar strong,.card-heading h2,.metadata-preview-heading h3,.preview-content h3{color:#e4edf5}

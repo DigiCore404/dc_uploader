@@ -5,71 +5,27 @@ from pathlib import Path
 
 from utils.bcolors import bcolors
 
-MEDIA_EXTENSIONS = {'.mp4', '.mkv', '.avi', '.mov', '.flv', '.wmv', '.mpg', '.mpeg', '.webm', '.m4v', '.m2ts', '.ts'}
-SAMPLE_WORDS = {'sample', 'samples', 'proof', 'trailer', 'extras', 'extra'}
 
-
-def is_sample_path(path):
-    """Return True for obvious sample/extras paths."""
-    path = Path(path)
-    parts = {part.lower() for part in path.parts}
-    name = path.name.lower()
-    stem = path.stem.lower()
-    return bool(parts & SAMPLE_WORDS) or 'sample' in stem or name.startswith('proof.')
-
-
-def iter_media_files(directory):
-    """Walk media files using os.walk; this behaves better on rar2fs/FUSE than Path.rglob."""
-    seen_dirs = set()
-    for dirpath, dirnames, filenames in os.walk(directory, followlinks=True):
-        try:
-            stat_result = os.stat(dirpath)
-        except OSError:
-            dirnames[:] = []
-            continue
-
-        dir_key = (stat_result.st_dev, stat_result.st_ino)
-        if dir_key in seen_dirs:
-            dirnames[:] = []
-            continue
-        seen_dirs.add(dir_key)
-
-        for filename in filenames:
-            path = Path(dirpath) / filename
-            if path.suffix.lower() in MEDIA_EXTENSIONS:
-                yield path
-
-
-def media_priority(path):
-    try:
-        size_score = -path.stat().st_size
-    except OSError:
-        size_score = 0
-    return (is_sample_path(path), size_score, str(path).lower())
-
-
-def generate_mediainfo(directory, tmp_dir, allow_sample_fallback=True):
+def generate_mediainfo(directory, tmp_dir):
     """Generate media info for movie files in the given directory using the mediainfo executable, and save to a file in tmp_dir."""
+    media_extensions = ['*.mp4', '*.mkv', '*.avi', '*.mov', '*.flv', '*.wmv', '*.mpg', '*.mpeg', '*.webm', '*.m4v']
+    
     mediainfo_output = ""
     print(f"{bcolors.YELLOW}Creating mediainfo for directory: {directory}\n{bcolors.ENDC}")
 
-    # os.walk with followlinks is more reliable for symlinks and rar2fs/FUSE mounts.
-    media_files = sorted(iter_media_files(directory), key=media_priority)
-
+    # Collect all movie files matching the extensions recursively
+    media_files = []
+    for ext in media_extensions:
+        found_files = list(Path(directory).rglob(ext))
+        media_files.extend(found_files)
+    
     if not media_files:
         print(f"{bcolors.FAIL}No media files found.{bcolors.ENDC}")  # Red text for no files found
         return
-
-    print(f"Found {len(media_files)} media files, attempting to get mediainfo from one candidate.")
-
-    main_media_files = [path for path in media_files if not is_sample_path(path)]
-    if main_media_files:
-        media_files = main_media_files
-    elif not allow_sample_fallback:
-        print(f"{bcolors.WARNING}Only sample/extras media files found; skipping mediainfo.{bcolors.ENDC}")
-        return
     else:
-        print(f"{bcolors.WARNING}Only sample/extras media files found; using sample fallback.{bcolors.ENDC}")
+        print(f"Found {len(media_files)} media files, attempting to get mediainfo from one candidate.")
+        # Sort found media files alphabetically
+        media_files = sorted(media_files)
 
     for media_file in media_files:
         print(f"Processing file: {media_file}\n")

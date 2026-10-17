@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Manager</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
+</head>
+<body>
+
+{% include 'header.html' %}
+<div class="container mt-4">
+    <h1 class="mb-4">Upload Manager</h1>
+
+    <h2 class="mt-4">Available Directories</h2>
+    <table class="table table-striped" id="directoriesTable">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- The table will be dynamically populated by JavaScript -->
+        </tbody>
+    </table>
+</div>
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    var table = $('#directoriesTable').DataTable({
+        "order": [[2, "desc"]],  // Order by the date column (index 2), descending
+        "columnDefs": [
+            { "orderable": true, "targets": [2] },  // Allow sorting only on the date column
+            { "orderable": false, "targets": [0, 1, 3] },  // Disable sorting on name, status, and actions columns
+            { "className": "nowrap", "targets": [0, 2] }  // Apply nowrap class to name and date columns
+        ]
+    });
+
+    // Function to update the table with new directory data
+    function updateTable() {
+        var currentPage = table.page();  // Store the current page number
+
+        $.ajax({
+            url: '/get_directories_json',
+            type: 'GET',
+            success: function(response) {
+                // Map the response data into the structure expected by DataTables
+                var data = response.data.map(function(item) {
+                    return [
+                        item.name,  // Directory name
+                        getStatusBadge(item.status),  // Status badge
+                        item.date,  // Creation date
+                        getActions(item)  // Actions (upload/reset buttons)
+                    ];
+                });
+
+                // Clear existing rows and add new data
+                table.clear().rows.add(data).draw(false);  // False to keep the current pagination
+                table.page(currentPage).draw(false);  // Restore the page number
+            },
+            error: function(xhr, status, error) {
+                console.error("Error fetching directories: " + error);
+            }
+        });
+    }
+
+    // Helper function to get the status badge based on the directory status
+    function getStatusBadge(status) {
+        switch(status) {
+            case 'dupe':
+                return '<span class="badge badge-dupe">Dupe</span>';
+            case 'uploading':
+                return '<span class="badge badge-uploading">Uploading</span>';
+            case 'uploaded':
+                return '<span class="badge badge-uploaded">Uploaded</span>';
+            default:
+                return status;  // Return raw status if it's not a known status
+        }
+    }
+
+    // Helper function to generate action buttons based on the directory status
+    function getActions(directory) {
+        var actions = '<div class="btn-group" role="group">';
+        if (directory.status === 'none') {
+            actions += '<form class="upload-form" style="display:inline;">' +
+                       '<input type="hidden" name="directory_name" value="' + directory.name + '">' +
+                       '<button type="submit" class="btn btn-success btn-sm">Upload</button>' +
+                       '</form>';
+        } else {
+            actions += '<form class="reset-status-form" style="display:inline;">' +
+                       '<input type="hidden" name="directory_name" value="' + directory.name + '">' +
+                       '<button type="submit" class="btn btn-danger btn-sm">Reset Status</button>' +
+                       '</form>';
+        }
+        actions += '</div>';
+        return actions;
+    }
+
+    // Handle form submission for Upload without refreshing the page
+    function handleUpload(event, directoryName) {
+        event.preventDefault();  // Prevent default form submission behavior
+        $.ajax({
+            type: 'POST',
+            url: '/upload',
+            data: JSON.stringify({ directory_name: directoryName }),  // Send JSON data
+            contentType: 'application/json',  // Set the content type to JSON
+            success: function(response) {
+                console.log('Upload started for directory:', directoryName);
+                updateTable();  // Refresh the table after uploading
+            },
+            error: function(xhr, status, error) {
+                console.error('Error during upload:', error);
+            }
+        });
+    }
+
+    // Handle form submission for Reset Status without refreshing the page
+    function handleResetStatus(event, directoryName) {
+        event.preventDefault();  // Prevent default form submission behavior
+        $.ajax({
+            type: 'POST',
+            url: '/reset_status',
+            data: JSON.stringify({ directory_name: directoryName }),  // Send JSON data
+            contentType: 'application/json',  // Set the content type to JSON
+            success: function(response) {
+                console.log('Status reset for directory:', directoryName);
+                updateTable();  // Refresh the table after resetting status
+            },
+            error: function(xhr, status, error) {
+                console.error('Error during status reset:', error);
+            }
+        });
+    }
+
+    // Attach handleUpload to form submission for upload buttons
+    $(document).on('submit', 'form.upload-form', function(event) {
+        var directoryName = $(this).find('input[name="directory_name"]').val();
+        handleUpload(event, directoryName);
+    });
+
+    // Attach handleResetStatus to form submission for reset status buttons
+    $(document).on('submit', 'form.reset-status-form', function(event) {
+        var directoryName = $(this).find('input[name="directory_name"]').val();
+        handleResetStatus(event, directoryName);
+    });
+
+    // Poll every 10 seconds to fetch new directory data and update the table
+    setInterval(updateTable, 10000);  // Poll every 10 seconds
+
+    // Initial table load
+    updateTable();
+});
+</script>
+</body>
+</html>

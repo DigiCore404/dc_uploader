@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Categories</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+
+{% include 'header.html' %}
+
+<div class="container mt-5">
+    <h1>Edit Categories</h1>
+
+    <!-- Display flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="alert alert-{{ messages[0][0] }} alert-dismissible fade show" role="alert">
+                {{ messages[0][1] }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+        <div class="row">
+            {% for category_name, category_data in categories.items() %}
+            <div class="col-md-4"> <!-- 3 columns per row -->
+                <div class="card mb-3">
+                    <!-- Category Header (Click to toggle collapse) -->
+                    <div class="card-header" id="heading{{ loop.index }}">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse{{ loop.index }}" aria-expanded="false" aria-controls="collapse{{ loop.index }}">
+                                <strong>{{ category_name.strip() }}</strong> <!-- Main Category Name -->
+                            </button>
+                        </h5>
+                    </div>
+
+                    <!-- Collapsible content -->
+                    <div id="collapse{{ loop.index }}" class="collapse" aria-labelledby="heading{{ loop.index }}">
+                        <div class="card-body">
+                            <!-- Check if there are patterns -->
+                            <div class="mb-3">
+                                <label for="initial_patterns_{{ loop.index }}" class="form-label">Initial Match Patterns</label>
+                                <textarea class="form-control" id="initial_patterns_{{ loop.index }}" name="{{ category_name.strip() }}_initial_patterns" {% if not category_data['patterns']['initial'] %} disabled {% endif %}>{{ category_data['patterns']['initial'] | join(', ') }}</textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="exclude_patterns_{{ loop.index }}" class="form-label">Exclude Patterns</label>
+                                <textarea class="form-control" id="exclude_patterns_{{ loop.index }}" name="{{ category_name.strip() }}_exclude_patterns" {% if not category_data['patterns']['exclude_patterns'] %} disabled {% endif %}>{{ category_data['patterns']['exclude_patterns'] | join(', ') }}</textarea>
+                            </div>
+
+                            <!-- Loop through subcategories -->
+                            <div class="row">
+                                {% for subcategory in category_data['categories'] %}
+                                <div class="col-md-12"> <!-- Subcategories inside main category -->
+                                    <div class="card mb-3">
+                                        <div class="card-header">
+                                            {{ subcategory['name'] }} <!-- Subcategory Name -->
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label for="subcat_name_{{ loop.index }}" class="form-label">Name</label>
+                                                <input type="text" class="form-control" id="subcat_name_{{ loop.index }}" name="{{ category_name.strip() }}_subcat_name_{{ loop.index }}" value="{{ subcategory['name'] }}">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="subcat_id_{{ loop.index }}" class="form-label">Cat ID</label>
+                                                <input type="text" class="form-control" id="subcat_id_{{ loop.index }}" name="{{ category_name.strip() }}_subcat_id_{{ loop.index }}" value="{{ subcategory['cat_id'] }}">
+                                            </div>
+                                            <!-- Only show pattern fields if they exist -->
+                                            {% if subcategory['patterns'] %}
+                                            <div class="mb-3">
+                                                <label for="patterns_{{ loop.index }}" class="form-label">Patterns</label>
+                                                <textarea class="form-control" id="patterns_{{ loop.index }}" name="{{ category_name.strip() }}_patterns_{{ loop.index }}">{{ subcategory['patterns'] | join(', ') }}</textarea>
+                                            </div>
+                                            {% endif %}
+                                            {% if subcategory['exclude_patterns'] %}
+                                            <div class="mb-3">
+                                                <label for="exclude_patterns_{{ loop.index }}" class="form-label">Exclude Patterns</label>
+                                                <textarea class="form-control" id="exclude_patterns_{{ loop.index }}" name="{{ category_name.strip() }}_exclude_patterns_{{ loop.index }}">{{ subcategory['exclude_patterns'] | join(', ') }}</textarea>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm">Save Changes</button>
+    </form>
+</div>
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.3/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

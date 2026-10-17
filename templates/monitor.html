@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitor Output</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
+    <style>
+
+        .terminal {
+            background-color: #111; /* Darker background for terminal area */
+            color: #00FF00; /* Green text */
+            font-family: 'Courier New', Courier, monospace;
+            padding: 10px;
+            border-radius: 5px;
+            height: 900px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        /* Blinking cursor */
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            background-color: #00FF00;
+            margin-left: 5px;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+
+<body>
+    {% include 'header.html' %}
+
+    <div class="monitor-container">
+        <!-- First terminal for auto uploads -->
+        <div class="terminal-container">
+            <h3>Monitor Auto Upload</h3>
+            <div id="terminalOutput" class="terminal">
+                <!-- Simulate a terminal with some placeholder content -->
+                <span id="terminalContent">root@server:~$ ls -la</span><span class="cursor"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <!-- Include AnsiUp (from a CDN or your static folder) -->
+    <script src="{{ url_for('static', filename='ansi_up.js') }}"></script>
+
+    <script>
+        var ansiUp = new AnsiUp();
+        var last_id = 0;  // Keep track of the last shown log's id
+
+        function fetchNewTerminalOutput() {
+            $.ajax({
+                url: '/get_terminal_output',
+                type: 'GET',
+                data: { last_id: last_id },  // Send the last displayed id
+                success: function(response) {
+                    var output = '';
+                    response.data.forEach(function(entry) {
+                        output += ansiUp.ansi_to_html(entry.line);
+                        last_id = entry.id;  // Update the last_id to the latest log's id
+                    });
+
+                    // Append new lines to the terminal div and scroll to bottom
+                    $('#terminalContent').append(output);
+                    var terminal = document.getElementById('terminalOutput');
+                    terminal.scrollTop = terminal.scrollHeight;  // Auto-scroll to bottom
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error fetching terminal output: " + error);
+                }
+            });
+        }
+
+        // Poll every 2 seconds to fetch new terminal output
+        setInterval(fetchNewTerminalOutput, 2000);  // 2000ms = 2 seconds
+    </script>
+
+</body>
+
+</html>

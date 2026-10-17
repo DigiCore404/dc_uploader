@@ -16,6 +16,7 @@
       }
     ]
   },
+
   "MUSIC_MP3": {
     "priority": 80,
     "patterns": {
@@ -41,6 +42,7 @@
       }
     ]
   },
+
   "MUSIC_FLAC": {
     "patterns": {
       "initial": [
@@ -60,6 +62,7 @@
       }
     ]
   },
+
   "SPORTS_EVENTS": {
     "priority": 85,
     "patterns": {
@@ -75,7 +78,7 @@
     },
     "categories": [
       {
-        "name": "Tv/SPORTS",
+        "name": "TV/Sports",
         "cat_id": "15",
         "patterns": [
           "(?:^|[.\\-_])(?:nfl|nba|ncaa|nhl|nsr|mlb|mls|fifa|nrl|nwsl|spfl|vfl|afl|nrlw|motogp|moto2|moto3|f1|formula1|formula2|formula3|formula4|formulae|indycar|wrc|erc|la\\.?liga|serie\\s?a|bundesliga|epl|fa\\.?cup|uefa|champions\\s?league|europa\\s?league|premier\\s?league|ligue\\s?1|ufc|mma|wwe|wwf|boxing|budo\\s?striking|glory|pdc|snooker|darts|poker|grand\\s?prix|rennen|qualifikation|freies\\s?training|spieltag|vorberichte|cricket|rugby|wimbledon|giro\\s?d[''']italia|tour\\s?de\\s?france|vuelta\\s?a\\s?espa|match\\s?of\\s?the\\s?day|soccer\\s?aid|world\\s?cup|olympics?|Cycling)(?:[.\\-_]|$)"
@@ -84,6 +87,7 @@
       }
     ]
   },
+
   "SD_MOVIES_TV_SPORTS_PACKS": {
     "patterns": {
       "initial": [
@@ -100,7 +104,7 @@
     },
     "categories": [
       {
-        "name": "Tv/PACKS",
+        "name": "TV Packs/SD",
         "cat_id": "12",
         "patterns": [
           ".*[Ss][0-9][0-9].*",
@@ -116,7 +120,7 @@
         ]
       },
       {
-        "name": "Tv/SD",
+        "name": "Series/SD",
         "cat_id": "10",
         "patterns": [
           ".*[Ss][0-9][0-9].*[Ee][0-9][0-9].*",
@@ -130,7 +134,7 @@
         ]
       },
       {
-        "name": "Tv/SPORTS",
+        "name": "Sports",
         "cat_id": "15",
         "patterns": [
           "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)"
@@ -154,6 +158,7 @@
       }
     ]
   },
+
   "2160P_MOVIES_TV_SPORTS_PACKS": {
     "patterns": {
       "initial": [
@@ -166,7 +171,7 @@
     },
     "categories": [
       {
-        "name": "Tv/PACKS",
+        "name": "TV Packs/2160p",
         "cat_id": "12",
         "patterns": [
           ".*[Ss][0-9][0-9].*",
@@ -181,7 +186,7 @@
         ]
       },
       {
-        "name": "Tv/2160p",
+        "name": "Series/2160p",
         "cat_id": "13",
         "patterns": [
           ".*[Ss][0-9][0-9].*[Ee][0-9][0-9].*",
@@ -196,7 +201,7 @@
         ]
       },
       {
-        "name": "Tv/SPORTS",
+        "name": "Sports",
         "cat_id": "15",
         "patterns": [
           "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)"
@@ -220,6 +225,7 @@
       }
     ]
   },
+
   "1080P_MOVIES_TV_SPORTS_PACKS": {
     "patterns": {
       "initial": [
@@ -232,7 +238,7 @@
     },
     "categories": [
       {
-        "name": "Tv/PACKS",
+        "name": "TV Packs/1080p",
         "cat_id": "12",
         "patterns": [
           ".*[Ss][0-9][0-9].*",
@@ -247,7 +253,7 @@
         ]
       },
       {
-        "name": "Tv/1080p",
+        "name": "Series/1080p",
         "cat_id": "9",
         "patterns": [
           ".*[Ss][0-9][0-9].*[Ee][0-9][0-9].*",
@@ -262,7 +268,7 @@
         ]
       },
       {
-        "name": "Tv/SPORTS",
+        "name": "Sports",
         "cat_id": "15",
         "patterns": [
           "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)"
@@ -286,6 +292,7 @@
       }
     ]
   },
+
   "720P_MOVIES_TV_SPORTS_PACKS": {
     "patterns": {
       "initial": [
@@ -298,7 +305,7 @@
     },
     "categories": [
       {
-        "name": "Tv/PACKS",
+        "name": "TV Packs/720p",
         "cat_id": "12",
         "patterns": [
           ".*[Ss][0-9][0-9].*",
@@ -313,7 +320,7 @@
         ]
       },
       {
-        "name": "Tv/720p",
+        "name": "Series/720p",
         "cat_id": "8",
         "patterns": [
           ".*[Ss][0-9][0-9].*[Ee][0-9][0-9].*",
@@ -328,7 +335,7 @@
         ]
       },
       {
-        "name": "Tv/SPORTS",
+        "name": "Sports",
         "cat_id": "15",
         "patterns": [
           "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)"
@@ -352,6 +359,7 @@
       }
     ]
   },
+
   "BLURAY_COMPLETE_MOVIES_TV_SPORTS_PACKS": {
     "patterns": {
       "initial": [
@@ -367,7 +375,7 @@
     },
     "categories": [
       {
-        "name": "Tv/PACKS",
+        "name": "TV Packs/Bluray",
         "cat_id": "12",
         "patterns": [
           ".*[Ss][0-9][0-9].*",
@@ -383,7 +391,7 @@
         ]
       },
       {
-        "name": "Tv/BluRay",
+        "name": "Series/Bluray",
         "cat_id": "14",
         "patterns": [
           ".*[Ss][0-9][0-9].*[Dd][0-9][0-9].*",
@@ -397,7 +405,7 @@
         ]
       },
       {
-        "name": "Tv/SPORTS",
+        "name": "Sports",
         "cat_id": "15",
         "patterns": [
           "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)"
@@ -407,7 +415,7 @@
         ]
       },
       {
-        "name": "Movies/Bluray/UHD",
+        "name": "Movies/UHD/Bluray",
         "cat_id": "38",
         "patterns": [
           "([Uu][hH][dD])"
@@ -417,7 +425,7 @@
         ]
       },
       {
-        "name": "Movies/BluRay",
+        "name": "Movies/Bluray",
         "cat_id": "3",
         "patterns": [
           ""
@@ -432,6 +440,7 @@
       }
     ]
   },
+
   "PC_ISO_GAMES": {
     "patterns": {
       "initial": [
@@ -443,7 +452,7 @@
     },
     "categories": [
       {
-        "name": "Games/Mac",
+        "name": "MacOSX/Games",
         "cat_id": "27",
         "patterns": [
           ".*\\b[Mm][aA][Cc]\\b.*",
@@ -454,7 +463,7 @@
         ]
       },
       {
-        "name": "Games/PC",
+        "name": "Games",
         "cat_id": "25",
         "patterns": [
           ""
@@ -465,6 +474,7 @@
       }
     ]
   },
+
   "NSW_GAMES": {
     "priority": 90,
     "patterns": {
@@ -478,7 +488,7 @@
     },
     "categories": [
       {
-        "name": "Games/Consoles",
+        "name": "NSW/Games",
         "cat_id": "26",
         "patterns": [
           "(?:^|[.\\-_])NSW(?:[.\\-_]|$)"
@@ -487,6 +497,7 @@
       }
     ]
   },
+
   "PS5_GAMES": {
     "priority": 90,
     "patterns": {
@@ -501,7 +512,7 @@
     },
     "categories": [
       {
-        "name": "Games/Consoles",
+        "name": "PS5/Games",
         "cat_id": "26",
         "patterns": [
           "(?:^|[.\\-_])PS5(?:[.\\-_]|$)"
@@ -510,6 +521,7 @@
       }
     ]
   },
+
   "0DAY": {
     "patterns": {
       "initial": [
@@ -521,7 +533,7 @@
     },
     "categories": [
       {
-        "name": "Apps/Mac",
+        "name": "MacOSX/Apps",
         "cat_id": "21",
         "patterns": [
           ".*\\b[Mm][aA][Cc]\\b.*",
@@ -532,7 +544,7 @@
         ]
       },
       {
-        "name": "Apps/PC",
+        "name": "PC/Apps",
         "cat_id": "20",
         "patterns": [
           "([Ii][Ss][Oo])"
@@ -542,7 +554,7 @@
         ]
       },
       {
-        "name": "Apps/0DAY",
+        "name": "APPS/0day",
         "cat_id": "18",
         "patterns": [
           ""
@@ -553,6 +565,7 @@
       }
     ]
   },
+
   "APPS": {
     "patterns": {
       "initial": [
@@ -564,7 +577,7 @@
     },
     "categories": [
       {
-        "name": "Apps/Mac",
+        "name": "MacOSX/Apps",
         "cat_id": "21",
         "patterns": [
           ".*\\b[Mm][aA][Cc]\\b.*",
@@ -575,7 +588,7 @@
         ]
       },
       {
-        "name": "Apps/Tutorials",
+        "name": "TUTORIAL/Apps",
         "cat_id": "33",
         "patterns": [
           "(-iLEARN|-UDUMMY|ELearning|-BLOAT|-SkilledHares|-QUiD|-LiBRO|-ViGOROUS|-APoLLo|-XCODE|-RiDWARE|-iNKiSO|-NOLEDGE|-CONSORTiUM|-REBAR|-ADSR|-ZH|-KNiSO|-BLZiSO|-STM|-QUASAR|-XQZT|-BooKWoRM|-kEISO|-TUTOR|-ELOHiM|-JGTiSO|-RPBISO|-BiFiSO|-SKiLLUP|-H0WT0|BOOKWARE|-iLST|-iLLiTERATE|-OXBRiDGE|-ANALYTiCS|-SHEPHERDS)$"
@@ -585,7 +598,7 @@
         ]
       },
       {
-        "name": "Apps/PC",
+        "name": "PC/Apps",
         "cat_id": "20",
         "patterns": [
           ""
@@ -596,6 +609,7 @@
       }
     ]
   },
+
   "DVDR": {
     "patterns": {
       "initial": [
@@ -607,7 +621,7 @@
     },
     "categories": [
       {
-        "name": "Movies/DVDR",
+        "name": "DVDR",
         "cat_id": "1",
         "patterns": [
           ""
@@ -618,6 +632,7 @@
       }
     ]
   },
+
   "MBLURAY": {
     "patterns": {
       "initial": [
@@ -630,7 +645,7 @@
     },
     "categories": [
       {
-        "name": "Music/MTV",
+        "name": "MBluray",
         "cat_id": "24",
         "patterns": [
           "([mM][bB][lL][uU][rR][aA][yY])",
@@ -642,6 +657,7 @@
       }
     ]
   },
+
   "MDVDR": {
     "patterns": {
       "initial": [
@@ -653,7 +669,7 @@
     },
     "categories": [
       {
-        "name": "Music/DVD",
+        "name": "MDVDR",
         "cat_id": "39",
         "patterns": [
           ".*[mM][dD][vV][dD][rR].*"
@@ -664,6 +680,7 @@
       }
     ]
   },
+
   "EBOOKS": {
     "priority": 90,
     "patterns": {
@@ -691,6 +708,7 @@
       }
     ]
   },
+
   "PORN_": {
     "patterns": {
       "initial": [
@@ -715,7 +733,7 @@
         ]
       },
       {
-        "name": "XXX/HD",
+        "name": "XXX/0DAY/HD",
         "cat_id": "31",
         "patterns": [
           "(1080[pP]|720[pP]|960[pP])"
@@ -726,7 +744,7 @@
         ]
       },
       {
-        "name": "XXX/Movies/4K",
+        "name": "XXX/MOVIES/4K",
         "cat_id": "37",
         "patterns": [
           "(2160[pP]|2880[pP]|3630[pP]|2700[pP]|4096[pP]|2048[pP]|3072[pP]|3840[pP]|3000[pP]|1440[pP])"
@@ -739,7 +757,7 @@
         ]
       },
       {
-        "name": "XXX/4K",
+        "name": "XXX/0DAY/4K",
         "cat_id": "32",
         "patterns": [
           "(2160[pP]|2880[pP]|3630[pP]|2700[pP]|4096[pP]|2048[pP]|3072[pP]|3840[pP]|3000[pP]|1440[pP])"
@@ -750,7 +768,7 @@
         ]
       },
       {
-        "name": "XXX/Imagesets",
+        "name": "XXX/IMAGESET",
         "cat_id": "34",
         "patterns": [
           "(IMAGESET)"
@@ -781,6 +799,7 @@
       }
     ]
   },
+
   "ROMS": {
     "priority": 85,
     "patterns": {
@@ -791,13 +810,14 @@
     },
     "categories": [
       {
-        "name": "Games/ROMS",
+        "name": "ROMs",
         "cat_id": "43",
         "patterns": [],
         "exclude_patterns": []
       }
     ]
   },
+
   "UNKNOWN": {
     "patterns": {
       "initial": [

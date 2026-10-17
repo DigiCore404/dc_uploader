@@ -28,8 +28,6 @@ def prepare_template(template_path, output_path, replacements):
     """
     template = load_template(template_path)
     
-    if replacements.get('!description!') and '!description!' not in template:
-        template += '\n\n!description!'
     for placeholder, value in replacements.items():
         template = replace_placeholder(template, placeholder, value)
 

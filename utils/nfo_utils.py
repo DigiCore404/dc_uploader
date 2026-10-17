@@ -1,5 +1,7 @@
 import os
+import subprocess
 from pathlib import Path
+from tempfile import NamedTemporaryFile
 
 from utils.bcolors import bcolors
 from utils.config_loader import ConfigLoader
@@ -28,36 +30,48 @@ def find_nfo_file(directory):
             return file
     return None
 
-def read_nfo_content(nfo_file: Path, tmp_dir: Path = None, from_encoding: str = 'cp437', to_encoding: str = 'utf-8') -> str:
+def read_nfo_content(nfo_file: Path, tmp_dir: Path, from_encoding: str = 'cp437', to_encoding: str = 'utf-8') -> str:
     """
-    Read the content of the .nfo file, converting classic scene cp437 encoding to UTF-8.
-
-    Done in pure Python (no iconv subprocess or temp files needed). Falls back to
-    UTF-8 with replacement characters if the primary decode fails.
+    Read the content of the .nfo file, handling potential encoding issues and converting to UTF-8.
 
     Args:
         nfo_file (Path): The path to the .nfo file.
-        tmp_dir (Path): Unused, kept for backwards compatibility.
+        tmp_dir (Path): The temporary directory to use for intermediate files.
         from_encoding (str): The source encoding (default is 'cp437').
-        to_encoding (str): Unused, output is always a Python string.
+        to_encoding (str): The target encoding (default is 'utf-8').
 
     Returns:
         str: The content of the .nfo file.
     """
-    raw = Path(nfo_file).read_bytes()
-
-    # Many modern NFOs are actually UTF-8; prefer that when it decodes cleanly
     try:
-        return raw.decode('utf-8')
-    except UnicodeDecodeError:
-        pass
+        # Ensure tmp_dir exists
+        tmp_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Create a temporary file in the specified tmp_dir
+        with NamedTemporaryFile(delete=False, mode='w+', encoding=to_encoding, dir=tmp_dir) as temp_file:
+            temp_file_path = temp_file.name
+            
+            # Convert the file encoding using iconv
+            result = subprocess.run(
+                ['iconv', f'--from-code={from_encoding}', f'--to-code={to_encoding}', str(nfo_file)],
+                stdout=temp_file,
+                stderr=subprocess.PIPE,
+                check=True
+            )
+        
+        # Read the content from the temporary file
+        with open(temp_file_path, 'r', encoding=to_encoding) as file:
+            content = file.read()
+        
+        return content
+    except subprocess.CalledProcessError as e:
+        raise RuntimeError(f"Error converting file encoding: {e}")
+    finally:
+        # Clean up the temporary file
+        if Path(temp_file_path).exists():
+            Path(temp_file_path).unlink()
 
-    try:
-        return raw.decode(from_encoding)
-    except (UnicodeDecodeError, LookupError):
-        return raw.decode('utf-8', errors='replace')
-
-def process_nfo(directory, replacements, log_file_path, nfo_file=None):
+def process_nfo(directory, replacements, log_file_path):
     """
     Find a .nfo file in the specified directory, read its content, and update the replacements dictionary.
 
@@ -67,7 +81,7 @@ def process_nfo(directory, replacements, log_file_path, nfo_file=None):
         log_file_path (Path): The path to the log file for logging errors.
     """
     try:
-        nfo_file = Path(nfo_file) if nfo_file else find_nfo_file(directory)
+        nfo_file = find_nfo_file(directory)
         if nfo_file:
             # Read the NFO content while preserving formatting
             nfo_content = read_nfo_content(nfo_file, TMP_DIR)

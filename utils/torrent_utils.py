@@ -1,323 +1,372 @@
-import subprocess
 import configparser
-import json
 import os
+import platform
 import re
-import math
+import shlex
 import shutil
+import subprocess
 import time
 from pathlib import Path
 
+import cli_ui
 import requests
-from utils.torrent_metadata import TorrentMetadata as Torrent
+from torf import Torrent, ReadError, BdecodeError, MetainfoError, VerifyIsDirectoryError, VerifyFileSizeError, \
+    WriteError
 
 from utils.bcolors import bcolors
 from utils.config_loader import ConfigLoader
-from utils.job_events import publish as job_event
 from utils.fastresume_utils import add_fastresume
 from utils.logging_utils import log_to_file
 
 # Load configuration
 config = ConfigLoader().get_config()
-ROOT_DIR = Path(__file__).resolve().parents[1]
-REQUEST_TIMEOUT = config.getint('Network', 'Timeout', fallback=60)
-VERIFY_SSL = config.getboolean('Network', 'VERIFY_SSL', fallback=False)
-TORRENT_DOWNLOAD_RETRIES = config.getint('Network', 'TorrentDownloadRetries', fallback=12)
-TORRENT_DOWNLOAD_RETRY_DELAY = config.getfloat('Network', 'TorrentDownloadRetryDelay', fallback=5.0)
 
-class UploadResponseError(RuntimeError):
-    """The upload outcome cannot be determined from the server confirmation."""
-
-
-def parse_upload_response(response):
-    try:
-        payload = response.json()
-    except ValueError as exc:
-        raise UploadResponseError(
-            f"Server returned HTTP {response.status_code} without valid JSON. "
-            "The torrent may already have been uploaded. Check the site before retrying; "
-            "the server response is recorded in files/upload_response.log."
-        ) from exc
-    if (not isinstance(payload, dict) or isinstance(payload.get('id'), bool)
-            or not str(payload.get('id', '')).isdigit() or int(payload['id']) <= 0
-            or not isinstance(payload.get('name'), str) or not payload['name'].strip()):
-        raise UploadResponseError(
-            "Server confirmation is missing a valid torrent ID or name. "
-            "Check the site before retrying; see files/upload_response.log."
-        )
-    return payload
-
-
-def resolve_config_path(path_value):
-    path = Path(path_value)
-    return path if path.is_absolute() else ROOT_DIR / path
-
-
-TMP_DIR = str(resolve_config_path(config.get('Paths', 'TMP_DIR')) / str(os.getpid()))
-WATCHFOLDER = str(resolve_config_path(config.get('Paths', 'WATCHFOLDER')))
+TMP_DIR = os.path.join(config.get('Paths', 'TMP_DIR'), str(os.getpid()))
+WATCHFOLDER = config.get('Paths', 'WATCHFOLDER')
 PREPENDNAME = config.get('Settings', 'PREPENDNAME')
 
 # Ensure TMP_DIR exists
 os.makedirs(TMP_DIR, exist_ok=True)
-
-
-
-def persistent_log_path(file_name):
-    upload_log = Path(config.get('Paths', 'UPLOADLOG', fallback='files/upload.log'))
-    log_dir = upload_log.parent if upload_log.parent != Path('') else Path('files')
-    return resolve_config_path(log_dir) / file_name
-
-
-def log_download_event(file_name, message):
-    """Keep per-run tmp logs and persistent files/ logs for post-cleanup debugging."""
-    log_to_file(os.path.join(TMP_DIR, file_name), message)
-    log_to_file(persistent_log_path(file_name), message)
-
-
-def copy_torrent_to_watchfolder(source_path, final_torrent_path, remove_source=False):
-    """Copy via a temporary file so qBittorrent never sees a partial torrent."""
-    temp_final_path = f"{final_torrent_path}.tmp.{os.getpid()}"
-    shutil.copyfile(source_path, temp_final_path)
-    os.replace(temp_final_path, final_torrent_path)
-    if remove_source:
-        os.remove(source_path)
-
-
-def fetch_torrent_with_retries(url, auth_headers, release_name, log_file):
-    """Download torrent bytes, retrying while the site finishes publishing the torrent."""
-    retry_statuses = {404, 409, 429, 500, 502, 503, 504}
-    attempts = max(1, TORRENT_DOWNLOAD_RETRIES)
-
-    for attempt in range(1, attempts + 1):
-        try:
-            response = requests.get(url, headers=auth_headers, timeout=REQUEST_TIMEOUT, verify=VERIFY_SSL)
-        except requests.RequestException as exc:
-            if attempt >= attempts:
-                raise
-            message = (
-                f"Torrent download request failed for {release_name}; "
-                f"attempt={attempt}/{attempts}, retry_in={TORRENT_DOWNLOAD_RETRY_DELAY}s, error={exc}"
-            )
-            log_download_event(log_file, message)
-            log_download_event('torrent_download_error.log', message)
-            time.sleep(TORRENT_DOWNLOAD_RETRY_DELAY)
-            continue
-
-        if response.ok:
-            if attempt > 1:
-                log_download_event(log_file, f"Torrent download succeeded after retry: attempt={attempt}/{attempts}")
-            return response
-
-        if response.status_code in retry_statuses and attempt < attempts:
-            message = (
-                f"Torrent download not ready for {release_name}; "
-                f"status={response.status_code}, attempt={attempt}/{attempts}, "
-                f"retry_in={TORRENT_DOWNLOAD_RETRY_DELAY}s, url={url}, body={response.text[:300]}"
-            )
-            log_download_event(log_file, message)
-            log_download_event('torrent_download_error.log', message)
-            time.sleep(TORRENT_DOWNLOAD_RETRY_DELAY)
-            continue
-
-        response.raise_for_status()
-
-    raise RuntimeError(f"Torrent download failed after {attempts} attempts for {release_name}: {url}")
-
-
-def validate_downloaded_torrent(torrent_path, log_file):
-    try:
-        torrent = Torrent.read(str(torrent_path))
-        torrent.validate()
-        job_event(torrent_hash=torrent.infohash)
-    except Exception as exc:
-        message = f"Downloaded torrent is invalid and will not be copied to watch folder: {torrent_path}; error={exc}"
-        log_download_event(log_file, message)
-        log_download_event('torrent_download_error.log', message)
-        raise RuntimeError(message)
-
-
-def place_torrent_in_watchfolder(
-    source_torrent_path,
-    release_name,
-    log_file,
-    remove_source=False,
-    source_label='torrent',
-    allow_plain_fallback=None,
-):
-    """Add fastresume when possible, then place a torrent in the watch folder."""
-    validate_downloaded_torrent(source_torrent_path, log_file)
-
-    final_torrent_path = os.path.join(WATCHFOLDER, f'{PREPENDNAME}{release_name}.torrent')
-    os.makedirs(WATCHFOLDER, exist_ok=True)
-    log_download_event(log_file, f"Watch folder target: {final_torrent_path}; source={source_label}")
-
-    plain_fallback_enabled = (
-        config.getboolean('Settings', 'WATCHFOLDER_FALLBACK_PLAIN', fallback=True)
-        if allow_plain_fallback is None
-        else bool(allow_plain_fallback)
-    )
-
-    if config.getboolean('Settings', 'ADDFASTRESUME'):
-        download_dir = config.get('Paths', 'DATADIR')
-        fastresume_output_path = os.path.join(TMP_DIR, f'{PREPENDNAME}{release_name}.fastresume.torrent')
-        log_download_event(
-            log_file,
-            f"Adding fastresume: download_dir={download_dir}, output={fastresume_output_path}, source={source_label}"
-        )
-        fastresume_ok = add_fastresume(source_torrent_path, download_dir, fastresume_output_path)
-
-        if fastresume_ok and os.path.exists(fastresume_output_path):
-            copy_torrent_to_watchfolder(fastresume_output_path, final_torrent_path, remove_source=True)
-            if remove_source:
-                os.remove(source_torrent_path)
-            log_download_event(log_file, f"Fastresume torrent copied to watch folder: {final_torrent_path}")
-            print(f"{bcolors.OKGREEN}Torrent copied to watch folder: {final_torrent_path}\n{bcolors.ENDC}")
-            return final_torrent_path
-
-        error_message = (
-            "Fast resume failed or output was not found. "
-            f"download_dir={download_dir}, output={fastresume_output_path}, source={source_label}"
-        )
-        log_download_event('torrent_download_error.log', error_message)
-        print(f"{bcolors.WARNING}{error_message}{bcolors.ENDC}")
-
-        if plain_fallback_enabled:
-            copy_torrent_to_watchfolder(source_torrent_path, final_torrent_path, remove_source=remove_source)
-            fallback_message = (
-                "Fastresume failed, but WATCHFOLDER_FALLBACK_PLAIN is enabled. "
-                f"Plain {source_label} copied to watch folder: {final_torrent_path}. "
-                "If qBittorrent's watched-folder save path points at DATADIR, this should still seed."
-            )
-            log_download_event(log_file, fallback_message)
-            log_download_event('torrent_download_error.log', fallback_message)
-            print(f"{bcolors.WARNING}{fallback_message}\n{bcolors.ENDC}")
-            return final_torrent_path
-
-        error_message = (
-            f"{error_message}. Plain watchfolder fallback is disabled for this upload, "
-            "so no torrent was copied that could start downloading instead of seeding."
-        )
-        log_download_event('torrent_download_error.log', error_message)
-        print(f"{bcolors.FAIL}{error_message}{bcolors.ENDC}")
-        return None
-
-    if allow_plain_fallback is False:
-        error_message = (
-            "ADDFASTRESUME is disabled, but this upload requires fastresume. "
-            f"Refusing to copy plain {source_label} to watch folder because it may download instead of seed: "
-            f"{final_torrent_path}"
-        )
-        log_download_event(log_file, error_message)
-        log_download_event('torrent_download_error.log', error_message)
-        print(f"{bcolors.FAIL}{error_message}{bcolors.ENDC}")
-        return None
-
-    copy_torrent_to_watchfolder(source_torrent_path, final_torrent_path, remove_source=remove_source)
-    log_download_event(log_file, f"Plain {source_label} copied to watch folder: {final_torrent_path}")
-    print(f"{bcolors.OKGREEN}Torrent copied to watch folder: {final_torrent_path}\n{bcolors.ENDC}")
-    return final_torrent_path
-
-
-class TorrentWatchFolderError(RuntimeError):
-    """Raised when the site accepted a torrent but local seeding setup failed."""
-
-    def __init__(self, message, *, torrent_id=None, torrent_name=None, torrent_url=None):
-        super().__init__(message)
-        self.torrent_id = torrent_id
-        self.torrent_name = torrent_name
-        self.torrent_url = torrent_url
-
+torf_start_time = time.time()
 
 def get_root_dir():
     """Use config.ini to get the root directory."""
     return os.path.dirname(os.path.abspath('config.ini'))
 
-def create_torrent(directory,temp_dir,edit,hasher,total_size_bytes=None,exclude_globs=(),exclude_regexs=(),source_torrent=None):
-    from utils.runtime_tools import find_tool
-    directory=Path(directory).resolve();temp_dir=Path(temp_dir);temp_dir.mkdir(parents=True,exist_ok=True)
-    binary=find_tool('mkbrr',config)
-    if not binary:raise RuntimeError('mkbrr is missing. Configure Torrent.MKBRR_BIN or reinstall the package.')
-    if hasher!='mkbrr':raise ValueError('Set Torrent.HASHER = mkbrr; the torf engine has been removed.')
-    output=temp_dir/(directory.name+'.torrent')
-    source_folder=config.get('Torrent','SOURCEFOLDER',fallback='').strip()
-    original=Path(source_folder)/(directory.name+'.torrent') if source_folder else None
-    common=['--tracker',config.get('Torrent','ANNOUNCEURL'),'--private','--source',config.get('Torrent','ESOURCE'),'--comment',config.get('Torrent','ECOMMENT'),'--skip-prefix']
-    editing=False
-    imported=None
-    if source_torrent:
-        from utils.source_torrent import prepare
-        imported=prepare(source_torrent,directory,temp_dir/'imported-source.torrent')
-        original=temp_dir/'imported-source.torrent'
-        if exclude_globs or exclude_regexs:raise ValueError('Import torrent editing cannot exclude payload files. Extracted/changed payloads need a separate new upload.')
-    if (source_torrent or edit) and original and original.is_file() and not exclude_globs and not exclude_regexs:
-        metadata=Torrent.read(original)
-        if metadata.name!=directory.name or not metadata.verify_filesize(directory):raise ValueError('Existing torrent does not match the selected release files.')
-        command=[binary,'modify',str(original),'--output',output.stem,'--output-dir',str(temp_dir),*common]
-        editing=True
-    else:
-        command=[binary,'create',str(directory),'--output',str(output),*common]
-        for pattern in exclude_globs:command+=['--exclude',str(pattern)]
-        if exclude_regexs:
-            import glob
-            patterns=[re.compile(pattern) for pattern in exclude_regexs]
-            for root,_,files in os.walk(directory):
-                for name in files:
-                    relative=Path(root,name).relative_to(directory).as_posix()
-                    if any(pattern.search(relative) for pattern in patterns):command+=['--exclude',glob.escape(relative)]
-    print('mkbrr: '+('editing existing torrent without rehashing' if editing else 'hashing release files'),flush=True)
-    job_event(stage='hashing',hash_progress=None if editing else 0.0,hash_mode='editing' if editing else 'hashing',hash_total=int(total_size_bytes or 0))
-    last_percent=-1
-    with subprocess.Popen(command,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,encoding='utf-8',errors='replace') as process:
-        for line in process.stdout:
-            plain=re.sub(r'\x1b\[[0-9;?]*[ -/]*[@-~]','',line).strip()
-            progress=re.search(r'Hashing pieces.*?(\d+(?:\.\d+)?)%',plain,re.I)
-            if progress:
-                percent=min(100,max(0,int(float(progress[1]))))
-                if percent==last_percent:continue
-                last_percent=percent
-                job_event(stage='hashing',hash_progress=percent/100,hash_mode='hashing',hash_total=int(total_size_bytes or 0))
-            if plain:print(plain,flush=True)
-        if process.wait():raise RuntimeError('mkbrr failed to create or edit the torrent.')
-    creator=config.get('Torrent','CREATOR',fallback='').strip()
-    if creator:
-        from utils.torrent_metadata import decode
-        from utils.source_torrent import encode
-        metainfo,_=decode(output.read_bytes());metainfo[b'created by']=creator.encode('utf-8')
-        output.write_bytes(encode(metainfo))
-    metadata=Torrent.read(output)
-    if imported and metadata.metainfo['info']['pieces']!=imported.metainfo['info']['pieces']:
-        raise RuntimeError('Edited torrent changed its piece hashes.')
-    if metadata.trackers != [[config.get('Torrent','ANNOUNCEURL')]]:
-        raise RuntimeError('Torrent tracker replacement failed; no upload was started.')
-    if not metadata.private or metadata.source!=config.get('Torrent','ESOURCE') or not metadata.verify_filesize(directory):raise RuntimeError('mkbrr output does not match the private release payload.')
-    job_event(stage='hashing',hash_progress=1.0,hash_mode='editing' if editing else 'hashing',hash_total=int(total_size_bytes or 0))
-    return str(output),metadata.piece_size
+def torf_cb(torrent, filepath, pieces_done, pieces_total):
+    global torf_start_time
 
+    if pieces_done == 0:
+        torf_start_time = time.time()  # Reset start time when hashing starts
+
+    elapsed_time = time.time() - torf_start_time
+
+    # Calculate percentage done
+    if pieces_total > 0:
+        percentage_done = (pieces_done / pieces_total) * 100
+    else:
+        percentage_done = 0
+
+    # Estimate ETA (if at least one piece is done)
+    if pieces_done > 0:
+        estimated_total_time = elapsed_time / (pieces_done / pieces_total)
+        eta_seconds = max(0, estimated_total_time - elapsed_time)
+        eta = time.strftime("%M:%S", time.gmtime(eta_seconds))
+    else:
+        eta = "--:--"
+
+    # Calculate hashing speed (MB/s)
+    if elapsed_time > 0 and pieces_done > 0:
+        piece_size = torrent.piece_size / (1024 * 1024)
+        speed = (pieces_done * piece_size) / elapsed_time
+        speed_str = f"{speed:.2f} MB/s"
+    else:
+        speed_str = "-- MB/s"
+
+    # Display progress with percentage, speed, and ETA
+    cli_ui.info_progress(f"Torf hashing... {speed_str} | ETA: {eta}", int(percentage_done), 100)
+
+def create_torrent(directory, temp_dir, edit, hasher):
+    """Create a torrent file from the given directory using torf-cli.
+        Args:
+            directory (Path): Path of the directory to generate a torrent for
+            temp_dir (Path): Path to the temp directory to store output
+            edit (bool): If true, edit the torrent file
+            hasher (str): Which hasher to use
+    """
+    try:
+        ecomment = config.get('Torrent', 'ECOMMENT').strip()
+        esource = config.get('Torrent', 'ESOURCE').strip()
+        creator = config.get('Torrent', 'CREATOR').strip()
+        announceurl = config.get('Torrent', 'ANNOUNCEURL').strip()
+        etorrentpath = config.get('Torrent', 'SOURCEFOLDER').strip().rstrip('/')
+    except (configparser.NoOptionError, configparser.NoSectionError) as e:
+        print(f"Config error: {e}")
+        return None
+
+    directory_path = Path(directory)
+    temp_dir_path = Path(temp_dir)
+    output_torrent = str(temp_dir_path) + f"/{directory_path.name}.torrent"
+
+    # Proceed only if SOURCEFOLDER is set
+    if etorrentpath:
+        etorrent_file_path = Path(etorrentpath) / f"{directory_path.name}.torrent"
+    else:
+        print("SOURCEFOLDER is not configured; not reusing existing torrent. New torrent will be generated.")
+        etorrent_file_path = None
+
+    if edit and etorrent_file_path:
+        if not etorrent_file_path.exists():
+            print("No existing .torrent found. New torrent will be generated.")
+            # Call itself, but set edit to false
+            return create_torrent(directory, temp_dir, False, hasher)
+
+        # Existing torrent *file* successfully found, try to use it
+        try:
+            reused_torrent = Torrent.read(f"{shlex.quote(str(etorrent_file_path))}")
+        except MetainfoError as e:
+            print(f"Invalid existing torrent. {e}\n"
+                  f"New torrent will be generated.")
+            # Call itself, but set edit to false
+            return create_torrent(directory, temp_dir, False, hasher)
+        except Exception as e:
+            # Catch the rest, the only error that is not treated as fatal is MetainfoError
+            log_to_file(temp_dir_path / 'create_torrent_error.log', str(e))
+            print(f"Error reusing torrent: {e}")
+            return None, None
+        else:
+            print(f"### Found existing torrent. {output_torrent}. Saving an edited copy")
+            # Now edit the torrent as an object
+            reused_torrent.trackers = [announceurl]
+            reused_torrent.comment = ecomment
+            reused_torrent.created_by = creator
+            piece_size = reused_torrent.piece_size
+            
+            info_dict = reused_torrent.metainfo['info']
+            valid_keys = ['name', 'piece length', 'pieces', 'private', 'source']
+
+            # Add the correct key based on single vs multi file torrent
+            if 'files' in info_dict:
+                valid_keys.append('files')
+            elif 'length' in info_dict:
+                valid_keys.append('length')
+
+            # Remove everything not in the whitelist
+            for each in list(info_dict):
+                if each not in valid_keys:
+                    info_dict.pop(each, None)
+            for each in list(reused_torrent.metainfo):
+                if each not in ('announce', 'comment', 'creation date', 'created by', 'encoding', 'info'):
+                    reused_torrent.metainfo.pop(each, None)
+
+            reused_torrent.source = f"{shlex.quote(esource)}"
+            reused_torrent.private = True
+            try:
+                reused_torrent = Torrent.copy(reused_torrent)
+            except Exception as e:
+                log_to_file(temp_dir_path / 'create_torrent_error.log', str(e))
+                print(f"Error when trying to copy torrent: {e}")
+                return None, None
+            try:
+                reused_torrent.write(output_torrent, overwrite=True)
+            except WriteError as e:
+                log_to_file(temp_dir_path / 'create_torrent_error.log', str(e))
+                print(f"Error, could not write torrent to {output_torrent}: {e}")
+                return None, None
+            except MetainfoError as e:
+                log_to_file(temp_dir_path / 'create_torrent_error.log', str(e))
+                print(f"Error with newly copied torrent {directory_path.name}.torrent metainfo: {e}")
+                return None, None
+    else:
+        piece_size = calculate_piece_size(directory)
+        max_piece_size_bytes = piece_size * 1024 * 1024
+        if hasher == 'torf':
+            try:
+                new_torrent = Torrent(path=str(directory_path),
+                                      name=directory_path.name,
+                                      trackers=[announceurl],
+                                      source=esource,
+                                      created_by=creator,
+                                      comment=ecomment,
+                                      randomize_infohash=True,
+                                      private=True,
+                                      piece_size_max=max_piece_size_bytes)
+
+            except Exception as e:
+                log_to_file(temp_dir_path / 'create_torrent_error.log', str(e))
+                print(f"{bcolors.FAIL}Error when writing torrent metainfo to Torrent object: {e}")
+                return None, None
+
+            try:
+                if new_torrent.generate(callback=torf_cb, interval=5):
+                    new_torrent.write(output_torrent, overwrite=True)
+                    log_to_file(temp_dir_path / 'create_torrent_output.log',
+                                "New torrent successfully generated. Validating now")
+                    print("New torrent successfully generated. Validating now")
+                    try:
+                        Torrent.read(output_torrent).validate()
+                    except (ReadError, BdecodeError, MetainfoError) as e:
+                        log_to_file(temp_dir_path / 'create_torrent_error.log', str(e))
+                        print(f"Could not read output torrent: {e}")
+                        return None, None
+                    try:
+                        validated = new_torrent.verify_filesize(directory_path)
+                    except (ReadError, MetainfoError, VerifyIsDirectoryError, VerifyFileSizeError) as e:
+                        log_to_file(temp_dir_path / 'create_torrent_error.log', str(e))
+                        print(f"Could not verify output torrent: {e}")
+                    else:
+                        if validated:
+                            log_to_file(temp_dir_path / 'create_torrent_output.log',
+                                        "Torrent file successfully validated")
+                            print("Torrent file successfully validated")
+                        else:
+                            log_to_file(temp_dir_path / 'create_torrent_error.log',
+                                        "Failed to hash all pieces during torrent generation")
+                            print("Failed to hash all pieces during torrent generation")
+                            return None, None
+                else:
+                    # Failed for whatever reason that wasn't raised as an exception
+                    log_to_file(temp_dir_path / 'create_torrent_error.log', "Failed to hash all pieces during torrent generation")
+                    print("Failed to hash all pieces during torrent generation")
+                    return None, None
+            except Exception as e:
+                log_to_file(temp_dir_path / 'create_torrent_error.log', str(e))
+                print(f"{bcolors.FAIL}Error generating torrent: {e}{bcolors.ENDC}")
+                return None, None
+
+        elif hasher == 'mkbrr':
+            try:
+                mkbrr_path = get_mkbrr_bin()
+            except Exception as e:
+                log_to_file(temp_dir_path / 'create_torrent_error.log', str(e))
+                print(f"{bcolors.FAIL}Error getting mkbrr binary: {e}{bcolors.ENDC}")
+                return None, None
+
+            # Ensure mkbrr is executable for both owner and group
+            os.chmod(mkbrr_path, 0o775)
+
+            if piece_size < 16:
+                # Mkbrr only supports a minimum piece length of 16. If it's lower than 16, set to 16.
+                max_piece_size_bytes = 16 * 1024 * 1024
+
+            # Largest power of 2 that's less than or equal to max piece size in bytes
+            import math
+            power = min(27, max(16, math.floor(math.log2(max_piece_size_bytes))))
+            print(
+                f"{bcolors.YELLOW}Setting mkbrr piece length to {(2 ** power) / (1024 * 1024):.2f} MiB{bcolors.ENDC}")
+            cmd = [mkbrr_path,
+                   "create",
+                   str(directory_path),
+                   '-t', f'{announceurl}',
+                   '-e',
+                   '-l', str(power),
+                   '-o', get_root_dir() + f'/{output_torrent}',
+                   '-s', f'{esource}',
+                   '-c', f'{ecomment}']
+
+            try:
+                process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1)
+                print(f"mkbrr PID: {process.pid}")
+            except OSError as e:
+                log_to_file(temp_dir_path / 'create_torrent_error.log', str(e))
+                print(f"{bcolors.FAIL}Error starting mkbrr process: {e}")
+                return None, None
+
+            total_pieces = 100  # Default to 100% for scaling progress
+            pieces_done = 0
+            mkbrr_start_time = time.time()
+            torrent_written = False
+
+            error = "Unknown error" # Initialize error to "Unknown error"
+            try:
+                for line in process.stdout:
+                    line = line.strip()
+                    if 'error' in line.lower():
+                        error = line
+                        break
+                    # Detect hashing progress, speed, and percentage
+                    match = re.search(r"Hashing pieces.*?\[(\d+(?:\.\d+)? [GM](?:B|iB)/s)]\s+(\d+)%", line)
+                    if match:
+                        speed = match.group(1)  # Extract speed (e.g., "12734.21 MB/s")
+                        pieces_done = int(match.group(2))  # Extract percentage (e.g., "60")
+
+                        # Try to extract the ETA directly if it's in the format [elapsed:remaining]
+                        eta_match = re.search(r'\[(\d+)s:(\d+)s]', line)
+                        if eta_match:
+                            eta_seconds = int(eta_match.group(2))
+                            eta = time.strftime("%M:%S", time.gmtime(eta_seconds))
+                        else:
+                            # Fallback to calculating ETA if not directly available
+                            elapsed_time = time.time() - mkbrr_start_time
+                            if pieces_done > 0:
+                                estimated_total_time = elapsed_time / (pieces_done / 100)
+                                eta_seconds = max(0, estimated_total_time - elapsed_time)
+                                eta = time.strftime("%M:%S", time.gmtime(eta_seconds))
+                            else:
+                                eta = "--:--"  # Placeholder if we can't estimate yet
+
+                        cli_ui.info_progress(f"mkbrr hashing... {speed} | ETA: {eta}", pieces_done, total_pieces)
+
+                    # Detect final output line
+                    if "Wrote" in line and ".torrent" in line:
+                        # Print the final torrent file creation message
+                        print(f"{bcolors.BCyan}{line}")
+                        torrent_written = True
+
+                # Wait for the process to finish
+                result = process.wait()
+
+                # Verify the torrent was actually created
+                if result != 0:
+                    raise RuntimeError(f"mkbrr exited with following error: {error}")
+
+                if not torrent_written or not os.path.exists(output_torrent):
+                    raise FileNotFoundError(f"Expected torrent file {output_torrent} was not created")
+            except Exception as e:
+                log_to_file(temp_dir_path / 'create_torrent_error.log', str(e))
+                print(f"{bcolors.FAIL}Error creating torrent: {e}{bcolors.ENDC}")
+
+                # Ensure process is termianted to prevent orphaned mkbrr processes
+                process.terminate()
+                return None, None
+
+            # Validate the torrent file by trying to read it
+            try:
+                test_torrent = Torrent.read(output_torrent)
+                if not test_torrent.metainfo.get('info', {}).get('pieces'):
+                    raise ValueError("Generated torrent is missing pieces")
+            except Exception as e:
+                log_to_file(temp_dir_path / 'create_torrent_error.log', str(e))
+                print(f"{bcolors.FAIL}Error creating torrent: {e}{bcolors.ENDC}")
+                return None, None
+
+    print(f"{bcolors.OKGREEN}Torrent to be uploaded has been created: {output_torrent}\n{bcolors.ENDC}")
+    return output_torrent, piece_size  # Return the path to the torrent file as a string
+
+def get_mkbrr_bin():
+    """Get the path to the mkbrr binary based on the platform."""
+    platform_type = platform.machine().lower()
+    system_platform = platform.system().lower()
+    mkbrr_path = 'bin/mkbrr/'
+    if system_platform == 'linux':
+        mkbrr_path += 'linux/'
+        if 'amd64' in platform_type:
+            mkbrr_path += 'amd64/mkbrr'
+        elif 'x86_64' in platform_type:
+            mkbrr_path += 'x86_64/mkbrr'
+        elif 'aarch64' in platform_type or 'arm64' in platform_type or 'armv8' in platform_type:
+            mkbrr_path += 'arm64/mkbrr'
+        elif "armv6" in platform_type:
+            mkbrr_path += 'armv6/mkbrr'
+        elif "armv7" in platform_type:
+            mkbrr_path += 'arm/mkbrr'
+        else:
+            raise FileNotFoundError(f"Unsupported Linux architecture: {platform_type}")
+    return mkbrr_path
 
 def calculate_size(directory):
-    """Calculate the directory size in bytes (follows symlinks)."""
-    total_size = 0
-    for root, _, files in os.walk(directory):
-        for file in files:
-            try:
-                total_size += os.path.getsize(os.path.join(root, file))
-            except OSError:
-                pass
+    """Calculate the directory size."""
+    total_size = sum(
+        os.path.getsize(os.path.join(root, file))
+        for root, _, files in os.walk(directory)
+        for file in files
+    )
+
     return total_size
 
-def calculate_piece_size(directory, total_size=None):
-    """Calculate the appropriate piece size exponent based on directory size.
-
-    Args:
-        directory: Directory to measure (only used when total_size is not given).
-        total_size (int, optional): Pre-computed size in bytes, avoids re-walking the directory.
-    """
-    if total_size is None:
-        total_size = calculate_size(directory)
+def calculate_piece_size(directory):
+    """Calculate the appropriate piece size for the torrent based on directory size."""
+    total_size = sum(
+        os.path.getsize(os.path.join(root, file))
+        for root, _, files in os.walk(directory)
+        for file in files
+    )
 
     mb = total_size // (1024 * 1024)
 
-    if mb > 194560:
+    if mb > 484352:
+        pieces = 24
+    elif mb > 194560:
         pieces = 24
     elif mb > 73728:
         pieces = 23
@@ -341,72 +390,71 @@ def calculate_piece_size(directory, total_size=None):
     return pieces
 
 
-def download_torrent(url, auth_headers, release_name, is_dupe=False, dupe_id=None, allow_plain_fallback=None):
-    """Download a torrent file and place it in the watch folder.
-
-    Returns the final path of the .torrent in the watch folder, or None on failure.
-    """
+def download_torrent(url, auth_headers, release_name, is_dupe=False, dupe_id=None):
+    """Download a torrent file, distinguishing between duplicate and regular torrents."""
     try:
-        log_file = 'dupe_download.log' if is_dupe else 'torrent_download.log'
-
         # Determine the temporary file path with appropriate naming
-        temp_torrent_path = os.path.join(TMP_DIR, f'{dupe_id}_{release_name}.download.torrent') if is_dupe and dupe_id else os.path.join(TMP_DIR, f'{release_name}.download.torrent')
+        temp_torrent_path = os.path.join(TMP_DIR, f'{dupe_id}_{release_name}.torrent') if is_dupe and dupe_id else os.path.join(TMP_DIR, f'{release_name}.torrent')
 
         # Download the torrent content
-        response = fetch_torrent_with_retries(url, auth_headers, release_name, log_file)
+        response = requests.get(url, headers=auth_headers)
+        response.raise_for_status()  # Raise an error for bad responses
+        log_to_file(os.path.join(TMP_DIR, 'response_debug.log'), f"Response status: {response.status_code}\nResponse content: {response.text}")
 
         # Write the torrent content to the temporary file
         with open(temp_torrent_path, 'wb') as f:
             f.write(response.content)
 
+        # Choose the appropriate log file
+        log_file = 'dupe_download.log' if is_dupe else 'torrent_download.log'
+        
         # Log the successful download
-        log_download_event(
-            log_file,
-            (
-                f"Torrent downloaded successfully: {temp_torrent_path}; "
-                f"status={response.status_code}; content_type={response.headers.get('content-type')}; "
-                f"bytes={len(response.content)}; url={url}"
-            )
-        )
+        log_to_file(os.path.join(TMP_DIR, log_file), f"Torrent downloaded successfully: {temp_torrent_path}")
         print(f"{bcolors.OKGREEN}Torrent downloaded successfully: {temp_torrent_path}\n{bcolors.ENDC}")
-        return place_torrent_in_watchfolder(
-            temp_torrent_path,
-            release_name,
-            log_file,
-            remove_source=True,
-            source_label='site torrent',
-            allow_plain_fallback=allow_plain_fallback,
-        )
+        
+        # Check if fast resume should be added
+        add_fastresume_flag = config.getboolean('Settings', 'ADDFASTRESUME')
+        if add_fastresume_flag:
+            # Get the data directory from configuration
+            download_dir = config.get('Paths', 'DATADIR')  # Ensure this path is correct
+            
+            # Prepare the fast resume output file path
+            fastresume_output_path = os.path.join(TMP_DIR, f'dc.{release_name}.torrent')
+            
+            # Add fast resume data
+            add_fastresume(temp_torrent_path, download_dir, fastresume_output_path)
+            
+            # Check if the fast resume file exists and move it
+            if os.path.exists(fastresume_output_path):
+                final_torrent_path = os.path.join(WATCHFOLDER, f'{PREPENDNAME}{release_name}.torrent')
+                
+                # Use copyfile and remove instead of rename
+                shutil.copyfile(fastresume_output_path, final_torrent_path)
+                os.remove(fastresume_output_path)
+                
+                print(f"{bcolors.OKGREEN}Torrent copied to watch folder: {final_torrent_path}\n{bcolors.ENDC}")
+            else:
+                print(f"{bcolors.FAIL}Fast resume output file not found: {fastresume_output_path}{bcolors.ENDC}")
+        else:
+            final_torrent_path = os.path.join(WATCHFOLDER, f'{PREPENDNAME}{release_name}.torrent')
+            
+            # Use copyfile and remove instead of rename
+            shutil.copyfile(temp_torrent_path, final_torrent_path)
+            os.remove(temp_torrent_path)
+            
+            print(f"{bcolors.OKGREEN}Torrent copied to watch folder: {final_torrent_path}\n{bcolors.ENDC}")
 
     except requests.RequestException as e:
         # Log any request exceptions
-        log_download_event(
-            'dupe_download_error.log' if is_dupe else 'torrent_download_error.log',
-            f"Failed to download torrent for {release_name} from {url}: {str(e)}"
-        )
+        log_to_file(os.path.join(TMP_DIR, 'dupe_download_error.log' if is_dupe else 'torrent_download_error.log'), f"Failed to download torrent: {str(e)}")
         print(f"{bcolors.FAIL}Failed to download torrent: {str(e)}{bcolors.ENDC}")
-        return None
 
     except Exception as e:
         # General exception logging
-        log_download_event(
-            'dupe_general_error.log' if is_dupe else 'torrent_general_error.log',
-            f"An error occurred while placing torrent for {release_name} in watch folder: {str(e)}"
-        )
+        log_to_file(os.path.join(TMP_DIR, 'dupe_general_error.log' if is_dupe else 'torrent_general_error.log'), f"An error occurred: {str(e)}")
         print(f"{bcolors.FAIL}An error occurred: {str(e)}{bcolors.ENDC}")
-        return None
 
-def upload_torrent(
-    torrent_file,
-    template_file,
-    auth_headers,
-    category_id,
-    mediainfo_text,
-    dupedl_enabled,
-    allow_plain_fallback=None,
-    allow_local_upload_fallback=None,
-    metadata=None,
-):
+def upload_torrent(torrent_file, template_file, auth_headers, category_id, imdb_id, mediainfo_text, dupedl_enabled):
     """
     Uploads a torrent file to the specified site with the required details.
 
@@ -415,16 +463,15 @@ def upload_torrent(
         template_file (str): Path to the NFO template file.
         auth_headers (dict): Authentication headers (X-API-KEY, User-Agent, Accept).
         category_id (int): The ID of the category of the torrent.
+        imdb_id (str): The IMDB ID associated with the torrent.
         mediainfo_text (str): The mediainfo text to be included in the upload.
 
     Returns:
-        dict: Upload response details, including the final watch-folder torrent path.
+        None
     """
     # Log torrent file path to ensure it's correct
     #print(f"Torrent file path: {torrent_file}")
     
-    from utils.unpacked_source import assert_unpacked_torrent
-    assert_unpacked_torrent(Torrent.read(str(torrent_file)))
     upload_url = f"{config.get('Website', 'SITEURL')}/api/v1/torrents/upload"
     user_agent = config.get('Network', 'UserAgent', fallback='Mozilla/5.0')
     
@@ -440,50 +487,24 @@ def upload_torrent(
         
         data = {
             'category': category_id,
+            'imdbId': imdb_id,
             'reqid': 0,
+            'section': 'new',
             'frileech': int(f"{config.get('UploadForm', 'FREELEECH')}"),
             'anonymousUpload': int(f"{config.get('UploadForm', 'ANONYMOUS')}"),
+            'p2p': 0,
             'nfo': nfo_content
         }
-
-
-        # Name-derived metadata (studio, performers, release_year,
-        # runtime_minutes, language) - only fields that have a value
-        if metadata:
-            allowed = {'studio', 'performers', 'release_year', 'runtime_minutes',
-                       'language', 'content_categories', 'content_tags',
-                       'firstpic', 'backdrop_url', 'othergenre', 'imdbId', 'gameUrl'}
-            for key, value in metadata.items():
-                if key in allowed and value not in (None, ''):
-                    data[key] = value
-            print(f"{bcolors.OKBLUE}Posting metadata: "
-                  + ", ".join(f"{k}={v}" for k, v in data.items() if k in allowed)
-                  + f"{bcolors.ENDC}")
-
-        if metadata:
-            if metadata.get('content_tags'):
-                data['othergenre'] = metadata['content_tags']
-            # DigitalCore uses IMDb/game IDs for its own metadata. Keep optional
-            # production/cast information in the description rather than losing it.
-            extras = []
-            for key, label in (('studio', 'Production'), ('performers', 'Cast')):
-                if metadata.get(key):
-                    extras.append(label + ': ' + str(metadata[key]))
-            if extras:
-                data['nfo'] += '\n\n' + '\n'.join(extras)
 
         if len(mediainfo_text) > 0:
             # Add in mediainfo if there is any
             data['mediainfo'] = mediainfo_text
-
-        request_log_payload = {
-            'url': upload_url,
-            'headers': {key: ('***' if 'KEY' in key.upper() else value) for key, value in auth_headers.items()},
-            'file_name': os.path.basename(torrent_file),
-            'category': category_id,
-            'mediainfo_length': len(mediainfo_text or ''),
-        }
-        log_download_event('upload_request.log', json.dumps(request_log_payload, indent=2))
+        
+        # Log request details for debugging
+        log_to_file(os.path.join(TMP_DIR, 'upload_request.log'), f"Uploading to URL: {upload_url}")
+        log_to_file(os.path.join(TMP_DIR, 'upload_request.log'), f"Headers: {auth_headers}")
+        log_to_file(os.path.join(TMP_DIR, 'upload_request.log'), f"Files: {files}")
+        log_to_file(os.path.join(TMP_DIR, 'upload_request.log'), f"Data: {data}")
 
         try:
             response = requests.post(
@@ -491,26 +512,20 @@ def upload_torrent(
                 headers=auth_headers,
                 files=files,
                 data=data,
-                verify=VERIFY_SSL,
-                timeout=REQUEST_TIMEOUT,
+                verify=False
             )
         except requests.RequestException as e:
-            log_download_event('upload_response.log', f"Request exception: {e}")
+            log_to_file(os.path.join(TMP_DIR, 'upload_response.log'), f"Request exception: {e}")
             raise requests.RequestException(e)
 
         response_code = response.status_code
         # Log the upload response
-        log_download_event(
-            'upload_response.log',
-            f"Upload response status: {response_code}\n{response.text[:4000]}"
-        )
+        log_to_file(os.path.join(TMP_DIR, 'upload_response.log'), f"Upload response status: {response_code}\n{response.text}")
 
         if response_code == 200 or (response_code == 409 and dupedl_enabled):
-            response_json = parse_upload_response(response)
+            response_json = response.json()
             torrent_id = response_json.get('id')
             torrent_name = response_json.get('name')
-            job_event(stage='downloading_torrent', site_status='accepted',
-                      torrent_id=int(torrent_id), torrent_name=torrent_name)
 
             if response_code == 200:
                 print(f"{bcolors.OKGREEN}Torrent uploaded successfully: {torrent_name}\n{bcolors.ENDC}")
@@ -520,63 +535,7 @@ def upload_torrent(
             
             # Download the torrent file using the ID from the response
             torrent_url = f"{config.get('Website', 'SITEURL')}/api/v1/torrents/download/{torrent_id}"
-            log_download_event(
-                'upload_response.log',
-                f"Site upload accepted: status={response_code}, id={torrent_id}, name={torrent_name}, download_url={torrent_url}"
-            )
-            watch_torrent_path = download_torrent(
-                torrent_url,
-                auth_headers,
-                torrent_name,
-                is_dupe=False,
-                allow_plain_fallback=allow_plain_fallback,
-            )
-            if not watch_torrent_path:
-                local_upload_fallback_enabled = (
-                    config.getboolean('Settings', 'WATCHFOLDER_FALLBACK_UPLOADED_TORRENT', fallback=True)
-                    if allow_local_upload_fallback is None
-                    else bool(allow_local_upload_fallback)
-                )
-                if local_upload_fallback_enabled:
-                    fallback_message = (
-                        "Site torrent download failed after retries. Falling back to the locally generated "
-                        f"uploaded torrent because the upload was accepted. This is usually safe when the "
-                        f"configured ANNOUNCEURL already contains the user's passkey. id={torrent_id}, "
-                        f"name={torrent_name}, download_url={torrent_url}"
-                    )
-                    log_download_event('torrent_download_error.log', fallback_message)
-                    print(f"{bcolors.WARNING}{fallback_message}{bcolors.ENDC}")
-                    watch_torrent_path = place_torrent_in_watchfolder(
-                        torrent_file,
-                        torrent_name,
-                        'torrent_download.log',
-                        remove_source=False,
-                        source_label='locally generated uploaded torrent',
-                        allow_plain_fallback=allow_plain_fallback,
-                    )
-
-                if watch_torrent_path:
-                    return {
-                        'status_code': response_code,
-                        'torrent_id': torrent_id,
-                        'torrent_name': torrent_name,
-                        'watch_torrent': watch_torrent_path,
-                        'watch_torrent_source': 'local_upload_fallback',
-                    }
-
-                raise TorrentWatchFolderError(
-                    "Site upload accepted, but local seeding setup failed: the downloaded torrent was not placed "
-                    "in the watch folder. Check files/torrent_download_error.log and files/fastresume_error.log.",
-                    torrent_id=torrent_id,
-                    torrent_name=torrent_name,
-                    torrent_url=torrent_url,
-                )
-
-            return {
-                'status_code': response_code,
-                'torrent_id': torrent_id,
-                'torrent_name': torrent_name,
-                'watch_torrent': watch_torrent_path,
-            }
+            download_torrent(torrent_url, auth_headers, torrent_name, is_dupe=False)
+            return response_code
         else:
             raise requests.RequestException(f"Status code: {response_code}\nResponse: {response.text}")

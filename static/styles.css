@@ -1,0 +1,167 @@
+body, html {
+    height: 100%; /* Full height */
+    margin: 0;
+    padding: 0;
+}
+
+.navbar {
+    margin-bottom: 10px; /* Spacing below the navbar */
+}
+
+.btn-sm {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+}
+
+/* Remove flex for the main container unless needed */
+.container {
+    max-width: 1200px;
+    padding: 0 20px; /* Add some padding */
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+        .thumbnail-img {
+            width: 50px;
+            height: 50px;
+        }
+
+
+
+
+       .nowrap {
+            white-space: nowrap;
+        }
+
+
+
+
+
+.monitor-container {
+    display: flex; /* Flex for the terminal layout */
+    height: calc(90vh - 56px); /* Full height minus navbar */
+    padding: 0 20px; /* Padding on the sides */
+    margin-top: 10px;
+    margin-bottom: 10px;
+    justify-content: space-between; /* Ensure even spacing between terminals */
+    width: 100%; /* Full width */
+}
+
+
+/* Only use flex when necessary (e.g., for terminal containers) */
+.terminal-container {
+    flex: 1;
+    margin: 0 10px; /* Spacing between terminals */
+    display: flex;
+    flex-direction: column;
+    min-width: 0; /* Prevent overflow */
+
+}
+
+.terminal {
+    background-color: #000;
+    color: #d4d4d4;
+    overflow-y: auto;
+    padding: 10px;
+    font-family: 'Courier New', monospace;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 12px; /* Slightly larger font size for readability */
+    height: 100%; /* Ensure terminal occupies full height */
+}
+
+h3 {
+    color: #000; /* Black color for better visibility */
+    text-align: center; /* Center-align the header */
+    margin-bottom: 10px; /* Space between header and content */
+}
+
+.form-group label, .form-group input, .form-group select, .btn {
+    font-size: 0.75rem; /* Smaller text size for form elements */
+}
+
+.btn-group {
+    display: flex;
+    gap: 0.5rem; /* Space between buttons */
+}
+
+.actions-cell {
+    white-space: nowrap; /* Prevent wrapping of buttons */
+}
+
+.card {
+    margin-bottom: 1rem; /* Adjust card spacing */
+}
+
+.card-body {
+    font-size: 0.75rem; /* Smaller text size in cards */
+}
+
+.col-section {
+    padding: 15px; /* Add padding to columns */
+}
+
+.row-custom {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.row-custom > .col-md-3 {
+    flex: 1 0 25%; /* 4 columns per row */
+    max-width: 25%;
+}
+
+/* Table and status-related styles */
+.table td, .table th {
+    font-size: 0.875rem;
+}
+
+.table td.date-field {
+    white-space: nowrap;
+}
+
+/* Define color for each status */
+.dupe-row {
+    background-color: lightcoral;
+}
+
+.uploading-row {
+    background-color: orange;
+}
+
+.failed-row {
+    background-color: indianred;
+}
+
+.uploaded-row {
+    background-color: lightgreen;
+}
+
+.badge-dupe {
+    background-color: purple;
+    color: #fff;
+}
+
+.badge-uploaded {
+    background-color: darkred;
+    color: #fff;
+}
+
+.badge-uploaded {
+    background-color: green;
+    color: #fff;
+}
+
+.badge-uploading {
+    background-color: orange;
+    color: #fff;
+}
+
+
+
+/* Remove container max-width for larger screens */
+@media (min-width: 1200px) {
+    .container {
+        max-width: 100%; /* Ensure it takes up full width */
+    }
+}

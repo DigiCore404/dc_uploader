@@ -5,7 +5,18 @@ function renderConfigSettings(settings){
  const intro=element('div','config-intro');intro.append(element('h2','','Uploader configuration'),element('p','','These controls save directly to '+settings.config_file+'. Both the web service and CLI use this file. Client connections and workspace access have their own controls.'));target.append(intro);
  for(const section of settings.config_schema||[]){
   const details=element('details','card config-section');details.dataset.section=section.section;details.open=open.has(section.section)||(first&&section.section==='MediaTools');
-  const summary=element('summary','',section.title);details.append(summary);const grid=element('div','config-grid');
+  const ownHost=section.section==='ImageHost'&&settings.image_host==='digitalcore';
+  const summary=element('summary','',ownHost?'DigitalCore image host':section.title);details.append(summary);const grid=element('div','config-grid');
+  if(ownHost){
+   let loaded=false,loading=false;
+   const endpoint=element('input'),key=element('input'),note=element('small','field-help','The official DigitalCore image host. Its public upload key is loaded automatically from DigitalCore.');
+   for(const [input,id,label,value] of [[endpoint,'dc-image-endpoint','Upload URL','https://img.digitalcore.club/api/upload'],[key,'dc-image-public-key','Public upload key','']]){
+    const box=element('div','config-field'),caption=element('label','',label);input.id=id;caption.htmlFor=id;input.type='text';input.readOnly=true;input.value=value;box.append(caption,input);grid.append(box);
+   }
+   key.placeholder='Loading public upload key…';
+   const load=async()=>{if(loaded||loading||!details.open)return;loading=true;try{const result=await api('/api/image-host/public-config');endpoint.value=result.endpoint;key.value=result.public_key;loaded=true;note.textContent='Official DigitalCore image host. This upload key is public and kept up to date automatically.';}catch(error){key.placeholder='Could not load public key';note.textContent=error.message;}finally{loading=false;}};
+   details.addEventListener('toggle',load);grid.append(note);details.append(grid);target.append(details);if(details.open)load();continue;
+  }
   for(const field of section.fields){
    const wrapper=element('div','config-field'),id='cfg-'+section.section+'-'+field.key;const label=element('label','',field.label);label.htmlFor=id;
    const input=element('input');input.id=id;input.dataset.configSection=section.section;input.dataset.configKey=field.key;input.dataset.configType=field.type;

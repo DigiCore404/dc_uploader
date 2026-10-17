@@ -386,6 +386,9 @@ class Handler(BaseHTTPRequestHandler):
             workspace = self.server.workspace
             if path == '/api/security':
                 return self.send(dict(workspace.security.state(), current_ip=self.client_address[0]))
+            if path == '/api/image-host/public-config':
+                from utils.digitalcore_images import ENDPOINT, authentication
+                return self.send({'endpoint': ENDPOINT, 'public_key': authentication(uploader.load_config())})
             if path == '/api/imports':
                 query = parse_qs(urlparse(self.path).query)
                 return self.send(workspace.imports.page(query.get('limit',[30])[0], query.get('offset',[0])[0],

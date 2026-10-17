@@ -168,3 +168,9 @@ input,select,textarea,pre,.log-output{color:#e4edf5}
 .text-button{color:#b4e6ff}.status-badge:not(.ready){color:#ffe3a3;background:#4a3a17}.steps .step div,.steps .step small{color:#bdcddd}
 input::placeholder,textarea::placeholder{color:#a0b1c3}.metadata-provider-settings{padding-top:14px;margin-top:22px;border-top:1px solid #49637e}
 .metadata-provider-settings h3{color:#f0f6fc}.config-section>summary:focus-visible{outline:3px solid #a5dbff;outline-offset:3px}
+/* Disclosure controls must stay readable in Manuals as well as Settings. */
+details>summary{color:#f0f6fc;font-weight:650;cursor:pointer}
+details>summary::marker{color:#cce6fa}
+details>summary:hover,details[open]>summary{color:#ffffff}
+details>summary:focus-visible{outline:3px solid #a5dbff;outline-offset:3px}
+.automation-guide pre{background:#0a1521;color:#e4edf5}

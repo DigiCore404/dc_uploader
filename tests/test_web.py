@@ -17,6 +17,15 @@ import web
 
 
 class WebTests(unittest.TestCase):
+    def test_public_image_host_config_uses_official_public_key(self):
+        path = self.base + '/api/image-host/public-config'
+        self.assertEqual(self.client.get(path).status_code, 401)
+        self.login()
+        with patch('utils.digitalcore_images.authentication', return_value='public-upload-key'):
+            response = self.client.get(path)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), {'endpoint': 'https://img.digitalcore.club/api/upload', 'public_key': 'public-upload-key'})
+
     def setUp(self):
         (ROOT / 'tmp').mkdir(exist_ok=True)
         self.temp = tempfile.TemporaryDirectory(dir=ROOT / 'tmp')

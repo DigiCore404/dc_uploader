@@ -40,8 +40,18 @@ def determine_category(directory_name, manual_id=None):
         print(f"{bcolors.OKGREEN}No filters loaded.{bcolors.ENDC}")
         return 'Unknown', '17'  # Return default cat_id when no filters are loaded
     
-    # Check if there are any .mp3 files in the directory
-    if check_for_mp3_files(full_directory_path):
+    # Explicit audiobook names must keep their configured category even when
+    # the audiobook contains MP3 files.
+    audiobook_patterns = filters.get('AUDIOBOOKS', {}).get('patterns', {})
+    named_audiobook = (
+        any(re.search(pattern.replace('*', '.*'), directory_name, re.IGNORECASE)
+            for pattern in audiobook_patterns.get('initial', []) if pattern.strip())
+        and not any(re.search(pattern, directory_name, re.IGNORECASE)
+                    for pattern in audiobook_patterns.get('exclude_patterns', []) if pattern.strip())
+    )
+
+    # MP3 file detection remains the fallback for music, not named audiobooks.
+    if check_for_mp3_files(full_directory_path) and not named_audiobook:
         print(f"{bcolors.WARNING}Directory contains .mp3 files. Categorizing as Music/MP3.{bcolors.ENDC}")
         return 'Music/MP3', '22'  # Return the MP3 category directly
 

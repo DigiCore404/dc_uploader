@@ -1,6 +1,12 @@
 # Changelog
 
-## Unreleased · 2026-10-22
+## Unreleased � 2026-10-23
+
+- Require separate FLAC and EPUB tags so titles containing Flack or Republic are not sent to Unknown.
+- Recognize hyphenated Blu-ray UHD disc names, Dolby Vision Toolset releases and movie remuxes without a resolution tag.
+- Cover the reported Unknown releases with regression checks; preserve real FLAC/EPUB categories and existing TV, film, software and console rules.
+
+## Previous changes · 2026-10-22
 
 - Match explicit console and Mac game platforms before sports and video rules.
 - Recognize Formula/Formule 1, Formula E, additional sports formats, ROM collections, tutorials, audio libraries and Mac application tags with underscores.

@@ -44,7 +44,7 @@
   "MUSIC_FLAC": {
     "patterns": {
       "initial": [
-        ".*[fF][lL][aA][cC].*"
+        ".*(?:^|[.\\s_\\-])(?:flac)(?=[.\\s_\\-]|$).*"
       ],
       "exclude_patterns": [
         "(1080[pP]|720[pP]|2160[pP]|2880[pP]|3630[pP]|2700[pP]|4096[pP]|2048[pP]|3072[pP]|3840[pP]|3000[pP])",
@@ -66,7 +66,7 @@
         "-(?:SRPx?|OSKOREIA|KLViD|555666)$"
       ],
       "exclude_patterns": [
-        "(?:^|[.\\s_\\-])(?:flac|mp3|audiobook)(?:[.\\s_\\-]|$)"
+        "(?:^|[.\\s_\\-])(?:(?:^|[.\\s_\\-])(?:flac)(?=[.\\s_\\-]|$)|mp3|audiobook)(?:[.\\s_\\-]|$)"
       ]
     },
     "categories": [
@@ -84,7 +84,7 @@
         "(?:^|[.\\s_\\-])(?:PS[1-5]|PSP|PSV(?:ITA)?|XBOX(?:[.\\s_\\-]?(?:360|ONE|SERIES[.\\s_\\-]?[XS]))?|NSW|SWITCH|WIIU?|GAMECUBE)(?:[.\\s_\\-]|$)"
       ],
       "exclude_patterns": [
-        "(?:^|[.\\s_\\-])(?:ebook|epub|bookware|tutorial|audiobook|Incl[.\\s_\\-]+(?:Keygen|Keymaker|Keyfile))(?:[.\\s_\\-]|$)",
+        "(?:^|[.\\s_\\-])(?:ebook|(?:^|[.\\s_\\-])(?:epub)(?=[.\\s_\\-]|$)|bookware|tutorial|audiobook|Incl[.\\s_\\-]+(?:Keygen|Keymaker|Keyfile))(?:[.\\s_\\-]|$)",
         "(?:^|[.\\s_\\-])(?:1080[pi]|720[pi]|2160[pi]|480[pi]|h264|h265|x264|x265|hdtv|web(?:rip|dl)?|b[dr]rip|dvdrip|bluray)(?:[.\\s_\\-]|$)"
       ]
     },
@@ -106,7 +106,7 @@
         "^(?:Vons(?:Retrobat|Modern)Arcade|CP78[.\\s_\\-]+Retrobat)"
       ],
       "exclude_patterns": [
-        "(?:^|[.\\s_\\-])(?:ebook|epub|magazines?|mag|software|format|bookware|tutorial|audiobook)(?:[.\\s_\\-]|$)"
+        "(?:^|[.\\s_\\-])(?:ebook|(?:^|[.\\s_\\-])(?:epub)(?=[.\\s_\\-]|$)|magazines?|mag|software|format|bookware|tutorial|audiobook)(?:[.\\s_\\-]|$)"
       ]
     },
     "categories": [
@@ -126,7 +126,7 @@
       ],
       "exclude_patterns": [
         "(?:^|[.\\s_\\-])(?:Scrivener|Cloanto|VMware|Adobe|Wondershare|Lightroom)(?:[.\\s_\\-]|$)",
-        "(?:^|[.\\s_\\-])(?:ebook|epub|bookware|tutorial)(?:[.\\s_\\-]|$)"
+        "(?:^|[.\\s_\\-])(?:ebook|(?:^|[.\\s_\\-])(?:epub)(?=[.\\s_\\-]|$)|bookware|tutorial)(?:[.\\s_\\-]|$)"
       ]
     },
     "categories": [
@@ -160,7 +160,7 @@
       "exclude_patterns": [
         "(?:^|[.\\s_\\-])(?:1080[pi]|720[pi]|2160[pi]|480[pi]|h264|h265|x264|x265|hdtv|web(?:rip|dl)?|b[dr]rip|dvdrip|bluray)(?:[.\\s_\\-]|$)",
         "(?:^|[.\\s_\\-])(?:xxx)(?:[.\\s_\\-]|$)",
-        "(?:^|[.\\s_\\-])(?:ebook|epub|bookware|tutorial|audiobook)(?:[.\\s_\\-]|$)"
+        "(?:^|[.\\s_\\-])(?:ebook|(?:^|[.\\s_\\-])(?:epub)(?=[.\\s_\\-]|$)|bookware|tutorial|audiobook)(?:[.\\s_\\-]|$)"
       ]
     },
     "categories": [
@@ -179,7 +179,7 @@
         "^(?:Udemy|Masterclass)[.\\s_\\-]"
       ],
       "exclude_patterns": [
-        "(?:^|[.\\s_\\-])(?:ebook|epub|pdf|audiobook)(?:[.\\s_\\-]|$)",
+        "(?:^|[.\\s_\\-])(?:ebook|(?:^|[.\\s_\\-])(?:epub)(?=[.\\s_\\-]|$)|pdf|audiobook)(?:[.\\s_\\-]|$)",
         "(?:^|[.\\s_\\-])(?:xxx)(?:[.\\s_\\-]|$)"
       ]
     },
@@ -200,7 +200,7 @@
       "exclude_patterns": [
         "(?:^|[.\\s_\\-])(?:1080[pi]|720[pi]|2160[pi]|480[pi]|h264|h265|x264|x265|hdtv|web(?:rip|dl)?|b[dr]rip|dvdrip|bluray)(?:[.\\s_\\-]|$)",
         "(?:^|[.\\s_\\-])(?:xxx)(?:[.\\s_\\-]|$)",
-        "(?:^|[.\\s_\\-])(?:flac|mp3|audiobook|ebook|epub)(?:[.\\s_\\-]|$)"
+        "(?:^|[.\\s_\\-])(?:(?:^|[.\\s_\\-])(?:flac)(?=[.\\s_\\-]|$)|mp3|audiobook|ebook|(?:^|[.\\s_\\-])(?:epub)(?=[.\\s_\\-]|$))(?:[.\\s_\\-]|$)"
       ]
     },
     "categories": [
@@ -242,7 +242,7 @@
       "exclude_patterns": [
         "(?:^|[.\\s_\\-])(?:1080[pi]|720[pi]|2160[pi]|480[pi]|h264|h265|x264|x265|hdtv|web(?:rip|dl)?|b[dr]rip|dvdrip|bluray)(?:[.\\s_\\-]|$)",
         "(?:^|[.\\s_\\-])(?:xxx)(?:[.\\s_\\-]|$)",
-        "(?:^|[.\\s_\\-])(?:ebook|epub|bookware|tutorial|audiobook)(?:[.\\s_\\-]|$)",
+        "(?:^|[.\\s_\\-])(?:ebook|(?:^|[.\\s_\\-])(?:epub)(?=[.\\s_\\-]|$)|bookware|tutorial|audiobook)(?:[.\\s_\\-]|$)",
         "(oNePiEcE|BTCRiSO|-RAiN|-iLEARN|-UDUMMY|ELearning|-BLOAT|-SkilledHares|-DECiBEL|-QUiD|-LiBRO|-NOLEDGE|-REBAR|-SOFTiMAGE|-SSQ|-iLST|-LND|-STM|-ZH|-ViGOROUS|-APoLLo|-XCODE|-EXPANSION|-iLLiTERATE|-RiDWARE|-KNiSO|-SHEPHERDS|-BiFiSO|-ADSR|-ANALYTiCS|-CaviaRPDA|-H0WT0|-THECOOP|-OXBRiDGE|-XQZT|-PRODEV|-MAGNiTUDE|-MASCHiNE|-COMPRISED|-BooKWoRM|-PHOTONE|-THEOS|-LiQUiDWARE|-BooKWoRM|-kEISO|-ISO|-COMPRISED|-BYS|-NEWiSO|-DVTiSO|-TBE|-QUASAR|-rG|-NAViGON|-ELOHiM|-TUTOR|-PLATO|-SONiTUS|-EMBRACE|-XiSO|-YUM|-iRONiSO|-SoSISO|-SPiRiT|-BLZiSO|-CHR|-iNDiSO|-HOTiSO|-DVTiSO|-ZWTiSO|-ZWT|-JGTiSO|-DYNAMiCS|-WZT|-iNKiSO|-CYGiSO|-BIE|-AiRISO)$"
       ]
     },
@@ -267,11 +267,11 @@
       "exclude_patterns": [
         "(?:^|[.\\s_\\-])(?:xxx)(?:[.\\s_\\-]|$)",
         "[eE][Bb][oO][oO][kK]",
-        "[Ee][Pp][Uu][Bb]",
+        "(?:^|[.\\s_\\-])(?:epub)(?=[.\\s_\\-]|$)",
         "(?:food|cooking|chef|kitchen|recipe|bake|cook)\\s?tour",
         "(?:^|[.\\s_\\-])(?:nerd[.\\s_\\-]poker|poker[.\\s_\\-]face|podcast)(?:[.\\s_\\-]|$)",
         "(?:^|[.\\s_\\-])(?:PS[1-5]|PSP|PSV(?:ITA)?|XBOX(?:[.\\s_\\-]?(?:360|ONE|SERIES[.\\s_\\-]?[XS]))?|NSW|SWITCH|WIIU?|GAMECUBE)(?:[.\\s_\\-]|$)",
-        "(?:^|[.\\s_\\-])(?:ebook|epub|bookware|tutorial|audiobook)(?:[.\\s_\\-]|$)",
+        "(?:^|[.\\s_\\-])(?:ebook|(?:^|[.\\s_\\-])(?:epub)(?=[.\\s_\\-]|$)|bookware|tutorial|audiobook)(?:[.\\s_\\-]|$)",
         "-(?:RUNE|TENOKE|CODEX|SKIDROW|RELOADED|STRANGE|FLT|DUPLEX)$"
       ]
     },
@@ -308,7 +308,7 @@
         "(-BONDYE|RINDVIEH|-RLTS|-EQUiNOX|-BS|-BTCR|-WEB0DAY|-WEBiSO|-CaviaR|-6581|-rGPDA|-EATSHIT|-SERiF|-NGEN|-Unleashed|-FSOCIETY|-DVT|-ALiAS|-rG|-AMPED|-Lz0|-XFORCE|-CORE|-TE|-WaLMaRT|-BLiZZARD|-FALLEN|-LAXiTY|-DJiNN|-FANiSO|-CRD|-HERiTAGE|-DELiGHT|-AiR|-ArCADE|-BEAN|-EAT|-ST3RE0|-NOY|-FOSI|-eMAG|-REDT|-YPOGEiOS|-F4CG|-DIGERATI|-ROGUE|-AGAiN|-PARADOX|-ZWT|-UNION|-iNViSiBLE|-TCi|-JOLT|-MESMERiZE|-ARN|-DOA|-SiMPLiFY|-RECOiL|-PH|-TYPO|-VACE|-OUTLAWS|-QUANTiZE|-BRD|-EcHoS|-MAZE|-PH|-CzW)$"
       ],
       "exclude_patterns": [
-        "((?:^|[.\\s_\\-])(?:xxx)(?:[.\\s_\\-]|$)|[xX][vV][iI][dD]|[bB][dD][rR][iI][pP]|[dD][vV][dD][rR][iI][pP]|[dD][vV][bB][rR][iI][pP]|[bB][rR][rR][iI][pP]|[mM][bB][lL][uU][rR][aA][yY]|[mM][dD][vV][dD][rR]|\\b[nN][tT][sS][cC]\\b|\\b[pP][aA][lL]\\b|1080[pP]|720[pP]|2160[pP]|[fF][lL][aA][cC])"
+        "((?:^|[.\\s_\\-])(?:xxx)(?:[.\\s_\\-]|$)|[xX][vV][iI][dD]|[bB][dD][rR][iI][pP]|[dD][vV][dD][rR][iI][pP]|[dD][vV][bB][rR][iI][pP]|[bB][rR][rR][iI][pP]|[mM][bB][lL][uU][rR][aA][yY]|[mM][dD][vV][dD][rR]|\\b[nN][tT][sS][cC]\\b|\\b[pP][aA][lL]\\b|1080[pP]|720[pP]|2160[pP]|(?:^|[.\\s_\\-])(?:flac)(?=[.\\s_\\-]|$))"
       ]
     },
     "categories": [
@@ -350,7 +350,7 @@
         "(oNePiEcE|BTCRiSO|-RAiN|-iLEARN|-UDUMMY|ELearning|-BLOAT|-SkilledHares|-DECiBEL|-QUiD|-LiBRO|-NOLEDGE|-REBAR|-SOFTiMAGE|-SSQ|-iLST|-LND|-STM|-ZH|-ViGOROUS|-APoLLo|-XCODE|-EXPANSION|-iLLiTERATE|-RiDWARE|-KNiSO|-SHEPHERDS|-BiFiSO|-ADSR|-ANALYTiCS|-CaviaRPDA|-H0WT0|-THECOOP|-OXBRiDGE|-XQZT|-PRODEV|-MAGNiTUDE|-MASCHiNE|-COMPRISED|-BooKWoRM|-PHOTONE|-THEOS|-LiQUiDWARE|-BooKWoRM|-kEISO|-ISO|-COMPRISED|-BYS|-NEWiSO|-DVTiSO|-TBE|-QUASAR|-rG|-NAViGON|-ELOHiM|-TUTOR|-PLATO|-SONiTUS|-EMBRACE|-XiSO|-YUM|-iRONiSO|-SoSISO|-SPiRiT|-BLZiSO|-CHR|-iNDiSO|-HOTiSO|-DVTiSO|-ZWTiSO|-ZWT|-JGTiSO|-DYNAMiCS|-WZT|-iNKiSO|-CYGiSO|-BIE|-AiRISO)$"
       ],
       "exclude_patterns": [
-        "((?:^|[.\\s_\\-])(?:xxx)(?:[.\\s_\\-]|$)|[xX][vV][iI][dD]|[bB][dD][rR][iI][pP]|[dD][vV][dD][rR][iI][pP]|[dD][vV][bB][rR][iI][pP]|[bB][rR][rR][iI][pP]|[mM][bB][lL][uU][rR][aA][yY]|[mM][dD][vV][dD][rR]|\\b[nN][tT][sS][cC]\\b|\\b[pP][aA][lL]\\b|1080[pP]|720[pP]|2160[pP]|[fF][lL][aA][cC])"
+        "((?:^|[.\\s_\\-])(?:xxx)(?:[.\\s_\\-]|$)|[xX][vV][iI][dD]|[bB][dD][rR][iI][pP]|[dD][vV][dD][rR][iI][pP]|[dD][vV][bB][rR][iI][pP]|[bB][rR][rR][iI][pP]|[mM][bB][lL][uU][rR][aA][yY]|[mM][dD][vV][dD][rR]|\\b[nN][tT][sS][cC]\\b|\\b[pP][aA][lL]\\b|1080[pP]|720[pP]|2160[pP]|(?:^|[.\\s_\\-])(?:flac)(?=[.\\s_\\-]|$))"
       ]
     },
     "categories": [
@@ -392,11 +392,11 @@
         "([Ww][Ee][Bb]|[Ww][Ee][Bb][Rr][Ii][Pp]|[Hh][Dd][Tt][Vv]|[xX][vV][iI][dD]|[hH][eE][vV][cC]|\\b[cC][aA][mM]\\b|[hH]264|[xX]264|[dD][vV][dD][sS][cC][rR]|[wW][eE][bB][dD][lL]|[wW][eE][bB][rR][iI][pP]|[dD][vV][dD][rR][iI][pP]|[dD][vV][bB][rR][iI][pP]|[bB][rR][rR][iI][pP]|[bB][dD][rR][iI][pP])"
       ],
       "exclude_patterns": [
-        "([fF][lL][aA][cC]|(?:^|[.\\s_\\-])(?:xxx)(?:[.\\s_\\-]|$)|720[pP]|1080[pP]|2160[Pp]|[bB][lL][uU][rR][aA][yY]|\\b[pP][aA][lL]\\b|\\b[nN][tT][sS][cC]\\b|[eE][bB][oO][oO][kK])",
+        "((?:^|[.\\s_\\-])(?:flac)(?=[.\\s_\\-]|$)|(?:^|[.\\s_\\-])(?:xxx)(?:[.\\s_\\-]|$)|720[pP]|1080[pP]|2160[Pp]|[bB][lL][uU][rR][aA][yY]|\\b[pP][aA][lL]\\b|\\b[nN][tT][sS][cC]\\b|[eE][bB][oO][oO][kK])",
         "(-BTCR|-BitBook|-DARKSiDERS|-iLEARN|-UDUMMY|-BLOAT|-SkilledHares|-DECiBEL|-QUiD|-LiBRO|-NOLEDGE|-REBAR|-SOFTiMAGE|-SSQ|-iLST|-LND|-STM|-ZH|-ViGOROUS|-APoLLo|-XCODE|-EXPANSION|-iLLiTERATE|-RiDWARE|-KNiSO|-SHEPHERDS|-BiFiSO|-ADSR|-ANALYTiCS|-CaviaRPDA|-H0WT0|-THECOOP|-OXBRiDGE|-XQZT|-PRODEV|-MAGNiTUDE|-MASCHiNE|-COMPRISED|-BooKWoRM|-PHOTONE|-THEOS|-LiQUiDWARE|-kEISO|-ISO|-BYS|-NEWiSO|-DVTiSO|-TBE|-QUASAR|-rG|-NAViGON|-ELOHiM|-TUTOR|-PLATO|-SONiTUS|-EMBRACE|-XiSO|-YUM|-iRONiSO|-SoSISO|-SPiRiT|-BLZiSO|-CHR|-iNDiSO|-HOTiSO|-DVTiSO|-ZWTiSO|-ZWT|-JGTiSO|-DYNAMiCS|-WZT|-iNKiSO|-CYGiSO|-BIE|-AiRISO)$",
         ".*[Bb][oO][Oo][kK][Ww][Aa][Rr][Ee].*",
         ".*[eE][Bb][oO][Oo][kK].*",
-        ".*[Ee][Pp][Uu][Bb].*",
+        ".*(?:^|[.\\s_\\-])(?:epub)(?=[.\\s_\\-]|$).*",
         "(-I_KnoW|-HHT|-PLAYMAGiC|-CLS|-bADkARMA|-RUNE|-TENOKE|-ANOMALY|-FCKDRM|-VREX|-DVN|-DARKZER0|-NAPT|-RAZOR|-DINOByTES|-HOODLUM|-GOG|-DOGE|-STEAMPUNKS|-DARKSiDERS|-SiMPLEX|I_KnoW|-CPY|0x0007|-BAT|-PLAZA|-ACTiVATED|-CODEX|-CLASSiCS|-DEFA|-RELOADED|-SKIDROW|-JAGDOX|-Razor1911|-FLT|-JAGUAR|-iNDEPENDANT|-PROPHET|-WARG|-FANiSO|-HI2U|-ARMADA|-FLTDOX|-DELiGHT|-POSTMORTEM|-TiNYiSO|-AVENGED|-CLONEDVD-P2P|-ARM|-GENESIS|-FASiSO|-ViTALiTY|-RazorDOX|-SPLATTERKiNGS)$",
         "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
       ]
@@ -457,13 +457,32 @@
       }
     ]
   },
+  "UHD_BLURAY_DISCS": {
+    "patterns": {
+      "initial": [
+        "(?=.*(?:^|[.\\s_\\-])Blu[.\\s_\\-]?ray(?=[.\\s_\\-]|$))(?=.*(?:^|[.\\s_\\-])UHD(?=[.\\s_\\-]|$))"
+      ],
+      "exclude_patterns": [
+        "(?:^|[.\\s_\\-])(?:remux|bdrip|brrip|xxx|flac)(?=[.\\s_\\-]|$)",
+        "(?:^|[.\\s_\\-])S[0-9]{1,2}(?:E|D|[.\\s_\\-]|$)"
+      ]
+    },
+    "categories": [
+      {
+        "name": "Movies/Bluray/UHD",
+        "cat_id": "38",
+        "patterns": [],
+        "exclude_patterns": []
+      }
+    ]
+  },
   "2160P_MOVIES_TV_SPORTS_PACKS": {
     "patterns": {
       "initial": [
         "2160[pP]"
       ],
       "exclude_patterns": [
-        "((?:^|[.\\s_\\-])(?:xxx)(?:[.\\s_\\-]|$)|mbluray|mdvdr|flac)",
+        "((?:^|[.\\s_\\-])(?:xxx)(?:[.\\s_\\-]|$)|mbluray|mdvdr|(?:^|[.\\s_\\-])(?:flac)(?=[.\\s_\\-]|$))",
         "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
       ]
     },
@@ -529,7 +548,7 @@
         "1080[pP]"
       ],
       "exclude_patterns": [
-        "((?:^|[.\\s_\\-])(?:xxx)(?:[.\\s_\\-]|$)|mbluray|mdvdr|flac)",
+        "((?:^|[.\\s_\\-])(?:xxx)(?:[.\\s_\\-]|$)|mbluray|mdvdr|(?:^|[.\\s_\\-])(?:flac)(?=[.\\s_\\-]|$))",
         "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
       ]
     },
@@ -595,7 +614,7 @@
         "720[pP]"
       ],
       "exclude_patterns": [
-        "((?:^|[.\\s_\\-])(?:xxx)(?:[.\\s_\\-]|$)|mbluray|mdvdr|flac)",
+        "((?:^|[.\\s_\\-])(?:xxx)(?:[.\\s_\\-]|$)|mbluray|mdvdr|(?:^|[.\\s_\\-])(?:flac)(?=[.\\s_\\-]|$))",
         "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
       ]
     },
@@ -661,9 +680,9 @@
         "([bB][lL][uU][rR][aA][yY]|[Cc][Oo][Mm][Pp][Ll][Ee][Tt][Ee]|[Uu][Hh][Dd])"
       ],
       "exclude_patterns": [
-        "((?:^|[.\\s_\\-])(?:xxx)(?:[.\\s_\\-]|$)|[hH][dD][tT][vV]|(?:^|[.\\s_\\-])(?:xxx)(?:[.\\s_\\-]|$)|[mM][bB][lL][uU][rR][aA][yY]|[dD][vV][dD][rR][iI][pP]|[dD][vV][bB][rR][iI][pP]|[bB][rR][rR][iI][pP]|[xX][vV][iI][dD]|[bB][dD][rR][iI][pP]|480[pP]|1080[pP]|720[pP]|2160[pP]|[fF][lL][aA][cC])",
+        "((?:^|[.\\s_\\-])(?:xxx)(?:[.\\s_\\-]|$)|[hH][dD][tT][vV]|(?:^|[.\\s_\\-])(?:xxx)(?:[.\\s_\\-]|$)|[mM][bB][lL][uU][rR][aA][yY]|[dD][vV][dD][rR][iI][pP]|[dD][vV][bB][rR][iI][pP]|[bB][rR][rR][iI][pP]|[xX][vV][iI][dD]|[bB][dD][rR][iI][pP]|480[pP]|1080[pP]|720[pP]|2160[pP]|(?:^|[.\\s_\\-])(?:flac)(?=[.\\s_\\-]|$))",
         "(-I_KnoW|-HHT|-PLAYMAGiC|-CLS|-bADkARMA|-RUNE|-TENOKE|-ANOMALY|-FCKDRM|-VREX|-DVN|-DARKZER0|-NAPT|-RAZOR|-DINOByTES|-HOODLUM|-GOG|-DOGE|-STEAMPUNKS|-DARKSiDERS|-SiMPLEX|I_KnoW|-CPY|0x0007|-BAT|-PLAZA|-ACTiVATED|-CODEX|-CLASSiCS|-DEFA|-RELOADED|-SKIDROW|-JAGDOX|-Razor1911|-FLT|-JAGUAR|-iNDEPENDANT|-PROPHET|-WARG|-FANiSO|-HI2U|-ARMADA|-FLTDOX|-DELiGHT|-POSTMORTEM|-TiNYiSO|-AVENGED|-CLONEDVD-P2P|-ARM|-GENESIS|-FASiSO|-ViTALiTY|-RazorDOX|-SPLATTERKiNGS)$",
-        "([Bb][oO][Oo][kK][Ww][Aa][Rr][Ee]|[eE][Bb][oO][Oo][kK]|[Ee][Pp][Uu][Bb])",
+        "([Bb][oO][Oo][kK][Ww][Aa][Rr][Ee]|[eE][Bb][oO][Oo][kK]|(?:^|[.\\s_\\-])(?:epub)(?=[.\\s_\\-]|$))",
         ".*MDVDR.*|.*DVDR.*",
         "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
       ]
@@ -742,7 +761,7 @@
         "(?:^|[.\\-_])NSW(?:[.\\-_]|$)"
       ],
       "exclude_patterns": [
-        ".*[Ee][Pp][Uu][Bb].*",
+        ".*(?:^|[.\\s_\\-])(?:epub)(?=[.\\s_\\-]|$).*",
         ".*[eE][Bb][oO][Oo][kK].*"
       ]
     },
@@ -764,7 +783,7 @@
         "(?:^|[.\\-_])PS5(?:[.\\-_]|$)"
       ],
       "exclude_patterns": [
-        ".*[Ee][Pp][Uu][Bb].*",
+        ".*(?:^|[.\\s_\\-])(?:epub)(?=[.\\s_\\-]|$).*",
         ".*[eE][Bb][oO][Oo][kK].*",
         ".*[Bb][oO][Oo][kK][Ww][Aa][Rr][Ee].*"
       ]
@@ -786,7 +805,7 @@
         "(-JFKDVD|\\b[pP][aA][lL]\\b|\\b[nN][tT][sS][cC]\\b)"
       ],
       "exclude_patterns": [
-        "([Ww][Ee][Bb]|[Ff][lL][aA][cC]|(?:^|[.\\s_\\-])(?:xxx)(?:[.\\s_\\-]|$)|[xX][bB][oO][xX]360|[xX][vV][iI][dD]|[mM][bB][lL][uU][rR][aA][yY]|[mM][dD][vV][dD][rR]|720p|1080p|MAGNiTUDE|SONiTUS|DYNAMiCS|PLATO|[fF][lL][aA][cC])"
+        "([Ww][Ee][Bb]|[Ff][lL][aA][cC]|(?:^|[.\\s_\\-])(?:xxx)(?:[.\\s_\\-]|$)|[xX][bB][oO][xX]360|[xX][vV][iI][dD]|[mM][bB][lL][uU][rR][aA][yY]|[mM][dD][vV][dD][rR]|720p|1080p|MAGNiTUDE|SONiTUS|DYNAMiCS|PLATO|(?:^|[.\\s_\\-])(?:flac)(?=[.\\s_\\-]|$))"
       ]
     },
     "categories": [
@@ -809,7 +828,7 @@
         "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
       ],
       "exclude_patterns": [
-        "((?:^|[.\\s_\\-])(?:xxx)(?:[.\\s_\\-]|$)|[mM][dD][vV][dD][rR]|[fF][lL][aA][cC])"
+        "((?:^|[.\\s_\\-])(?:xxx)(?:[.\\s_\\-]|$)|[mM][dD][vV][dD][rR]|(?:^|[.\\s_\\-])(?:flac)(?=[.\\s_\\-]|$))"
       ]
     },
     "categories": [
@@ -821,7 +840,7 @@
           "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
         ],
         "exclude_patterns": [
-          "((?:^|[.\\s_\\-])(?:xxx)(?:[.\\s_\\-]|$)|[mM][dD][vV][dD][rR]|[fF][lL][aA][cC])"
+          "((?:^|[.\\s_\\-])(?:xxx)(?:[.\\s_\\-]|$)|[mM][dD][vV][dD][rR]|(?:^|[.\\s_\\-])(?:flac)(?=[.\\s_\\-]|$))"
         ]
       }
     ]
@@ -832,7 +851,7 @@
         ".*[mM][dD][vV][dD][rR].*"
       ],
       "exclude_patterns": [
-        "((?:^|[.\\s_\\-])(?:xxx)(?:[.\\s_\\-]|$)|[mM][pP]3|[xX][vV][iI][dD]|\\b[dD][vV][dD][rR]\\b|[bB][rR][rR][iI][pP]|[bB][dD][rR][iI][pP]|1080p|720p|[bB][lL][uU][rR][aA][yY]|[fF][lL][aA][cC])"
+        "((?:^|[.\\s_\\-])(?:xxx)(?:[.\\s_\\-]|$)|[mM][pP]3|[xX][vV][iI][dD]|\\b[dD][vV][dD][rR]\\b|[bB][rR][rR][iI][pP]|[bB][dD][rR][iI][pP]|1080p|720p|[bB][lL][uU][rR][aA][yY]|(?:^|[.\\s_\\-])(?:flac)(?=[.\\s_\\-]|$))"
       ]
     },
     "categories": [
@@ -843,7 +862,7 @@
           ".*[mM][dD][vV][dD][rR].*"
         ],
         "exclude_patterns": [
-          "((?:^|[.\\s_\\-])(?:xxx)(?:[.\\s_\\-]|$)|[mM][pP]3|[xX][vV][iI][dD]|\\b[dD][vV][dD][rR]\\b|[bB][rR][rR][iI][pP]|[bB][dD][rR][iI][pP]|1080p|720p|[bB][lL][uU][rR][aA][yY]|[fF][lL][aA][cC])"
+          "((?:^|[.\\s_\\-])(?:xxx)(?:[.\\s_\\-]|$)|[mM][pP]3|[xX][vV][iI][dD]|\\b[dD][vV][dD][rR]\\b|[bB][rR][rR][iI][pP]|[bB][dD][rR][iI][pP]|1080p|720p|[bB][lL][uU][rR][aA][yY]|(?:^|[.\\s_\\-])(?:flac)(?=[.\\s_\\-]|$))"
         ]
       }
     ]
@@ -854,10 +873,10 @@
       "initial": [
         ".*[Bb][oO][Oo][kK][Ww][Aa][Rr][Ee].*",
         ".*[eE][Bb][oO][Oo][kK].*",
-        ".*[Ee][Pp][Uu][Bb].*"
+        ".*(?:^|[.\\s_\\-])(?:epub)(?=[.\\s_\\-]|$).*"
       ],
       "exclude_patterns": [
-        "((?:^|[.\\s_\\-])(?:xxx)(?:[.\\s_\\-]|$)|[mM][pP]3|[xX][vV][iI][dD]|[dD][vV][dD][rR]|[bB][rR][rR][iI][pP]|[bB][dD][rR][iI][pP]|1080p|720p|[bB][lL][uU][rR][aA][yY]|[fF][lL][aA][cC])"
+        "((?:^|[.\\s_\\-])(?:xxx)(?:[.\\s_\\-]|$)|[mM][pP]3|[xX][vV][iI][dD]|[dD][vV][dD][rR]|[bB][rR][rR][iI][pP]|[bB][dD][rR][iI][pP]|1080p|720p|[bB][lL][uU][rR][aA][yY]|(?:^|[.\\s_\\-])(?:flac)(?=[.\\s_\\-]|$))"
       ]
     },
     "categories": [
@@ -867,10 +886,10 @@
         "patterns": [
           ".*[Bb][oO][Oo][kK][Ww][Aa][Rr][Ee].*",
           ".*[eE][Bb][oO][Oo][kK].*",
-          ".*[Ee][Pp][Uu][Bb].*"
+          ".*(?:^|[.\\s_\\-])(?:epub)(?=[.\\s_\\-]|$).*"
         ],
         "exclude_patterns": [
-          "((?:^|[.\\s_\\-])(?:xxx)(?:[.\\s_\\-]|$)|[mM][pP]3|[xX][vV][iI][dD]|[dD][vV][dD][rR]|[bB][rR][rR][iI][pP]|[bB][dD][rR][iI][pP]|1080p|720p|[bB][lL][uU][rR][aA][yY]|[fF][lL][aA][cC])"
+          "((?:^|[.\\s_\\-])(?:xxx)(?:[.\\s_\\-]|$)|[mM][pP]3|[xX][vV][iI][dD]|[dD][vV][dD][rR]|[bB][rR][rR][iI][pP]|[bB][dD][rR][iI][pP]|1080p|720p|[bB][lL][uU][rR][aA][yY]|(?:^|[.\\s_\\-])(?:flac)(?=[.\\s_\\-]|$))"
         ]
       }
     ]
@@ -881,7 +900,7 @@
         "(?:^|[.\\s_\\-])(?:xxx)(?:[.\\s_\\-]|$)"
       ],
       "exclude_patterns": [
-        "([fF][lL][aA][cC])"
+        "((?:^|[.\\s_\\-])(?:flac)(?=[.\\s_\\-]|$))"
       ]
     },
     "categories": [
@@ -984,6 +1003,41 @@
         "exclude_patterns": [
           ""
         ]
+      }
+    ]
+  },
+  "DOLBY_VISION_TOOLSET": {
+    "patterns": {
+      "initial": [
+        "^Donalds[.\\s_\\-]Dolby[.\\s_\\-]Vision[.\\s_\\-]Toolset(?=[.\\s_\\-]|$)"
+      ],
+      "exclude_patterns": []
+    },
+    "categories": [
+      {
+        "name": "Apps/0DAY",
+        "cat_id": "18",
+        "patterns": [],
+        "exclude_patterns": []
+      }
+    ]
+  },
+  "MOVIE_REMUX_FALLBACK": {
+    "patterns": {
+      "initial": [
+        "(?=.*(?:^|[.\\s_\\-])(?:19|20)[0-9]{2}(?=[.\\s_\\-]|$))(?=.*(?:^|[.\\s_\\-])REMUX(?=[.\\s_\\-]|$))"
+      ],
+      "exclude_patterns": [
+        "(?:^|[.\\s_\\-])(?:xxx|flac|audiobook)(?=[.\\s_\\-]|$)",
+        "(?:^|[.\\s_\\-])S[0-9]{1,2}(?:E|D|[.\\s_\\-]|$)"
+      ]
+    },
+    "categories": [
+      {
+        "name": "Movies/SD",
+        "cat_id": "2",
+        "patterns": [],
+        "exclude_patterns": []
       }
     ]
   }

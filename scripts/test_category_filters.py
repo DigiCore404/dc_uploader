@@ -62,6 +62,31 @@ cases=[
 ('Example.26.10.22.XXX.1080p.MP4-Example','31'),
 ('Alabama-Mountain_Music_(2023_CMA_Fest)-DDC-720p-h264-2023-SRPx','24'),
 ]
+cases += [
+    ('Caroline.Flack.Search.for.the.Truth.S01E01.DOC.SUBFRENCH.1080p.WEB.H264-AZR', '9'),
+    ('Caroline.Flack.Search.for.the.Truth.S01E02.FiNAL.DOC.SUBFRENCH.1080p.WEB.H264-AZR', '9'),
+    ('Me_First_And_The_Gimme_Gimmes-Have_A_Ball-CD-FLAC-1997-FAiNT', '23'),
+    ('What.Time.Is.It.There.2001.DVDRip.x264-RO', '2'),
+    ('Eagles.Of.The.Republic.2025.BDRip.x264-SNOW', '2'),
+    ('Three 6 Mafia Choices - The Movie (2001) NTSC DVD5', '1'),
+    ('d-tool.v10.3.German-iND', '18'),
+    ('Zwei.Maenner.und.ein.Baby.2004.GERMAN.WEB.H264-SPiRiTBOX', '2'),
+    ('Jagen.auf.Franzoesisch.2023.GERMAN.WEB.H264-SPiRiTBOX', '2'),
+    ('Alone.The.Beast.S01.1080p.AMZN.WEB-DL.DD+2.0.H.264-Cinefeel', '12'),
+    ('Donalds.Dolby.Vision.Toolset.READ.NFO-iND', '18'),
+    ('The_Jimi_Hendrix_Experience-Electric_Ladyland-BLURAY-FLAC-2025-401', '23'),
+    ('Strawberry.Shortcake.Rockaberry.Roll.2008.REMUX-ARCHIVED', '2'),
+    ('A.Cat.In.Paris.2010.COMPLETE.NTSC.DVDR-WaLMaRT', '1'),
+    ('Ringu.1998.2160p.GBR.Blu-ray.UHD.HEVC.DTS-HD.MA.5.1', '38'),
+    ('Time_Crisis_Razing_Storm_EUR_PS3-DARKFORCE', '26'),
+    ('Uncharted_Kodaishin_no_Hihou_JPN_PS4-HR', '26'),
+    ('God_of_War_Collection_JPN_JB_PS3-Caravan', '26'),
+    ('Artist-Republic-CD-FLAC-2026-GROUP', '23'),
+    ('Author-Book-EPUB-2026-GROUP', '28'),
+    ('Caroline.Flack.Show.S01E01.720p.WEB.h264-Example', '8'),
+    ('Movie.Republic.2025.2160p.WEB.h265-Example', '4'),
+    ('Movie.2025.2160p.UHD.BluRay.REMUX.HEVC-Example', '4'),
+]
 failed=[]
 for name,expected in cases:
     actual=classify(name)

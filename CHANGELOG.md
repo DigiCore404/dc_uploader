@@ -1,5 +1,10 @@
 # Changelog
 
+## Category correction - 2026-10-25
+
+- Keep 2160p UHD BluRay H265/x265 encodes in Movies/2160p (ID 4). The early UHD-disc rule no longer captures these encodes, including the reported Duplicity MALUS and B0MBARDiERS releases.
+- Preserve explicit COMPLETE/BDMV/ISO/BD50/BD66/BD100 disc releases, HEVC-only disc recognition, remuxes, TV categories and manual overrides. Filename-only matching still depends on the supplied release tags.
+
 ## Unreleased · 2026-10-23
 
 - Require separate FLAC and EPUB tags so titles containing Flack or Republic are not sent to Unknown.

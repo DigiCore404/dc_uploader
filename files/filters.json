@@ -460,12 +460,11 @@
   "UHD_BLURAY_DISCS": {
     "patterns": {
       "initial": [
-        "(?=.*(?:^|[.\\s_\\-])Blu[.\\s_\\-]?ray(?=[.\\s_\\-]|$))(?=.*(?:^|[.\\s_\\-])UHD(?=[.\\s_\\-]|$))"
+        "(?=[\\s\\S]{0,}(?:^|[.\\s_\\-])COMPLETE(?=[.\\s_\\-]|$))(?=[\\s\\S]{0,}(?:^|[.\\s_\\-])Blu[.\\s_\\-]?ray(?=[.\\s_\\-]|$))(?=[\\s\\S]{0,}(?:^|[.\\s_\\-])(?:UHD|2160p)(?=[.\\s_\\-]|$))"
       ],
       "exclude_patterns": [
         "(?:^|[.\\s_\\-])(?:remux|bdrip|brrip|xxx|flac)(?=[.\\s_\\-]|$)",
-        "(?:^|[.\\s_\\-])S[0-9]{1,2}(?:E|D|[.\\s_\\-]|$)",
-        "^(?!.*(?:^|[.\\s_\\-])(?:COMPLETE|BDMV|ISO|BD(?:50|66|100))(?=[.\\s_\\-]|$))(?=.*(?:^|[.\\s_\\-])2160p(?=[.\\s_\\-]|$))(?=.*(?:^|[.\\s_\\-])(?:x265|h\\.?265)(?=[.\\s_\\-]|$))"
+        "(?:^|[.\\s_\\-])S[0-9]{1,2}(?:E|D|[.\\s_\\-]|$)"
       ]
     },
     "categories": [
@@ -477,10 +476,92 @@
       }
     ]
   },
+  "BLURAY_COMPLETE_MOVIES_TV_SPORTS_PACKS": {
+    "patterns": {
+      "initial": [
+        "(?=[\\s\\S]{0,}(?:^|[.\\s_\\-])COMPLETE(?=[.\\s_\\-]|$))(?=[\\s\\S]{0,}(?:^|[.\\s_\\-])Blu[.\\s_\\-]?ray(?=[.\\s_\\-]|$))"
+      ],
+      "exclude_patterns": [
+        "((?:^|[.\\s_\\-])(?:xxx)(?:[.\\s_\\-]|$)|[hH][dD][tT][vV]|(?:^|[.\\s_\\-])(?:xxx)(?:[.\\s_\\-]|$)|[mM][bB][lL][uU][rR][aA][yY]|[dD][vV][dD][rR][iI][pP]|[dD][vV][bB][rR][iI][pP]|[bB][rR][rR][iI][pP]|[xX][vV][iI][dD]|[bB][dD][rR][iI][pP]|(?:^|[.\\s_\\-])(?:flac)(?=[.\\s_\\-]|$))",
+        "(-I_KnoW|-HHT|-PLAYMAGiC|-CLS|-bADkARMA|-RUNE|-TENOKE|-ANOMALY|-FCKDRM|-VREX|-DVN|-DARKZER0|-NAPT|-RAZOR|-DINOByTES|-HOODLUM|-GOG|-DOGE|-STEAMPUNKS|-DARKSiDERS|-SiMPLEX|I_KnoW|-CPY|0x0007|-BAT|-PLAZA|-ACTiVATED|-CODEX|-CLASSiCS|-DEFA|-RELOADED|-SKIDROW|-JAGDOX|-Razor1911|-FLT|-JAGUAR|-iNDEPENDANT|-PROPHET|-WARG|-FANiSO|-HI2U|-ARMADA|-FLTDOX|-DELiGHT|-POSTMORTEM|-TiNYiSO|-AVENGED|-CLONEDVD-P2P|-ARM|-GENESIS|-FASiSO|-ViTALiTY|-RazorDOX|-SPLATTERKiNGS)$",
+        "([Bb][oO][Oo][kK][Ww][Aa][Rr][Ee]|[eE][Bb][oO][Oo][kK]|(?:^|[.\\s_\\-])(?:epub)(?=[.\\s_\\-]|$))",
+        ".*MDVDR.*|.*DVDR.*",
+        "(-SRPx?|-OSKOREIA|-KLViD|-555666)",
+        "(?:^|[.\\s_\\-])remux(?=[.\\s_\\-]|$)"
+      ]
+    },
+    "categories": [
+      {
+        "name": "TV Packs/Bluray",
+        "cat_id": "12",
+        "patterns": [
+          ".*[Ss][0-9][0-9].*",
+          ".*[Ss][Ee][Aa][Ss][Oo][Nn].*[0-9][0-9].*",
+          ".*[0-9]{4}\\.[0-9]{2}\\.[0-9]{2}.*[Hh][Dd][Tt][Vv].*"
+        ],
+        "exclude_patterns": [
+          ".*[Dd][0-9][0-9].*",
+          ".*[Ee][0-9][0-9].*",
+          "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)",
+          "(?<!S[0-9][0-9]).*[Ee][0-9][0-9].*",
+          "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
+        ]
+      },
+      {
+        "name": "Series/Bluray",
+        "cat_id": "14",
+        "patterns": [
+          ".*[Ss][0-9][0-9].*[Dd][0-9][0-9].*",
+          ".*[Ss][0-9][0-9].*",
+          ".*[Dd][0-9][0-9].*",
+          "(\\d{4})\\.(\\d{2})\\.(\\d{2})"
+        ],
+        "exclude_patterns": [
+          "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)",
+          "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
+        ]
+      },
+      {
+        "name": "Sports",
+        "cat_id": "15",
+        "patterns": [
+          "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)"
+        ],
+        "exclude_patterns": [
+          "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
+        ]
+      },
+      {
+        "name": "Movies/UHD/Bluray",
+        "cat_id": "38",
+        "patterns": [
+          "([Uu][hH][dD])"
+        ],
+        "exclude_patterns": [
+          "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
+        ]
+      },
+      {
+        "name": "Movies/Bluray",
+        "cat_id": "3",
+        "patterns": [
+          ""
+        ],
+        "exclude_patterns": [
+          "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)",
+          ".*[Ss][0-9][0-9].*[Ee][0-9][0-9].*",
+          "(\\d{4})\\.(\\d{2})\\.(\\d{2})",
+          "(-I_KnoW|-HHT|-PLAYMAGiC|-CLS|-bADkARMA|-RUNE|-TENOKE|-ANOMALY|-FCKDRM|-VREX|-DVN|-DARKZER0|-NAPT|-RAZOR|-DINOByTES|-HOODLUM|-GOG|-DOGE|-STEAMPUNKS|-DARKSiDERS|-SiMPLEX|I_KnoW|-CPY|0x0007|-BAT|-PLAZA|-ACTiVATED|-CODEX|-CLASSiCS|-DEFA|-RELOADED|-SKIDROW|-JAGDOX|-Razor1911|-FLT|-JAGUAR|-iNDEPENDANT|-PROPHET|-WARG|-FANiSO|-HI2U|-ARMADA|-FLTDOX|-DELiGHT|-POSTMORTEM|-TiNYiSO|-AVENGED|-CLONEDVD-P2P|-ARM|-GENESIS|-FASiSO|-ViTALiTY|-RazorDOX|-SPLATTERKiNGS)$",
+          "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
+        ]
+      }
+    ]
+  },
   "2160P_MOVIES_TV_SPORTS_PACKS": {
     "patterns": {
       "initial": [
-        "2160[pP]"
+        "2160[pP]",
+        "(?=[\\s\\S]{0,}(?:^|[.\\s_\\-])UHD(?=[.\\s_\\-]|$))(?=[\\s\\S]{0,}(?:^|[.\\s_\\-])Blu[.\\s_\\-]?ray(?=[.\\s_\\-]|$))"
       ],
       "exclude_patterns": [
         "((?:^|[.\\s_\\-])(?:xxx)(?:[.\\s_\\-]|$)|mbluray|mdvdr|(?:^|[.\\s_\\-])(?:flac)(?=[.\\s_\\-]|$))",
@@ -670,86 +751,6 @@
           "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)",
           ".*[Ss][0-9][0-9].*[Ee][0-9][0-9].*",
           "(\\d{4})\\.(\\d{2})\\.(\\d{2})",
-          "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
-        ]
-      }
-    ]
-  },
-  "BLURAY_COMPLETE_MOVIES_TV_SPORTS_PACKS": {
-    "patterns": {
-      "initial": [
-        "([bB][lL][uU][rR][aA][yY]|[Cc][Oo][Mm][Pp][Ll][Ee][Tt][Ee]|[Uu][Hh][Dd])"
-      ],
-      "exclude_patterns": [
-        "((?:^|[.\\s_\\-])(?:xxx)(?:[.\\s_\\-]|$)|[hH][dD][tT][vV]|(?:^|[.\\s_\\-])(?:xxx)(?:[.\\s_\\-]|$)|[mM][bB][lL][uU][rR][aA][yY]|[dD][vV][dD][rR][iI][pP]|[dD][vV][bB][rR][iI][pP]|[bB][rR][rR][iI][pP]|[xX][vV][iI][dD]|[bB][dD][rR][iI][pP]|480[pP]|1080[pP]|720[pP]|2160[pP]|(?:^|[.\\s_\\-])(?:flac)(?=[.\\s_\\-]|$))",
-        "(-I_KnoW|-HHT|-PLAYMAGiC|-CLS|-bADkARMA|-RUNE|-TENOKE|-ANOMALY|-FCKDRM|-VREX|-DVN|-DARKZER0|-NAPT|-RAZOR|-DINOByTES|-HOODLUM|-GOG|-DOGE|-STEAMPUNKS|-DARKSiDERS|-SiMPLEX|I_KnoW|-CPY|0x0007|-BAT|-PLAZA|-ACTiVATED|-CODEX|-CLASSiCS|-DEFA|-RELOADED|-SKIDROW|-JAGDOX|-Razor1911|-FLT|-JAGUAR|-iNDEPENDANT|-PROPHET|-WARG|-FANiSO|-HI2U|-ARMADA|-FLTDOX|-DELiGHT|-POSTMORTEM|-TiNYiSO|-AVENGED|-CLONEDVD-P2P|-ARM|-GENESIS|-FASiSO|-ViTALiTY|-RazorDOX|-SPLATTERKiNGS)$",
-        "([Bb][oO][Oo][kK][Ww][Aa][Rr][Ee]|[eE][Bb][oO][Oo][kK]|(?:^|[.\\s_\\-])(?:epub)(?=[.\\s_\\-]|$))",
-        ".*MDVDR.*|.*DVDR.*",
-        "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
-      ]
-    },
-    "categories": [
-      {
-        "name": "TV Packs/Bluray",
-        "cat_id": "12",
-        "patterns": [
-          ".*[Ss][0-9][0-9].*",
-          ".*[Ss][Ee][Aa][Ss][Oo][Nn].*[0-9][0-9].*",
-          ".*[0-9]{4}\\.[0-9]{2}\\.[0-9]{2}.*[Hh][Dd][Tt][Vv].*"
-        ],
-        "exclude_patterns": [
-          ".*[Dd][0-9][0-9].*",
-          ".*[Ee][0-9][0-9].*",
-          "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)",
-          "(?<!S[0-9][0-9]).*[Ee][0-9][0-9].*",
-          "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
-        ]
-      },
-      {
-        "name": "Series/Bluray",
-        "cat_id": "14",
-        "patterns": [
-          ".*[Ss][0-9][0-9].*[Dd][0-9][0-9].*",
-          ".*[Ss][0-9][0-9].*",
-          ".*[Dd][0-9][0-9].*",
-          "(\\d{4})\\.(\\d{2})\\.(\\d{2})"
-        ],
-        "exclude_patterns": [
-          "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)",
-          "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
-        ]
-      },
-      {
-        "name": "Sports",
-        "cat_id": "15",
-        "patterns": [
-          "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)"
-        ],
-        "exclude_patterns": [
-          "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
-        ]
-      },
-      {
-        "name": "Movies/UHD/Bluray",
-        "cat_id": "38",
-        "patterns": [
-          "([Uu][hH][dD])"
-        ],
-        "exclude_patterns": [
-          "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
-        ]
-      },
-      {
-        "name": "Movies/Bluray",
-        "cat_id": "3",
-        "patterns": [
-          ""
-        ],
-        "exclude_patterns": [
-          "(-NiGHTNiNJAS|-DARKSPORT|-SPORTSNET|-VERUM|-ACEHiGH|-GAMENiGHT|GAMETiME|-HARDHiTS|-TWOLEFTFEET|-ULTRAS|-FTP|-ALLURE|-OVERTAKE)",
-          ".*[Ss][0-9][0-9].*[Ee][0-9][0-9].*",
-          "(\\d{4})\\.(\\d{2})\\.(\\d{2})",
-          "(-I_KnoW|-HHT|-PLAYMAGiC|-CLS|-bADkARMA|-RUNE|-TENOKE|-ANOMALY|-FCKDRM|-VREX|-DVN|-DARKZER0|-NAPT|-RAZOR|-DINOByTES|-HOODLUM|-GOG|-DOGE|-STEAMPUNKS|-DARKSiDERS|-SiMPLEX|I_KnoW|-CPY|0x0007|-BAT|-PLAZA|-ACTiVATED|-CODEX|-CLASSiCS|-DEFA|-RELOADED|-SKIDROW|-JAGDOX|-Razor1911|-FLT|-JAGUAR|-iNDEPENDANT|-PROPHET|-WARG|-FANiSO|-HI2U|-ARMADA|-FLTDOX|-DELiGHT|-POSTMORTEM|-TiNYiSO|-AVENGED|-CLONEDVD-P2P|-ARM|-GENESIS|-FASiSO|-ViTALiTY|-RazorDOX|-SPLATTERKiNGS)$",
           "(-SRPx?|-OSKOREIA|-KLViD|-555666)"
         ]
       }

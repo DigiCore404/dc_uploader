@@ -1,5 +1,10 @@
 # Changelog
 
+## WEBFLAC category fix - 2026-10-29
+
+- Recognize WEBFLAC as an explicit lossless music tag alongside FLAC. WEBFLAC albums now use Music/FLAC (23) instead of falling back to Movies/SD (2).
+- Add regression cases for the 17 reported albums, mixed-case names and FLAC tag variants; retain existing movie, TV and full-disc classification.
+
 ## Category correction - 2026-10-25
 
 - Keep 2160p UHD BluRay H265/x265 encodes in Movies/2160p (ID 4). The early UHD-disc rule no longer captures these encodes, including the reported Duplicity MALUS and B0MBARDiERS releases.

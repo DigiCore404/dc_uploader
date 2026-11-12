@@ -297,3 +297,11 @@ A: The primary limitation of hardlinking is that the source and intended destina
 ### Q: Can I use this tool on windows?
 
 A: No you'll be missing a lot of the required tools. Instead, look into [WSL](https://learn.microsoft.com/en-us/windows/wsl/install). Once WSL is running, just mount your torrent parent folder to the WSL environment through /etc/fstab and you should be fine. Treat it like a second computer.
+
+### Completed-release link watcher
+
+`scripts/link_watcher.py` maintains `/uploaders/COMPLETE` from completed-release events in `/uploaders/LINKS`. Configure its uploader paths for your box before installing it as a supervised process. Process events only after the writer closes the event file.
+
+Incoming GAMES/NSW/PS5 files on the same filesystem use hardlinks while the archive mover relocates the original directory. The watcher records these in `/uploaders/durable_game_links.json`, then replaces them with links to matching physical `DISK*` archive files after the move completes. It retains the hardlinks if the archive is incomplete. Other archive files use resolved physical paths immediately.
+
+Empty or unverifiable sources are not uploaded. Backend output is retained in each uploader's `files/launcher.log`; apply your normal log rotation policy. Run `python3 scripts/test_link_watcher.py` on Linux to verify archive moves, link repair and failure handling.

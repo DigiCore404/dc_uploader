@@ -1,5 +1,11 @@
 # Changelog
 
+## Durable game upload links - 2026-11-12
+
+- Maintain the box link watcher in scripts/link_watcher.py. Incoming game files use temporary hardlinks while fin-space moves the source, then switch to verified physical archive paths. Existing archive links resolve virtual aliases before linking.
+- Refuse empty or unverifiable sources and retain launcher output for early failures.
+- Cover archive moves, incomplete archives, old incoming links, alias removal and failed verification with regression tests.
+
 ## WEBFLAC category fix - 2026-10-29
 
 - Recognize WEBFLAC as an explicit lossless music tag alongside FLAC. WEBFLAC albums now use Music/FLAC (23) instead of falling back to Movies/SD (2).

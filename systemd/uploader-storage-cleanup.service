@@ -1,0 +1,12 @@
+[Unit]
+Description=Protected inactive upload link and processed-event cleanup
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /uploaders/scripts/safe_storage_cleanup.py --config /etc/digitalcore-qbit-cleanup.json --apply
+UMask=0077
+TimeoutStartSec=180
+NoNewPrivileges=true
+ProtectSystem=full
+ReadOnlyPaths=/glftpd

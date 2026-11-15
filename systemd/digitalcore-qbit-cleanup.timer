@@ -1,0 +1,11 @@
+[Unit]
+Description=Check DigitalCore torrent retention every five minutes
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=5min
+Persistent=true
+Unit=digitalcore-qbit-cleanup.service
+
+[Install]
+WantedBy=timers.target

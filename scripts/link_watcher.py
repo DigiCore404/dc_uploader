@@ -9,6 +9,7 @@ import subprocess
 import sys
 import time
 import threading
+import signal
 from pathlib import Path
 from typing import Iterable, List, Sequence
 
@@ -20,7 +21,6 @@ INCOMING_ROOT = Path('/glftpd/site')
 ARCHIVE_ROOT = Path('/glftpd')
 PENDING_LINKS = Path('/uploaders/durable_game_links.json')
 PENDING_LOCK = threading.RLock()
-GAME_SECTIONS = {'GAMES', 'NSW', 'PS5'}
 
 UPLOADERS = [
     {
@@ -210,16 +210,16 @@ def ensure_parent(path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
 
 
-def is_incoming_game(path: Path) -> bool:
+def is_incoming_source(path: Path) -> bool:
     try:
-        return path.relative_to(INCOMING_ROOT).parts[0].upper() in GAME_SECTIONS
+        return len(path.relative_to(INCOMING_ROOT).parts) >= 2
     except (ValueError, IndexError):
         return False
 
 
 def record_pending_archive(source: Path, destination: Path) -> None:
-    """Track temporary hardlinks until fin-space finishes moving the source."""
-    if not is_incoming_game(source):
+    """Track temporary hardlinks until the archive mover finishes moving the source."""
+    if not is_incoming_source(source):
         return
     files = {}
     for rel in iter_expected_files(source):
@@ -238,7 +238,7 @@ def _save_pending(pending: dict) -> None:
     temporary.replace(PENDING_LINKS)
 
 
-def reconcile_archived_games() -> None:
+def reconcile_archived_releases() -> None:
     """Release temporary incoming hardlinks once matching archive data is ready."""
     with PENDING_LOCK:
         if not PENDING_LINKS.exists():
@@ -248,8 +248,11 @@ def reconcile_archived_games() -> None:
             source = Path(item['source'])
             if source.exists():
                 continue
-            section = source.relative_to(INCOMING_ROOT).parts[0]
-            candidates = ARCHIVE_ROOT.glob(f'DISK*/{section}/{source.name}')
+            relative = source.relative_to(INCOMING_ROOT)
+            relatives = [relative]
+            if relative.parts[0].upper() in {'FOREIGN', 'PRE', 'ARCHIVE'}:
+                relatives.append(Path(*relative.parts[1:]))
+            candidates = (disk / rel for disk in ARCHIVE_ROOT.glob('DISK*') for rel in relatives)
             for archive in candidates:
                 if not all((archive / rel).is_file() and (archive / rel).stat().st_size == st['size']
                            for rel, st in item['files'].items()):
@@ -266,7 +269,7 @@ def reconcile_archived_games() -> None:
                         raise RuntimeError(f'Unexpected archive staging file: {temporary}')
                     temporary.symlink_to((archive / rel).resolve(strict=True))
                     temporary.replace(dest)
-                debug_log(f'Rebound archived game {source.name} to {archive}')
+                debug_log(f'Rebound archived release {source.name} to {archive}')
                 del pending[destination]
                 break
         _save_pending(pending)
@@ -275,9 +278,9 @@ def reconcile_archived_games() -> None:
 def maintain_archive_links() -> None:
     while True:
         try:
-            reconcile_archived_games()
+            reconcile_archived_releases()
         except Exception:
-            logging.exception('Could not reconcile archived game links')
+            logging.exception('Could not reconcile archived release links')
         time.sleep(30)
 
 
@@ -289,7 +292,7 @@ def sync_links(src_root: Path, dest_root: Path) -> None:
         ensure_parent(dest_file)
         if dest_file.is_symlink():
             try:
-                if os.readlink(dest_file) == str(stable_source) and not is_incoming_game(stable_source):
+                if os.readlink(dest_file) == str(stable_source) and not is_incoming_source(stable_source):
                     continue
             except FileNotFoundError:
                 dest_file.unlink(missing_ok=True)
@@ -297,10 +300,10 @@ def sync_links(src_root: Path, dest_root: Path) -> None:
             continue
         if dest_file.exists() or dest_file.is_symlink():
             dest_file.unlink(missing_ok=True)
-        # Incoming game directories are real directories, moved by fin-space.
+        # Incoming release directories are real directories, moved by fin-space.
         # A hardlink survives that move; the maintenance task releases it after
         # replacing it with a symlink to verified archive data.
-        if is_incoming_game(stable_source):
+        if is_incoming_source(stable_source):
             os.link(stable_source, dest_file)
         else:
             os.symlink(stable_source, dest_file)
@@ -700,18 +703,30 @@ def watch_releases() -> None:
         text=True,
         bufsize=1,
     )
-    assert process.stdout is not None
-    for line in process.stdout:
-        release = line.strip()
-        if not release:
-            continue
-        try:
-            process_release(release, picker)
-        except Exception as exc:
-            logging.exception("Unexpected error while processing %s: %s", release, exc)
+    try:
+        assert process.stdout is not None
+        for line in process.stdout:
+            release = line.strip()
+            if not release:
+                continue
+            try:
+                process_release(release, picker)
+            except Exception as exc:
+                logging.exception("Unexpected error while processing %s: %s", release, exc)
+    finally:
+        if process.poll() is None:
+            process.terminate()
+            try:
+                process.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                process.kill()
+                process.wait()
 
 
 def main() -> int:
+    def request_stop(signum, frame):
+        raise KeyboardInterrupt
+    signal.signal(signal.SIGTERM, request_stop)
     configure_logging()
     try:
         watch_releases()

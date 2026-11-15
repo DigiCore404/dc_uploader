@@ -1,0 +1,17 @@
+[Unit]
+Description=Completed release links and uploader launcher
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/GoFTPd
+ExecStart=/usr/bin/python3 -u /uploaders/scripts/link.py
+Restart=on-failure
+RestartSec=5
+# Uploads already launched by the watcher must survive a watcher restart.
+KillMode=process
+TimeoutStopSec=15
+UMask=0022
+
+[Install]
+WantedBy=multi-user.target

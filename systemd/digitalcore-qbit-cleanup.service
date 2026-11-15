@@ -1,0 +1,14 @@
+[Unit]
+Description=DigitalCore qBittorrent cleanup with completion and swarm protection
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /uploaders/scripts/safe_qbit_cleanup.py --config /etc/digitalcore-qbit-cleanup.json --apply
+StateDirectory=digitalcore-qbit-cleanup
+LogsDirectory=digitalcore-qbit-cleanup
+UMask=0077
+TimeoutStartSec=180
+NoNewPrivileges=true
+ProtectSystem=full
+ReadOnlyPaths=/uploaders /glftpd

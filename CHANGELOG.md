@@ -1,5 +1,15 @@
 # Changelog
 
+## Protected DigitalCore cleanup - 2026-11-15
+
+- Centralize active entry points under /uploaders/scripts with English documentation and Python-only administration. Keep the FTP hook path working and the archive manager unchanged.
+- Replace the filesystem deletion loop with registered-torrent/mount protection and confirmed-missing link retention; prune LINKS events after three days.
+
+- Add a dry-run-first qBittorrent cleaner and systemd timer for the two DigitalCore clients. Require a complete, readable payload, healthy tracker, at least three reported seeds, no downloaders, one hour of seeding and inactivity, and repeated eligibility before ratio/age cleanup. Payload deletion is never requested.
+- Keep compact rotating logs with removal reasons and aggregate protection counts. Read credentials from the existing private configuration.
+- Extend durable incoming upload links to TV and other release categories, including flattened FOREIGN archive layouts, without changing the archive mover.
+- Add cleanup policy, last-moment peer changes, payload safety and TV archive regression coverage.
+
 ## Durable game upload links - 2026-11-12
 
 - Maintain the box link watcher in scripts/link_watcher.py. Incoming game files use temporary hardlinks while fin-space moves the source, then switch to verified physical archive paths. Existing archive links resolve virtual aliases before linking.

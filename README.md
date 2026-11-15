@@ -302,6 +302,24 @@ A: No you'll be missing a lot of the required tools. Instead, look into [WSL](ht
 
 `scripts/link_watcher.py` maintains `/uploaders/COMPLETE` from completed-release events in `/uploaders/LINKS`. Configure its uploader paths for your box before installing it as a supervised process. Process events only after the writer closes the event file.
 
-Incoming GAMES/NSW/PS5 files on the same filesystem use hardlinks while the archive mover relocates the original directory. The watcher records these in `/uploaders/durable_game_links.json`, then replaces them with links to matching physical `DISK*` archive files after the move completes. It retains the hardlinks if the archive is incomplete. Other archive files use resolved physical paths immediately.
+Incoming release files on the same filesystem use hardlinks while the archive mover relocates the original directory. The watcher records these in `/uploaders/durable_game_links.json`, then replaces them with links to matching physical `DISK*` archive files, including flattened FOREIGN sections after the move completes. It retains the hardlinks if the archive is incomplete. Other archive files use resolved physical paths immediately.
 
 Empty or unverifiable sources are not uploaded. Backend output is retained in each uploader's `files/launcher.log`; apply your normal log rotation policy. Run `python3 scripts/test_link_watcher.py` on Linux to verify archive moves, link repair and failure handling.
+
+
+### Protected DigitalCore qBittorrent cleanup
+
+`scripts/safe_qbit_cleanup.py --config /etc/digitalcore-qbit-cleanup.json` is read-only by default; `--apply` enables torrent-only removal. `files/safe-qbit-cleanup.example.json` contains no credentials and references the existing private client configuration. The cleaner is restricted to the two DigitalCore ports, 5011 and 5012. Disable their old autoremove strategies before enabling `systemd/digitalcore-qbit-cleanup.timer`; keep other sites' maintenance separate.
+
+Ratio 2.5 or age three days is only a retention trigger. A torrent must also be fully complete, actively seeding, have a healthy DigitalCore tracker and at least three reported seeds, have no swarm/connected downloaders or upload traffic, and have seeded and been idle for at least one hour. Selectively downloaded, checking, missing-data and unknown states are protected. Eligibility must persist for ten minutes, is checked again immediately before removal, and at most five torrents per client are removed per run. Content files are never deleted.
+
+The timer runs every five minutes. State lives in `/var/lib/digitalcore-qbit-cleanup`; timestamped reasons and protection summaries go to `/var/log/digitalcore-qbit-cleanup/cleanup.log`, capped at four files of 2 MiB. Run `python3 scripts/test_safe_qbit_cleanup.py` and `python3 scripts/test_link_watcher.py` on Linux to verify the policy and source-link behavior. The archive mover is not modified by this integration.
+
+
+### Central maintenance directory
+
+The box entry points live in `/uploaders/scripts`, with English instructions in `README.txt` and `status.py` for a compact service/timer/screen overview. The link watcher and both cleanup jobs are systemd-managed; obsolete screen launchers and redundant shell wrappers are retired. `on_complete_links.py` remains callable through the existing `/uploaders/on_complete_links.py` compatibility link. `fin-space.py` is only a launcher that preserves the unchanged archive manager's original working directory.
+
+`scripts/safe_storage_cleanup.py` replaces the unprotected filesystem delete loop. It inventories every relevant qBittorrent client, uploads in progress and active mounts; if that inventory fails, payload cleanup is skipped. It never deletes regular payload or archive files. Inactive broken links require seven-day age and a full day of repeated missing observations. Flat regular event marker files under `/uploaders/LINKS` are pruned after three days, separately from payload; `--events-only --event-limit 100000 --apply` handles an event backlog without touching torrent data. The normal timer limits each pass.
+
+Use `scripts/test_safe_qbit_cleanup.py`, `scripts/test_safe_storage_cleanup.py` and `scripts/test_link_watcher.py` on Linux for policy, dry-run, active-peer, file-integrity, event-retention and archive-link regressions. The old autoremove configuration is retained privately only for connection settings and the separate DirtyBytes task; DigitalCore retention is exclusively handled by the new cleaner.

@@ -1,0 +1,10 @@
+[Unit]
+Description=Check inactive upload links and events every ten minutes
+
+[Timer]
+OnBootSec=3min
+OnUnitActiveSec=10min
+Unit=uploader-storage-cleanup.service
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,13 @@
+[Unit]
+Description=Existing DirtyBytes and UNRAR maintenance
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /uploaders/scripts/uploader_aux_maintenance.py
+Restart=on-failure
+RestartSec=30
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

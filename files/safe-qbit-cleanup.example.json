@@ -1,0 +1,15 @@
+{
+  "credentials_file": "/root/config.yml",
+  "tasks": ["my_task_cl1", "my_task_cl2"],
+  "state_file": "/var/lib/digitalcore-qbit-cleanup/state.json",
+  "log_file": "/var/log/digitalcore-qbit-cleanup/cleanup.log",
+  "policy": {
+    "ratio": 2.5,
+    "age_seconds": 259200,
+    "minimum_seed_seconds": 3600,
+    "idle_seconds": 3600,
+    "minimum_reported_seeds": 3,
+    "grace_seconds": 600,
+    "maximum_removals": 5
+  }
+}

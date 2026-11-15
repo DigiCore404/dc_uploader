@@ -64,10 +64,24 @@ class DurableLinksTest(unittest.TestCase):
         shutil.copytree(source, archive)
         shutil.rmtree(source)
         self.assertEqual((dest / 'game.rar').read_bytes(), b'payload')
-        watcher.reconcile_archived_games()
+        watcher.reconcile_archived_releases()
         self.assertTrue((dest / 'game.rar').is_symlink())
         self.assertEqual((dest / 'game.rar').readlink(), archive / 'game.rar')
         self.assertEqual((dest / 'game.rar').read_bytes(), b'payload')
+
+    def test_foreign_tv_links_follow_flattened_archive_layout(self):
+        source = watcher.INCOMING_ROOT / 'FOREIGN' / 'TV-PL' / 'Episode-GROUP'
+        source.mkdir(parents=True)
+        (source / 'episode.rar').write_bytes(b'payload')
+        dest = self.root / 'complete' / source.name
+        watcher.sync_links(source, dest)
+        watcher.record_pending_archive(source, dest)
+        archive = watcher.ARCHIVE_ROOT / 'DISK1' / 'TV-PL' / source.name
+        shutil.copytree(source, archive)
+        shutil.rmtree(source)
+        watcher.reconcile_archived_releases()
+        self.assertTrue((dest / 'episode.rar').is_symlink())
+        self.assertEqual((dest / 'episode.rar').read_bytes(), b'payload')
 
     def test_incomplete_archive_keeps_original_hardlinks(self):
         source = watcher.INCOMING_ROOT / 'GAMES' / 'Game-GROUP'
@@ -80,7 +94,7 @@ class DurableLinksTest(unittest.TestCase):
         archive = watcher.ARCHIVE_ROOT / 'DISK1' / 'GAMES' / source.name
         archive.mkdir(parents=True)
         (archive / 'game.rar').write_bytes(b'part')
-        watcher.reconcile_archived_games()
+        watcher.reconcile_archived_releases()
         self.assertFalse((dest / 'game.rar').is_symlink())
         self.assertEqual((dest / 'game.rar').read_bytes(), b'payload')
 

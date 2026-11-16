@@ -1,4 +1,5 @@
 import importlib.util
+import json
 import tempfile
 import shutil
 import unittest
@@ -97,6 +98,78 @@ class DurableLinksTest(unittest.TestCase):
         watcher.reconcile_archived_releases()
         self.assertFalse((dest / 'game.rar').is_symlink())
         self.assertEqual((dest / 'game.rar').read_bytes(), b'payload')
+
+    def test_files_completed_after_snapshot_can_rebind(self):
+        source = watcher.INCOMING_ROOT / 'GAMES' / 'Growing-GROUP'
+        source.mkdir(parents=True)
+        payload = source / 'game.rar'
+        payload.write_bytes(b'part')
+        dest = self.root / 'complete' / source.name
+        watcher.sync_links(source, dest)
+        watcher.record_pending_archive(source, dest)
+        payload.write_bytes(b'complete payload')
+        archive = watcher.ARCHIVE_ROOT / 'DISK1' / 'GAMES' / source.name
+        shutil.copytree(source, archive)
+        shutil.rmtree(source)
+        watcher.reconcile_archived_releases()
+        self.assertTrue((dest / 'game.rar').is_symlink())
+        self.assertEqual((dest / 'game.rar').read_bytes(), b'complete payload')
+
+    def test_unmatched_metadata_does_not_strand_matching_payload(self):
+        source = watcher.INCOMING_ROOT / 'GAMES' / 'Mixed-GROUP'
+        source.mkdir(parents=True)
+        (source / 'game.rar').write_bytes(b'payload')
+        (source / 'game.nfo').write_bytes(b'old')
+        dest = self.root / 'complete' / source.name
+        watcher.sync_links(source, dest)
+        watcher.record_pending_archive(source, dest)
+        archive = watcher.ARCHIVE_ROOT / 'DISK1' / 'GAMES' / source.name
+        shutil.copytree(source, archive)
+        (archive / 'game.nfo').write_bytes(b'new metadata')
+        shutil.rmtree(source)
+        watcher.reconcile_archived_releases()
+        self.assertTrue((dest / 'game.rar').is_symlink())
+        self.assertFalse((dest / 'game.nfo').is_symlink())
+        self.assertEqual((dest / 'game.nfo').read_bytes(), b'old')
+        self.assertTrue(watcher.PENDING_LINKS.exists())
+
+    def test_grown_file_with_different_archive_content_is_retained(self):
+        source = watcher.INCOMING_ROOT / 'GAMES' / 'Changed-GROUP'
+        source.mkdir(parents=True)
+        (source / 'game.rar').write_bytes(b'part')
+        dest = self.root / 'complete' / source.name
+        watcher.sync_links(source, dest)
+        watcher.record_pending_archive(source, dest)
+        (source / 'game.rar').write_bytes(b'original data')
+        archive = watcher.ARCHIVE_ROOT / 'DISK1' / 'GAMES' / source.name
+        shutil.copytree(source, archive)
+        (archive / 'game.rar').write_bytes(b'differed data')
+        shutil.rmtree(source)
+        watcher.reconcile_archived_releases()
+        self.assertFalse((dest / 'game.rar').is_symlink())
+        self.assertEqual((dest / 'game.rar').read_bytes(), b'original data')
+
+    def test_archive_repair_preserves_concurrent_completion_records(self):
+        source = watcher.INCOMING_ROOT / 'GAMES' / 'Concurrent-GROUP'
+        source.mkdir(parents=True)
+        (source / 'game.rar').write_bytes(b'payload')
+        dest = self.root / 'complete' / source.name
+        watcher.sync_links(source, dest)
+        watcher.record_pending_archive(source, dest)
+        archive = watcher.ARCHIVE_ROOT / 'DISK1' / 'GAMES' / source.name
+        shutil.copytree(source, archive)
+        shutil.rmtree(source)
+        original_match = watcher.archive_file_matches
+
+        def matching_with_new_event(*args):
+            pending = json.loads(watcher.PENDING_LINKS.read_text())
+            pending['new-completion'] = {'source': 'new-source', 'files': {}}
+            watcher._save_pending(pending)
+            return original_match(*args)
+
+        with patch.object(watcher, 'archive_file_matches', side_effect=matching_with_new_event):
+            watcher.reconcile_archived_releases()
+        self.assertEqual(list(json.loads(watcher.PENDING_LINKS.read_text())), ['new-completion'])
 
     def test_old_volatile_incoming_symlink_becomes_hardlink(self):
         source = watcher.INCOMING_ROOT / 'NSW' / 'Game-GROUP'

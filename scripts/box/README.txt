@@ -8,6 +8,12 @@ AUTOMATIC SYSTEMD JOBS - DO NOT ALSO START THESE IN A SCREEN
 link.py
   Receives complete-release events, maintains durable links and starts uploaders.
   Service: uploader-link-watcher.service
+  Archive copies are rebound per file. A changed or missing NFO, sample or
+  other file cannot prevent matching payload files from being rebound.
+  Files completed after the initial snapshot are compared byte for byte.
+  Unmatched originals are retained; archive maintenance does not block new
+  completion records. Missing archives may have been intentionally removed
+  for space and are not recreated by this service.
 safe_qbit_cleanup.py
   Protected DigitalCore torrent-only cleanup every five minutes.
   Timer: digitalcore-qbit-cleanup.timer

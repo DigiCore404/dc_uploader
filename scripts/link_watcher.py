@@ -238,42 +238,90 @@ def _save_pending(pending: dict) -> None:
     temporary.replace(PENDING_LINKS)
 
 
+def file_version(st: os.stat_result) -> tuple:
+    # Reading may update atime; only identity and content-change timestamps matter.
+    return st.st_dev, st.st_ino, st.st_size, st.st_mtime_ns, st.st_ctime_ns
+
+
+def archive_file_matches(destination: Path, archive: Path, original: dict) -> bool:
+    """Accept the mover's completed copy, retaining files that differ or still change."""
+    if not archive.is_file() or not destination.is_file():
+        return False
+    before = destination.stat()
+    archived = archive.stat()
+    if before.st_size != archived.st_size:
+        return False
+    if before.st_size == original['size']:
+        return True
+    # The completion event may precede the final writes. An old snapshot size
+    # must not strand a completed hardlink, but a different archive is unsafe.
+    with destination.open('rb') as left, archive.open('rb') as right:
+        while True:
+            block = left.read(1024 * 1024)
+            if block != right.read(1024 * 1024):
+                return False
+            if not block:
+                break
+    return (file_version(before) == file_version(destination.stat())
+            and file_version(archived) == file_version(archive.stat()))
+
+
 def reconcile_archived_releases() -> None:
-    """Release temporary incoming hardlinks once matching archive data is ready."""
+    """Rebind matching files independently; retain every unmatched original."""
     with PENDING_LOCK:
         if not PENDING_LINKS.exists():
             return
         pending = json.loads(PENDING_LINKS.read_text())
-        for destination, item in list(pending.items()):
-            source = Path(item['source'])
-            if source.exists():
-                continue
+    for destination, item in list(pending.items()):
+        source = Path(item['source'])
+        if source.exists():
+            continue
+        try:
             relative = source.relative_to(INCOMING_ROOT)
             relatives = [relative]
             if relative.parts[0].upper() in {'FOREIGN', 'PRE', 'ARCHIVE'}:
                 relatives.append(Path(*relative.parts[1:]))
-            candidates = (disk / rel for disk in ARCHIVE_ROOT.glob('DISK*') for rel in relatives)
-            for archive in candidates:
-                if not all((archive / rel).is_file() and (archive / rel).stat().st_size == st['size']
-                           for rel, st in item['files'].items()):
+            archives = [disk / rel for disk in ARCHIVE_ROOT.glob('DISK*')
+                        for rel in relatives if (disk / rel).is_dir()]
+            if not archives or not item['files']:
+                continue
+            for rel, original in item['files'].items():
+                dest = Path(destination) / rel
+                if dest.is_symlink() or not dest.exists():
                     continue
-                for rel, original in item['files'].items():
-                    dest = Path(destination) / rel
-                    if dest.is_symlink() or not dest.exists():
+                st = dest.stat()
+                if (st.st_dev, st.st_ino) != (original['device'], original['inode']):
+                    logging.warning('Retaining externally changed incoming link: %s', dest)
+                    continue
+                for archive in archives:
+                    target = archive / rel
+                    if not archive_file_matches(dest, target, original):
                         continue
-                    st = dest.stat()
-                    if (st.st_dev, st.st_ino) != (original['device'], original['inode']):
-                        raise RuntimeError(f'Incoming link changed externally: {dest}')
                     temporary = dest.with_name(dest.name + '.archive-link')
                     if temporary.exists() or temporary.is_symlink():
-                        raise RuntimeError(f'Unexpected archive staging file: {temporary}')
-                    temporary.symlink_to((archive / rel).resolve(strict=True))
+                        logging.warning('Retaining unexpected archive staging file: %s', temporary)
+                        break
+                    temporary.symlink_to(target.resolve(strict=True))
+                    # Do not overwrite a link replaced by another process.
+                    current = dest.stat()
+                    if dest.is_symlink() or file_version(current) != file_version(st):
+                        temporary.unlink()
+                        break
                     temporary.replace(dest)
-                debug_log(f'Rebound archived release {source.name} to {archive}')
-                del pending[destination]
-                break
-        _save_pending(pending)
-
+                    break
+            if all((Path(destination) / rel).is_symlink() and (Path(destination) / rel).is_file()
+                   for rel in item['files']):
+                debug_log(f'Rebound archived release {source.name}')
+                # Another completion event may have refreshed this record while
+                # archive IO was in progress. Merge against the latest registry.
+                with PENDING_LOCK:
+                    latest = json.loads(PENDING_LINKS.read_text())
+                    if latest.get(destination) == item:
+                        del latest[destination]
+                        _save_pending(latest)
+        except (OSError, ValueError):
+            # A single missing file/mount must not block all other releases.
+            logging.exception('Could not reconcile archive for %s', source.name)
 
 def maintain_archive_links() -> None:
     while True:

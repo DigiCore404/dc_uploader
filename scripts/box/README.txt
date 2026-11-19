@@ -15,10 +15,17 @@ link.py
   completion records. Missing archives may have been intentionally removed
   for space and are not recreated by this service.
 safe_qbit_cleanup.py
-  Protected DigitalCore torrent-only cleanup every five minutes.
+  Completed uploader torrents are checked every minute.
+  Remove at ratio >= 2 OR at least two other tracker seeders, without an
+  additional age, idle-time or seeding-time delay. Three reported seeders
+  include this box and guarantee at least two others.
+  Incomplete downloads and active publication jobs remain protected.
+  Removes torrent registrations only; never requests payload deletion.
   Timer: digitalcore-qbit-cleanup.timer
   Configuration: /etc/digitalcore-qbit-cleanup.json
   Log: /var/log/digitalcore-qbit-cleanup/cleanup.log (bounded rotation)
+  The matching systemd drop-ins are under box/systemd in the source repository.
+  Install them under /etc/systemd/system, then reload systemd and restart the timer.
 safe_storage_cleanup.py
   Protected inactive-link and old-event cleanup every ten minutes.
   Timer: uploader-storage-cleanup.timer

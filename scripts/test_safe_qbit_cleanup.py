@@ -1,4 +1,5 @@
 import importlib.util, logging, time, unittest
+import tempfile
 from pathlib import Path
 from unittest.mock import patch
 spec = importlib.util.spec_from_file_location('cleaner', Path(__file__).with_name('safe_qbit_cleanup.py'))
@@ -74,6 +75,28 @@ class Tests(unittest.TestCase):
         other_site = dict(url='https://dirtybytes.net/announce', status=2, num_seeds=1)
         self.assertFalse(c.healthy_tracker([good, other_site], ['digitalcore.club', 'dirtybytes.net']))
 
+    def test_three_days_since_completion_is_an_independent_condition(self):
+        old = row(completion_on=time.time() - 259201, ratio=0, num_complete=1)
+        self.assertIsNone(self.eligible(old))
+        self.assertEqual(self.run_cleanup(Client(old, seeds=0)), ['a' * 40])
+
+    def test_recent_completion_and_incomplete_old_downloads_are_preserved(self):
+        self.assertIsNotNone(self.eligible(row(added_on=1, completion_on=time.time() - 10)))
+        self.assertIsNotNone(self.eligible(row(completion_on=1, progress=.5, amount_left=3)))
+        self.assertFalse(c.expired_complete(row(completion_on=0), time.time(), c.DEFAULT_POLICY))
+        self.assertFalse(c.expired_complete(row(completion_on=float('nan')), time.time(), c.DEFAULT_POLICY))
+        self.assertFalse(c.expired_complete(row(completion_on=1), time.time(), {'max_age_seconds': 0}))
+
+    def test_age_boundary_is_exact(self):
+        self.assertFalse(c.expired_complete(row(completion_on=100), 259299, c.DEFAULT_POLICY))
+        self.assertTrue(c.expired_complete(row(completion_on=100), 259300, c.DEFAULT_POLICY))
+
+    def test_proven_missing_data_does_not_require_ratio_or_seeds(self):
+        missing = row(state='error', progress=.5, amount_left=3, data_missing=True)
+        self.assertIsNone(self.eligible(missing))
+        self.assertEqual(self.run_cleanup(Client(missing, seeds=0)), ['a' * 40])
+        self.assertIsNotNone(self.eligible({**missing, 'uploader_active': True}))
+
     def test_delete_never_removes_payload(self):
 
         class Response:
@@ -123,5 +146,54 @@ class Tests(unittest.TestCase):
             self.assertEqual(fresh['total_size'], 7)
             self.assertEqual(client.get('torrents/info', hashes='a'), [])
         self.assertEqual(client.session.rids, [0, 1, 2])
+class MissingDataTests(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.base = Path(self.tmp.name)
+        self.complete = self.base / 'COMPLETE'
+        self.incoming = self.base / 'incoming'
+        self.root = self.complete / 'Test-GROUP'
+        self.root.mkdir(parents=True)
+        self.incoming.mkdir()
+        self.patcher = patch.multiple(c, LOCAL_COMPLETE=self.complete, LOCAL_INCOMING=self.incoming)
+        self.patcher.start()
+        self.addCleanup(self.patcher.stop)
+        self.torrent = row(content_path=str(self.root), added_on=time.time() - 3600)
+
+    def test_broken_local_source_links_are_proof_even_for_incomplete_record(self):
+        (self.root / 'payload.rar').symlink_to(self.incoming / 'TV' / 'Test-GROUP' / 'payload.rar')
+        incomplete = {**self.torrent, 'progress': .5, 'amount_left': 3, 'completed': 3}
+        self.assertTrue(c.data_definitely_gone(incomplete, mounts=[]))
+
+    def test_remaining_partial_payload_is_never_missing_data(self):
+        (self.root / 'payload.rar').write_bytes(b'partial data')
+        self.assertFalse(c.data_definitely_gone(self.torrent, mounts=[]))
+
+    def test_missing_empty_new_download_is_not_removed(self):
+        self.root.rmdir()
+        incomplete = {**self.torrent, 'progress': 0, 'amount_left': 7, 'completed': 0}
+        self.assertFalse(c.data_definitely_gone(incomplete, mounts=[]))
+        self.assertTrue(c.data_definitely_gone(self.torrent, mounts=[]))
+
+    def test_mount_failure_and_archive_alias_are_not_deletion_proof(self):
+        target = self.incoming / 'TV' / 'Test-GROUP' / 'payload.rar'
+        link = self.root / 'payload.rar'
+        link.symlink_to(target)
+        self.assertFalse(c.data_definitely_gone(self.torrent, mounts=[self.incoming / 'TV']))
+        link.unlink()
+        link.symlink_to(self.incoming / 'ARCHiVE' / 'Test-GROUP' / 'payload.rar')
+        self.assertFalse(c.data_definitely_gone(self.torrent, mounts=[]))
+        with patch.object(c, 'local_path_status', return_value='unknown'):
+            self.assertFalse(c.data_definitely_gone(self.torrent, mounts=[]))
+
+    def test_alias_parent_untrusted_root_and_active_publisher_stay_protected(self):
+        (self.incoming / 'TV').symlink_to(self.base / 'offline', target_is_directory=True)
+        (self.root / 'payload.rar').symlink_to(self.incoming / 'TV' / 'Test-GROUP' / 'payload.rar')
+        self.assertFalse(c.data_definitely_gone(self.torrent, mounts=[]))
+        self.assertFalse(c.data_definitely_gone({**self.torrent, 'content_path': str(self.base)}, mounts=[]))
+        self.assertFalse(c.data_definitely_gone({**self.torrent, 'uploader_active': True}, mounts=[]))
+
+
 if __name__ == '__main__':
     unittest.main()

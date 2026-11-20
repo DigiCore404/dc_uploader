@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Remove complete uploader torrents at ratio 2 OR with two other tracker seeds.
+"""Remove complete torrents at ratio 2, two other seeds or three days; clear proven missing data.
 
 Dry-run by default. Never delete payload files. Credentials remain in the existing
 private autoremove configuration; only the explicitly selected tasks are read.
@@ -10,6 +10,8 @@ import fcntl
 import json
 import logging
 import math
+import re
+import stat
 from logging.handlers import RotatingFileHandler
 import os
 from pathlib import Path, PurePosixPath
@@ -20,22 +22,119 @@ import requests
 import yaml
 
 DEFAULT_POLICY = {
-    'ratio': 2.0, 'minimum_reported_seeds': 3,
+    'ratio': 2.0, 'minimum_reported_seeds': 3, 'max_age_seconds': 259200,
     'grace_seconds': 0, 'maximum_removals': 1000,
 }
 
 
+LOCAL_COMPLETE = Path('/uploaders/COMPLETE')
+LOCAL_INCOMING = Path('/glftpd/site')
+IGNORED_LINK_METADATA = {'.uploaded', '.tvmaze', '.imdb', '.message'}
+
+
+def expired_complete(torrent, now, policy):
+    maximum = int(policy.get('max_age_seconds', 259200))
+    try:
+        completed = float(torrent.get('completion_on', 0))
+        return maximum > 0 and math.isfinite(completed) and completed > 0 and now - completed >= maximum
+    except (TypeError, ValueError, OverflowError):
+        return False
+
+
+def local_path_status(path, mounts):
+    """Return missing/present/unknown, without following aliases or remote mounts."""
+    path = Path(os.path.abspath(path))
+    if any(m != Path('/') and (path == m or path.is_relative_to(m) or m.is_relative_to(path)) for m in mounts):
+        return 'unknown'
+    try:
+        for parent in reversed(path.parents):
+            if parent.is_symlink():
+                return 'unknown'
+        path.lstat()
+        return 'present'
+    except FileNotFoundError:
+        return 'missing'
+    except OSError:
+        return 'unknown'
+
+
+def local_mounts():
+    return [Path(re.sub(r'\\([0-7]{3})', lambda m: chr(int(m[1], 8)), line.split()[4]))
+            for line in Path('/proc/self/mountinfo').read_text().splitlines()]
+
+
+def data_definitely_gone(torrent, mounts=None):
+    """Inspect only local COMPLETE links; partial data and uncertain IO stay protected."""
+    if torrent.get('uploader_active'):
+        return False
+    raw = torrent.get('content_path')
+    if not raw:
+        return False
+    root = Path(os.path.abspath(raw))
+    if root.parent != LOCAL_COMPLETE:
+        return False
+    try:
+        if mounts is None:
+            mounts = local_mounts()
+        root_status = local_path_status(root, mounts)
+        if root_status == 'unknown':
+            return False
+        was_complete = (float(torrent.get('progress', 0)) == 1 and int(torrent.get('amount_left', -1)) == 0
+                        and int(torrent.get('completed', 0)) >= int(torrent.get('total_size', 1)) > 0)
+        old_enough = time.time() - float(torrent.get('added_on', time.time())) >= 60
+        if root_status == 'missing':
+            return was_complete and old_enough
+        stack = [root]
+        broken_source_link = False
+        while stack:
+            path = stack.pop()
+            if path.name in IGNORED_LINK_METADATA:
+                continue
+            st = path.lstat()
+            if stat.S_ISLNK(st.st_mode):
+                target = Path(os.readlink(path))
+                if not target.is_absolute():
+                    target = path.parent / target
+                target = Path(os.path.abspath(target))
+                if not target.is_relative_to(LOCAL_INCOMING):
+                    return False
+                # Archive aliases and unavailable mounts are not proof of deletion.
+                if target.relative_to(LOCAL_INCOMING).parts[0].upper() in {'ARCHIVE', 'ARCHIVES'}:
+                    return False
+                status = local_path_status(target, mounts)
+                if status != 'missing':
+                    return False
+                broken_source_link = True
+            elif stat.S_ISDIR(st.st_mode):
+                if local_path_status(path, mounts) != 'present':
+                    return False
+                stack.extend(path.iterdir())
+            elif stat.S_ISREG(st.st_mode):
+                # Keep even one byte of partially downloaded payload.
+                if st.st_size > 0:
+                    return False
+            else:
+                return False
+        return broken_source_link or (was_complete and old_enough)
+    except (OSError, ValueError, KeyError, IndexError, TypeError):
+        return False
+
+
 def eligibility(torrent, now, policy):
-    """Remove complete torrents at ratio 2 OR with two other reported seeders."""
+    """Remove proven missing data or complete torrents meeting ratio, seeds or age."""
     try:
         if torrent.get('uploader_active'):
             return 'active_publisher'
+        if torrent.get('data_missing') is True:
+            return None
         if torrent['state'] not in ('uploading', 'stalledUP', 'pausedUP', 'stoppedUP', 'missingFiles', 'error'):
             return 'not_seeding'
         total = int(torrent['total_size'])
         if (total <= 0 or float(torrent['progress']) != 1 or int(torrent['amount_left']) != 0
                 or int(torrent['completed']) < total or int(torrent['size']) != total):
             return 'incomplete'
+        if expired_complete(torrent, now, policy):
+            return None
         # Scrape totals include this seed. Three reported seeds guarantees at
         # least two others; ratio alone is an independent removal condition.
         ratio = float(torrent['ratio'])
@@ -43,7 +142,7 @@ def eligibility(torrent, now, policy):
             return 'unknown_metadata'
         if (ratio < float(policy['ratio'])
                 and int(torrent['num_complete']) < int(policy['minimum_reported_seeds'])):
-            return 'ratio_or_two_other_seeds_not_reached'
+            return 'ratio_seeds_or_three_day_age_not_reached'
     except (KeyError, TypeError, ValueError, OverflowError):
         return 'unknown_metadata'
     return None
@@ -155,7 +254,18 @@ class Client:
             self._rid = data['rid']
             selected = set(params['hashes'].split('|')) if params.get('hashes') else None
             active = active_upload_names()
-            return [{**item, 'hash': infohash, 'uploader_active': item.get('name') in active} for infohash, item in self._inventory.items() if selected is None or infohash in selected]
+            try:
+                mounts = local_mounts()
+            except OSError:
+                mounts = None
+            result = []
+            for infohash, item in self._inventory.items():
+                if selected is not None and infohash not in selected:
+                    continue
+                item = {**item, 'hash': infohash, 'uploader_active': item.get('name') in active}
+                item['data_missing'] = data_definitely_gone(item, mounts) if mounts is not None else False
+                result.append(item)
+            return result
         response = self.session.get(self.base + '/api/v2/' + route, params=params, timeout=20)
         response.raise_for_status()
         return response.json()
@@ -169,6 +279,8 @@ class Client:
 
 def inspect_candidate(client, torrent, policy=None):
     policy = policy or DEFAULT_POLICY
+    if torrent.get('data_missing') is True or expired_complete(torrent, time.time(), policy):
+        return None
     if float(torrent['ratio']) >= float(policy['ratio']):
         return None
     if not healthy_tracker(client.get('torrents/trackers', hash=torrent['hash']), client.allowed_hosts,
@@ -217,7 +329,7 @@ def clean_client(client, client_name, policy, previous, now, apply, logger):
             continue
         action = 'remove_torrent_only' if apply else 'would_remove_torrent_only'
         logger.info(json.dumps({'action': action, 'client': client_name, 'name': fresh['name'],
-            'hash': fresh['hash'], 'reason': 'complete_ratio_or_two_other_seeds',
+            'hash': fresh['hash'], 'reason': ('data_definitely_gone' if fresh.get('data_missing') else 'complete_three_days' if expired_complete(fresh, time.time(), policy) else 'complete_ratio_or_two_other_seeds'),
             'ratio': fresh['ratio'], 'reported_seeds': fresh['num_complete'],
             'leechers': fresh['num_incomplete'], 'delete_files': False}))
         if apply:
@@ -254,7 +366,8 @@ def main():
         for name in config['tasks']:
             try:
                 settings = {**credentials[name], 'allowed_tracker_hosts': config.get('tracker_domains', {}).get(name, ['digitalcore.club'])}
-                pending.update(clean_client(Client(settings), name, policy, previous,
+                client_policy = {**policy, **config.get('task_policies', {}).get(name, {})}
+                pending.update(clean_client(Client(settings), name, client_policy, previous,
                                             time.time(), args.apply, logger))
             except Exception as error:
                 # Do not expose private connection configuration in logs.

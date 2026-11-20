@@ -28,6 +28,12 @@ safe_qbit_cleanup.py
   aliases; an older result from another alias does not override it.
   Incomplete downloads and active publication jobs remain protected.
   Removes torrent registrations only; never requests payload deletion.
+  DigitalCore clients 5011/5012 also expire complete torrents three days
+  after completion. A pre-download/add timestamp does not start this clock.
+  Proven missing data in local COMPLETE links can be removed earlier, but
+  partial data, remote mounts and filesystem errors are not deletion proof.
+  Per-client task_policies can disable age expiry with max_age_seconds=0;
+  the existing third-client policy is preserved on this box.
   Timer: digitalcore-qbit-cleanup.timer
   Configuration: /etc/digitalcore-qbit-cleanup.json
   Log: /var/log/digitalcore-qbit-cleanup/cleanup.log (bounded rotation)

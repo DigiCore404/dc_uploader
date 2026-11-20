@@ -63,7 +63,16 @@ def healthy_tracker(trackers, allowed_hosts=('digitalcore.club',), minimum_repor
         return False
     for endpoints in groups.values():
         healthy = [entry for entry in endpoints if entry.get('status') == 2]
-        if not healthy or any(int(entry.get('num_seeds', -1)) < minimum_reported_seeds for entry in healthy):
+        # Proxy URLs for the same site report the same swarm at different
+        # announce times. One healthy confirmed result is sufficient; a stale
+        # mirror must not veto it. Separate sites still need their own proof.
+        counts = []
+        for entry in healthy:
+            try:
+                counts.append(int(entry.get('num_seeds', -1)))
+            except (TypeError, ValueError):
+                continue
+        if not counts or max(counts) < minimum_reported_seeds:
             return False
     return True
 

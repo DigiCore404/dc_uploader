@@ -10,6 +10,8 @@ import sys
 import time
 import threading
 import signal
+import sqlite3
+from contextlib import closing
 from pathlib import Path
 from typing import Iterable, List, Sequence
 
@@ -21,6 +23,7 @@ INCOMING_ROOT = Path('/glftpd/site')
 ARCHIVE_ROOT = Path('/glftpd')
 PENDING_LINKS = Path('/uploaders/durable_game_links.json')
 PENDING_LOCK = threading.RLock()
+RACE_DB = Path('/GoFTPd/userdata/race.db')
 
 UPLOADERS = [
     {
@@ -461,6 +464,93 @@ def category_uses_fast_settle(category: str) -> bool:
     return any(item in category_upper for item in FAST_SETTLE_CATEGORIES)
 
 
+SAMPLE_DISCOVERY_SECONDS = 5.0
+SAMPLE_STABLE_SECONDS = 2.0
+SAMPLE_RETRY_SECONDS = 1.0
+_SAMPLE_STATES = {}
+_SAMPLE_RETRIES = {}
+_SAMPLE_RETRY_LOCK = threading.Lock()
+
+
+def sample_source_ready(src_root: Path, category: str, now=None) -> tuple[bool, str]:
+    """Check existing Sample folders; briefly allow late folders on video releases."""
+    now = time.monotonic() if now is None else now
+    sample_dirs = []
+    for root, dirs, _ in os.walk(src_root):
+        dirs[:] = [d for d in dirs if not should_skip_dir(Path(root) / d, src_root)]
+        sample_dirs.extend(Path(root) / d for d in dirs if d.casefold() == 'sample')
+    video = (not any(token in category.upper() for token in ('MP3', 'FLAC', 'EBOOK', 'XXX-IMAGESETS')) and (
+        any(part.upper().startswith(('TV-', 'X264', 'X265', 'XVID', 'BLURAY', 'DVDR', 'HDTV', 'MOVIE', 'XXX-0DAY')) for part in src_root.parts)
+        or re.search(r'(?:^|[._ -])(?:[hx]26[45]|[0-9]{3,4}p|xvid|divx|bluray|bdrip|dvdrip|hdtv|webrip)(?:[._ -]|$)', src_root.name, re.I)
+    ))
+    if not sample_dirs and not video:
+        return True, 'no Sample folder'
+    files = iter_expected_files(src_root)
+    try:
+        snapshot = tuple((str(rel), (src_root / rel).stat().st_size,
+                          (src_root / rel).stat().st_mtime_ns) for rel in files)
+    except OSError:
+        return False, 'source files are changing'
+    key = str(src_root)
+    state = _SAMPLE_STATES.setdefault(key, {'started': now, 'changed': now, 'snapshot': snapshot})
+    if state['snapshot'] != snapshot:
+        state.update(snapshot=snapshot, changed=now)
+    if video and now - state['started'] < SAMPLE_DISCOVERY_SECONDS:
+        return False, 'allowing a late Sample folder'
+    for folder in sample_dirs:
+        samples = [rel for rel in files if (src_root / rel).is_relative_to(folder)
+                   and rel.suffix.lower() not in {'.nfo', '.sfv', '.txt', '.jpg', '.jpeg', '.png'}]
+        if not samples or any((src_root / rel).stat().st_size <= 0 for rel in samples):
+            return False, 'Sample folder is empty or incomplete'
+        # The FTP receipt covers non-SFV files too, and is written after the
+        # upload finishes. Do not mistake a temporarily paused transfer for EOF.
+        if RACE_DB.is_file() and is_incoming_source(folder):
+            virtual = '/' + folder.relative_to(INCOMING_ROOT).as_posix()
+            try:
+                with closing(sqlite3.connect('file:' + str(RACE_DB) + '?mode=ro', uri=True, timeout=.5)) as db:
+                    receipts = {name.casefold(): (size, present) for name, size, present in db.execute(
+                        'SELECT f.filename, f.size_bytes, f.is_present FROM release_files f JOIN releases r ON r.id=f.release_id WHERE r.path=?', (virtual,))}
+                for rel in samples:
+                    receipt = receipts.get((src_root / rel).relative_to(folder).as_posix().casefold())
+                    if not receipt or receipt[1] != 1 or receipt[0] != (src_root / rel).stat().st_size:
+                        return False, 'Sample upload has not finished on FTP'
+            except (sqlite3.Error, OSError):
+                return False, 'cannot verify Sample upload completion'
+    if now - state['changed'] < SAMPLE_STABLE_SECONDS:
+        return False, 'release files are still settling'
+    _SAMPLE_STATES.pop(key, None)
+    return True, 'Sample ready' if sample_dirs else 'no Sample folder after initial settle'
+
+
+def schedule_sample_retry(link_file: Path, delay=None) -> None:
+    """Requeue without blocking other releases or changing marker contents."""
+    key = str(link_file)
+    with _SAMPLE_RETRY_LOCK:
+        if key in _SAMPLE_RETRIES:
+            return
+        def retry():
+            with _SAMPLE_RETRY_LOCK:
+                _SAMPLE_RETRIES.pop(key, None)
+            try:
+                # IN_CLOSE_WRITE requeues the existing completion event. Never
+                # create missing markers or follow links; no bytes are written.
+                fd = os.open(link_file, os.O_WRONLY | os.O_APPEND | os.O_NOFOLLOW)
+                os.close(fd)
+            except OSError:
+                pass
+        timer = threading.Timer(SAMPLE_RETRY_SECONDS if delay is None else delay, retry)
+        timer.daemon = True
+        _SAMPLE_RETRIES[key] = timer
+        timer.start()
+
+
+def cancel_sample_retry(link_file: Path) -> None:
+    with _SAMPLE_RETRY_LOCK:
+        timer = _SAMPLE_RETRIES.pop(str(link_file), None)
+        if timer:
+            timer.cancel()
+
+
 def has_required_release_files(category: str, files: Sequence[Path]) -> bool:
     suffixes = {path.suffix.lower() for path in files}
     category_upper = category.upper()
@@ -625,9 +715,6 @@ def launch_uploader(uploader: dict, release: str) -> None:
 def process_release(release: str, picker: UploaderPicker) -> None:
     banner(f"New Release Detected: {release}", BLUE)
     debug_log(f"Start processing release {release}")
-    uploader = picker.next()
-    section("Uploader Selection", CYAN)
-    info_line("Selected", uploader["name"], CYAN)
     link_file = SOURCE / release
     link_info = parse_link_file(link_file)
     if link_info is None:
@@ -635,11 +722,6 @@ def process_release(release: str, picker: UploaderPicker) -> None:
     category, source_path = link_info
     src_release = resolve_source_release(source_path, release)
     dest_release = COMPLETE / release
-    # The round-robin uploader always runs, exactly as before. When the
-    # release is XXX, the extra 'upper' uploader is launched AS WELL.
-    uploaders_to_launch = [uploader]
-    if is_xxx_release(category, src_release, release):
-        uploaders_to_launch.append(XXX_UPLOADER)
     debug_log(
         f"Resolved release paths for {release}: category={category} source_path={source_path} "
         f"src_release={src_release} dest_release={dest_release}"
@@ -649,6 +731,26 @@ def process_release(release: str, picker: UploaderPicker) -> None:
     info_line("Category", category, CYAN)
     info_line("Source", str(src_release), WHITE)
     info_line("Dest", str(dest_release), WHITE)
+    try:
+        ready, readiness = sample_source_ready(src_release, category)
+    except OSError:
+        ready, readiness = False, 'source files are temporarily unavailable'
+    if not ready:
+        debug_log(f'Upload deferred for {release}: {readiness}')
+        waiting_since = _SAMPLE_STATES.get(str(src_release), {}).get('started', time.monotonic())
+        delay = SAMPLE_RETRY_SECONDS if time.monotonic() - waiting_since < 60 else 30
+        schedule_sample_retry(link_file, delay)
+        return
+    cancel_sample_retry(link_file)
+    debug_log(f'Sample readiness for {release}: {readiness}')
+    uploader = picker.next()
+    section("Uploader Selection", CYAN)
+    info_line("Selected", uploader["name"], CYAN)
+    # The round-robin uploader always runs, exactly as before. When the
+    # release is XXX, the extra 'upper' uploader is launched AS WELL.
+    uploaders_to_launch = [uploader]
+    if is_xxx_release(category, src_release, release):
+        uploaders_to_launch.append(XXX_UPLOADER)
     if XXX_UPLOADER in uploaders_to_launch:
         info_line("Extra", f"{XXX_UPLOADER['name']} (XXX match)", MAGENTA)
         debug_log(f"XXX match for {release}: also launching {XXX_UPLOADER['name']}")

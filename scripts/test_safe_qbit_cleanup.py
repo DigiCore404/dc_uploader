@@ -66,6 +66,14 @@ class Tests(unittest.TestCase):
         self.assertFalse(c.healthy_tracker([{**t, 'status': 4}]))
         self.assertFalse(c.healthy_tracker([{**t, 'url': 'https://other.invalid'}]))
 
+    def test_stale_mirror_does_not_override_confirmed_same_site_seeds(self):
+        good = dict(url='https://tracker.digitalcore.club/announce', status=2, num_seeds=11)
+        stale = dict(url='https://trackerprxy.digitalcore.club/announce', status=2, num_seeds=1)
+        self.assertTrue(c.healthy_tracker([good, stale]))
+        self.assertTrue(c.healthy_tracker([good, {**stale, 'num_seeds': None}]))
+        other_site = dict(url='https://dirtybytes.net/announce', status=2, num_seeds=1)
+        self.assertFalse(c.healthy_tracker([good, other_site], ['digitalcore.club', 'dirtybytes.net']))
+
     def test_delete_never_removes_payload(self):
 
         class Response:

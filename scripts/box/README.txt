@@ -8,6 +8,11 @@ AUTOMATIC SYSTEMD JOBS - DO NOT ALSO START THESE IN A SCREEN
 link.py
   Receives complete-release events, maintains durable links and starts uploaders.
   Service: uploader-link-watcher.service
+  Video releases get a five-second window for a late Sample folder.
+  Existing Sample folders must contain a non-empty sample with a completed
+  FTP receipt and stable file sizes/timestamps before linking and upload.
+  A missing Sample folder is allowed. Pending checks requeue the unchanged
+  completion event; other releases are not blocked. Longer waits back off.
   Archive copies are rebound per file. A changed or missing NFO, sample or
   other file cannot prevent matching payload files from being rebound.
   Files completed after the initial snapshot are compared byte for byte.
@@ -19,6 +24,8 @@ safe_qbit_cleanup.py
   Remove at ratio >= 2 OR at least two other tracker seeders, without an
   additional age, idle-time or seeding-time delay. Three reported seeders
   include this box and guarantee at least two others.
+  A confirmed healthy tracker result is sufficient for that site's proxy
+  aliases; an older result from another alias does not override it.
   Incomplete downloads and active publication jobs remain protected.
   Removes torrent registrations only; never requests payload deletion.
   Timer: digitalcore-qbit-cleanup.timer
